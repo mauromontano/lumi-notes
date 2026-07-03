@@ -50,7 +50,7 @@ Lumi Notes es una app personal de notas para iPhone construida con React Native 
 | Módulo | Librería | Rol |
 |---|---|---|
 | Voz | `expo-speech-recognition` | Dictado nativo iOS en español, resultados parciales + eventos de volumen (anima el orbe) |
-| IA | API Anthropic (fetch directo) | Formateo de transcripción y edición por instrucción; respuesta JSON `{titulo, cuerpo}` |
+| IA | API Anthropic (fetch directo) | Formateo de transcripción y edición por instrucción; respuesta JSON `{titulo, cuerpo}`. Modelo por defecto: Claude Haiku (suficiente para formatear y barato: ~USD 0.002/nota, ~USD 0.20/mes con 3 notas diarias) |
 | Storage | `expo-sqlite` | Persistencia local; búsqueda con `LIKE` |
 | Recordatorios | `expo-notifications` | Notificaciones locales con triggers de calendario (única/diaria/semanal/mensual) |
 | Orbe | `react-native-reanimated` + `@shopify/react-native-skia` | Gradientes radiales, glow, deformación por volumen, transiciones de estado |
