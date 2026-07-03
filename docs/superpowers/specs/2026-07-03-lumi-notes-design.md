@@ -82,6 +82,8 @@ Nota actual + instrucción dictada → Claude → nota modificada → preview (c
 
 **Máquina de estados de Lumi:** componente del orbe recibe `state` + `volumeLevel`; anima con Reanimated/Skia según el estado.
 
+**Proveedor de IA intercambiable:** el Cliente IA se implementa detrás de una interfaz mínima (`formatNote(transcripcion)` / `editNote(nota, instruccion)` → `{titulo, cuerpo}`). v1 usa la API de Anthropic (Claude Haiku); a futuro se puede reemplazar por un modelo on-device (p. ej. Apple Foundation Models, iOS 26+) sin tocar el resto de la app.
+
 ## Manejo de errores
 
 - **Sin internet / API caída / timeout (~15s):** Lumi pasa a *error*; se ofrece guardar la transcripción cruda. Nunca se pierde lo dictado.
@@ -99,4 +101,4 @@ Nota actual + instrucción dictada → Claude → nota modificada → preview (c
 
 ## Fuera de alcance (v1)
 
-Sync/backup en la nube, compartir notas, categorías/tags, widget iOS, Apple Watch, detección automática de recordatorios en el dictado, Android.
+Sync/backup en la nube, compartir notas, categorías/tags, widget iOS, Apple Watch, detección automática de recordatorios en el dictado, Android, modelo de IA on-device (Apple Foundation Models) como reemplazo de la API de Claude.
