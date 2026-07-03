@@ -64,6 +64,7 @@ export default function VoiceScreen() {
   }, [isEdit, noteId]);
 
   async function finishDictation() {
+    if (isEdit && !original) return;
     dictation.stop();
     const transcript = transcriptRef.current.trim();
     if (!transcript) {
@@ -171,7 +172,11 @@ export default function VoiceScreen() {
             <Text style={[styles.transcript, { color: palette.text }]} numberOfLines={6}>
               {dictation.transcript || (isEdit ? '¿Qué le cambio a la nota?' : 'Te escucho…')}
             </Text>
-            <Pressable onPress={finishDictation} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
+            <Pressable
+              onPress={finishDictation}
+              disabled={isEdit && !original}
+              style={[styles.saveBtn, { backgroundColor: palette.accent, opacity: isEdit && !original ? 0.4 : 1 }]}
+            >
               <Text style={styles.saveText}>Listo</Text>
             </Pressable>
           </>
@@ -204,14 +209,20 @@ export default function VoiceScreen() {
 
       <TextInput
         value={draft.title}
-        onChangeText={(t) => setDraft((d) => ({ ...d, title: t }))}
+        onChangeText={(t) => {
+          setDraft((d) => ({ ...d, title: t }));
+          setUndone(false);
+        }}
         style={[styles.title, { color: palette.text }]}
         placeholder="Título"
         placeholderTextColor={palette.textMuted}
       />
       <TextInput
         value={draft.body}
-        onChangeText={(t) => setDraft((d) => ({ ...d, body: t }))}
+        onChangeText={(t) => {
+          setDraft((d) => ({ ...d, body: t }));
+          setUndone(false);
+        }}
         style={[styles.body, { color: palette.text }]}
         multiline
       />
