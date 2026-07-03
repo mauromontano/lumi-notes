@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Lumi Notes",
+    "subtitle": "App personal de notas por voz — React Native (Expo) + Claude",
+    "output": "lumi-notes-arquitectura.html"
+  },
+  "components": [
+    { "id": "usuario", "type": "external", "label": "Usuario", "sublabel": "voz / tacto", "pos": [40, 300], "size": [120, 60] },
+    { "id": "orbe", "type": "frontend", "label": "Orbe Lumi", "sublabel": "Reanimated + Skia", "pos": [260, 140], "size": [120, 60], "tag": "5 estados" },
+    { "id": "screens", "type": "frontend", "label": "Pantallas", "sublabel": "expo-router", "pos": [260, 300], "size": [120, 60] },
+    { "id": "notas", "type": "database", "label": "Notas DB", "sublabel": "expo-sqlite", "pos": [260, 460], "size": [120, 60] },
+    { "id": "voz", "type": "backend", "label": "Dictado", "sublabel": "expo-speech-recognition", "pos": [465, 140], "size": [150, 60], "tag": "on-device" },
+    { "id": "ia", "type": "backend", "label": "Cliente IA", "sublabel": "formateo de notas", "pos": [480, 300], "size": [120, 60] },
+    { "id": "notif", "type": "cloud", "label": "Recordatorios", "sublabel": "expo-notifications", "pos": [480, 460], "size": [130, 60], "tag": "local" },
+    { "id": "securestore", "type": "security", "label": "Secure Store", "sublabel": "API key (keychain)", "pos": [700, 460], "size": [130, 60] },
+    { "id": "anthropic", "type": "external", "label": "Anthropic API", "sublabel": "Claude", "pos": [880, 300], "size": [120, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "iPhone — Lumi Notes (Expo dev build)", "wraps": ["orbe", "screens", "notas", "voz", "ia", "notif", "securestore"] }
+  ],
+  "connections": [
+    { "from": "usuario", "to": "screens", "label": "toca a Lumi / dicta", "variant": "emphasis" },
+    { "from": "screens", "to": "orbe", "label": "estado", "fromSide": "top", "toSide": "bottom", "labelDy": -58 },
+    { "from": "voz", "to": "orbe", "label": "volumen", "fromSide": "left", "toSide": "right" },
+    { "from": "voz", "to": "ia", "label": "transcripción", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelDy": 58 },
+    { "from": "ia", "to": "anthropic", "label": "HTTPS", "variant": "emphasis" },
+    { "from": "ia", "to": "screens", "label": "nota formateada", "fromSide": "left", "toSide": "right" },
+    { "from": "screens", "to": "notas", "label": "guardar / buscar", "fromSide": "bottom", "toSide": "top", "labelDy": 58 },
+    { "from": "notas", "to": "notif", "label": "agenda", "variant": "dashed", "fromSide": "right", "toSide": "left" },
+    { "from": "securestore", "to": "ia", "label": "API key", "variant": "security", "fromSide": "top", "toSide": "bottom", "via": [[765, 410], [540, 410]], "labelSegment": 1 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Flujo de voz", "items": ["Tocás a Lumi y dictás; transcripción en vivo en pantalla", "Claude formatea: título + cuerpo con bullets", "Preview editable antes de guardar"] },
+    { "dot": "emerald", "title": "Datos y recordatorios", "items": ["Notas 100% locales en SQLite", "Recordatorios únicos o recurrentes vía notificación local", "Si falla la IA, se guarda la transcripción cruda"] },
+    { "dot": "rose", "title": "Seguridad", "items": ["API key de Anthropic en el keychain del iPhone", "Sin backend propio: la app habla directo con la API"] }
+  ]
+}
