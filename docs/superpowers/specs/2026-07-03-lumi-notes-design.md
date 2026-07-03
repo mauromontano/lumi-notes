@@ -78,7 +78,7 @@ Sin categorías ni tags (YAGNI).
 Mic → `expo-speech-recognition` (parciales en pantalla + volumen al orbe) → texto final → Claude (prompt de formateo, JSON) → preview → INSERT en SQLite → si hay recordatorio, agendar notificación y guardar `notification_id`.
 
 **Flujo de edición por voz:**
-Nota actual + instrucción dictada → Claude → nota modificada → preview (con "deshacer" que restaura la versión anterior) → UPDATE + reprogramación de notificación si cambió.
+Nota actual + instrucción dictada → Claude → nota modificada → preview (con "deshacer" que restaura la versión anterior; disponible en memoria mientras la nota siga abierta, no persiste historial de versiones) → UPDATE + reprogramación de notificación si cambió.
 
 **Máquina de estados de Lumi:** componente del orbe recibe `state` + `volumeLevel`; anima con Reanimated/Skia según el estado.
 
