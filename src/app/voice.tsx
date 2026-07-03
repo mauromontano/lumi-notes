@@ -8,7 +8,7 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
 import { useDictation } from '../voice/useDictation';
@@ -17,10 +17,10 @@ import type { OrbState } from '../orb/orbState';
 import { createClaudeFormatter } from '../ai/claudeFormatter';
 import { FormatterError, FormattedNote } from '../ai/formatter';
 import { getDb, newId } from '../db/database';
-import { createNote, updateNote } from '../db/notesRepo';
+import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
-import type { Recurrence } from '../notes/types';
+import type { Recurrence, Note } from '../notes/types';
 
 type Phase = 'listening' | 'thinking' | 'preview';
 
@@ -30,6 +30,8 @@ export default function VoiceScreen() {
   const { palette } = useTheme();
   const insets = useSafeAreaInsets();
   const dictation = useDictation();
+  const { noteId } = useLocalSearchParams<{ noteId?: string }>();
+  const isEdit = typeof noteId === 'string' && noteId.length > 0;
 
   const [phase, setPhase] = useState<Phase>('listening');
   const [orbState, setOrbState] = useState<OrbState>('listening');
@@ -38,6 +40,8 @@ export default function VoiceScreen() {
   const [usedRawFallback, setUsedRawFallback] = useState<string | null>(null);
   const [reminderAt, setReminderAt] = useState<string | null>(null);
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
+  const [original, setOriginal] = useState<Note | null>(null);
+  const [undone, setUndone] = useState(false);
   const transcriptRef = useRef('');
   transcriptRef.current = dictation.transcript;
 
@@ -50,6 +54,15 @@ export default function VoiceScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!isEdit) return;
+    (async () => {
+      const n = await getNote(getDb(), noteId!);
+      if (!n) { router.back(); return; }
+      setOriginal(n);
+    })();
+  }, [isEdit, noteId]);
+
   async function finishDictation() {
     dictation.stop();
     const transcript = transcriptRef.current.trim();
@@ -60,19 +73,33 @@ export default function VoiceScreen() {
     setPhase('thinking');
     setOrbState('thinking');
     try {
-      const formatted = await formatter.formatNote(transcript);
+      const formatted = isEdit
+        ? await formatter.editNote(
+            { title: original!.title, body: original!.body },
+            transcript,
+          )
+        : await formatter.formatNote(transcript);
       setDraft(formatted);
       setUsedRawFallback(null);
       setOrbState('success');
     } catch (e) {
-      // Nunca se pierde lo dictado: fallback a transcripción cruda
       const kind = e instanceof FormatterError ? e.kind : 'api';
-      setDraft({ title: 'Nota dictada', body: transcript });
-      setUsedRawFallback(
-        kind === 'no-key'
-          ? 'Sin API key configurada: guardo la transcripción sin formatear.'
-          : 'Lumi no pudo formatear (sin conexión o error). Guardo la transcripción cruda.',
-      );
+      if (isEdit) {
+        // en edición no pisamos la nota con la transcripción: mostramos la original y avisamos
+        setDraft({ title: original!.title, body: original!.body });
+        setUsedRawFallback(
+          kind === 'no-key'
+            ? 'Sin API key configurada: no puedo editar por voz. Configurala en Ajustes.'
+            : 'Lumi no pudo aplicar la edición (sin conexión o error). La nota queda como estaba.',
+        );
+      } else {
+        setDraft({ title: 'Nota dictada', body: transcript });
+        setUsedRawFallback(
+          kind === 'no-key'
+            ? 'Sin API key configurada: guardo la transcripción sin formatear.'
+            : 'Lumi no pudo formatear (sin conexión o error). Guardo la transcripción cruda.',
+        );
+      }
       setOrbState('error');
     }
     setPhase('preview');
@@ -80,6 +107,11 @@ export default function VoiceScreen() {
 
   async function save() {
     const db = getDb();
+    if (isEdit) {
+      await updateNote(db, original!.id, { title: draft.title, body: draft.body });
+      router.back();
+      return;
+    }
     const note = await createNote(db, { title: draft.title, body: draft.body }, { id: newId() });
     try {
       const notificationId = await syncReminder(note, reminderAt ? new Date(reminderAt) : null, recurrence);
@@ -103,6 +135,11 @@ export default function VoiceScreen() {
     setPhase('listening');
     setOrbState('listening');
     dictation.start();
+  }
+
+  function undo() {
+    setDraft({ title: original!.title, body: original!.body });
+    setUndone(true);
   }
 
   if (permissionDenied) {
@@ -132,7 +169,7 @@ export default function VoiceScreen() {
         {phase === 'listening' ? (
           <>
             <Text style={[styles.transcript, { color: palette.text }]} numberOfLines={6}>
-              {dictation.transcript || 'Te escucho…'}
+              {dictation.transcript || (isEdit ? '¿Qué le cambio a la nota?' : 'Te escucho…')}
             </Text>
             <Pressable onPress={finishDictation} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
               <Text style={styles.saveText}>Listo</Text>
@@ -179,16 +216,28 @@ export default function VoiceScreen() {
         multiline
       />
 
-      <ReminderPicker
-        reminderAt={reminderAt}
-        recurrence={recurrence}
-        onChange={(at, rec) => { setReminderAt(at); setRecurrence(rec); }}
-      />
+      {!isEdit && (
+        <ReminderPicker
+          reminderAt={reminderAt}
+          recurrence={recurrence}
+          onChange={(at, rec) => { setReminderAt(at); setRecurrence(rec); }}
+        />
+      )}
 
       <View style={styles.actions}>
-        <Pressable onPress={redictate} style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}>
-          <Text style={{ color: palette.text }}>Re-dictar</Text>
-        </Pressable>
+        {isEdit ? (
+          <Pressable
+            onPress={undo}
+            disabled={undone}
+            style={[styles.secondaryBtn, { borderColor: palette.cardBorder, opacity: undone ? 0.4 : 1 }]}
+          >
+            <Text style={{ color: palette.text }}>Deshacer</Text>
+          </Pressable>
+        ) : (
+          <Pressable onPress={redictate} style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}>
+            <Text style={{ color: palette.text }}>Re-dictar</Text>
+          </Pressable>
+        )}
         <Pressable onPress={save} style={[styles.saveBtn, { backgroundColor: palette.accent, flex: 1 }]}>
           <Text style={styles.saveText}>Guardar</Text>
         </Pressable>
