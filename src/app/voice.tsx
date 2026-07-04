@@ -70,6 +70,11 @@ export default function VoiceScreen() {
     (async () => {
       const n = await getNote(getDb(), noteId!);
       if (!n) { router.back(); return; }
+      if (n.secure) {
+        log.warn('voice: bloqueada edición por voz de nota cifrada', noteId);
+        router.back();
+        return;
+      }
       setOriginal(n);
     })();
   }, [isEdit, noteId]);

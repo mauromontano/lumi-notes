@@ -4,6 +4,7 @@ import * as Notifications from 'expo-notifications';
 import { useShareIntent } from 'expo-share-intent';
 import { ThemeProvider, useTheme } from '../theme/ThemeContext';
 import { useReminderResponses } from '../reminders/useReminderResponses';
+import { prepareSharedText } from '../notes/sharedText';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,7 +24,7 @@ function Screens() {
   useEffect(() => {
     if (!hasShareIntent) return;
     const text = shareIntent.text ?? shareIntent.webUrl;
-    if (text) router.push({ pathname: '/voice', params: { sharedText: text } });
+    if (text) router.push({ pathname: '/voice', params: { sharedText: prepareSharedText(text) } });
     resetShareIntent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasShareIntent]);

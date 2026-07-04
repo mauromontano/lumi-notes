@@ -99,7 +99,10 @@ export default function NoteScreen() {
         Alert.alert('Nota muy larga', 'Las notas cifradas soportan hasta ~2000 caracteres. Acortá el contenido.');
         return;
       }
-      Alert.alert('No se pudo cifrar', 'Verificá que el iPhone tenga código de bloqueo configurado.');
+      Alert.alert(
+        'No se pudo cifrar',
+        'No se pudo guardar la nota cifrada. Probá de nuevo (si el iPhone no tiene código de bloqueo, configuralo primero).',
+      );
       return;
     }
     const storedBody = secure ? '' : body;
@@ -219,7 +222,7 @@ export default function NoteScreen() {
         }}
       />
 
-      {!isNew && hasApiKey && !secure && (
+      {!isNew && hasApiKey && !note?.secure && !secure && (
         <Pressable
           onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
           style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}
