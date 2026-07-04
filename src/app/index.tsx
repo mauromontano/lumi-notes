@@ -7,23 +7,26 @@ import { listNotes } from '../db/notesRepo';
 import type { Note } from '../notes/types';
 import { NoteCard } from '../components/NoteCard';
 import { SearchBar } from '../components/SearchBar';
+import { TagChips } from '../components/TagChips';
 import { LumiOrb } from '../orb/LumiOrb';
 import { useSharedValue } from 'react-native-reanimated';
+import type { NoteTag } from '../notes/tags';
 
 export default function NotesListScreen() {
   const { palette } = useTheme();
   const [notes, setNotes] = useState<Note[]>([]);
   const [search, setSearch] = useState('');
+  const [tagFilter, setTagFilter] = useState<NoteTag | null>(null);
   const idleVolume = useSharedValue(0);
 
-  const refresh = useCallback(async (q: string) => {
-    setNotes(await listNotes(getDb(), q || undefined));
+  const refresh = useCallback(async (q: string, t: NoteTag | null) => {
+    setNotes(await listNotes(getDb(), q || undefined, t || undefined));
   }, []);
 
   useFocusEffect(
     useCallback(() => {
-      refresh(search);
-    }, [refresh, search]),
+      refresh(search, tagFilter);
+    }, [refresh, search, tagFilter]),
   );
 
   return (
@@ -45,6 +48,7 @@ export default function NotesListScreen() {
         }}
       />
       <SearchBar value={search} onChange={setSearch} />
+      <TagChips selected={tagFilter} onSelect={setTagFilter} />
       <FlatList
         data={notes}
         keyExtractor={(n) => n.id}

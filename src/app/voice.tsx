@@ -22,6 +22,7 @@ import { getDb, newId } from '../db/database';
 import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
+import { TagChips } from '../components/TagChips';
 import type { Recurrence, Note } from '../notes/types';
 import { isNoteTag } from '../notes/tags';
 import { log } from '../lib/log';
@@ -133,11 +134,11 @@ export default function VoiceScreen() {
   async function save() {
     const db = getDb();
     if (isEdit) {
-      await updateNote(db, original!.id, { title: draft.title, body: draft.body });
+      await updateNote(db, original!.id, { title: draft.title, body: draft.body, tag: draft.tag });
       router.back();
       return;
     }
-    const note = await createNote(db, { title: draft.title, body: draft.body }, { id: newId() });
+    const note = await createNote(db, { title: draft.title, body: draft.body, tag: draft.tag }, { id: newId() });
     try {
       const notificationId = await syncReminder(note, reminderAt ? new Date(reminderAt) : null, recurrence);
       await updateNote(db, note.id, {
@@ -276,6 +277,12 @@ export default function VoiceScreen() {
         }}
         style={[styles.body, { color: palette.text }]}
         multiline
+      />
+
+      <TagChips
+        selected={draft.tag}
+        onSelect={(t) => setDraft((d) => ({ ...d, tag: t }))}
+        includeNone
       />
 
       {!isEdit && (

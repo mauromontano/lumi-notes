@@ -7,7 +7,9 @@ import { getDb, newId } from '../../db/database';
 import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo';
 import { cancelReminder, syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
+import { TagChips } from '../../components/TagChips';
 import type { Note, Recurrence } from '../../notes/types';
+import { isNoteTag, type NoteTag } from '../../notes/tags';
 
 export default function NoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +22,7 @@ export default function NoteScreen() {
   const [pinned, setPinned] = useState(false);
   const [reminderAt, setReminderAt] = useState<string | null>(null);
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
+  const [tag, setTag] = useState<NoteTag | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
 
   // re-chequea al volver del stack (p.ej. después de cargar la key en Ajustes)
@@ -43,6 +46,7 @@ export default function NoteScreen() {
       setPinned(n.pinned);
       setReminderAt(n.reminderAt);
       setRecurrence(n.reminderRecurrence);
+      setTag(isNoteTag(n.tag) ? n.tag : null);
     })();
   }, [id, isNew]);
 
@@ -51,10 +55,10 @@ export default function NoteScreen() {
     const finalTitle = title.trim() || 'Sin título';
     let saved: Note;
     if (isNew) {
-      saved = await createNote(db, { title: finalTitle, body }, { id: newId() });
+      saved = await createNote(db, { title: finalTitle, body, tag }, { id: newId() });
       if (pinned) saved = await updateNote(db, saved.id, { pinned: true });
     } else {
-      saved = await updateNote(db, note!.id, { title: finalTitle, body, pinned });
+      saved = await updateNote(db, note!.id, { title: finalTitle, body, pinned, tag });
     }
     try {
       const notificationId = await syncReminder(saved, reminderAt ? new Date(reminderAt) : null, recurrence);
@@ -130,6 +134,8 @@ export default function NoteScreen() {
         style={[styles.body, { color: palette.text }]}
         multiline
       />
+
+      <TagChips selected={tag} onSelect={setTag} includeNone />
 
       <ReminderPicker
         reminderAt={reminderAt}
