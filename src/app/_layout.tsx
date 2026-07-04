@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
-import { Stack, router } from 'expo-router';
+import React from 'react';
+import { Stack } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { ThemeProvider, useTheme } from '../theme/ThemeContext';
+import { useReminderResponses } from '../reminders/useReminderResponses';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -15,13 +16,7 @@ Notifications.setNotificationHandler({
 function Screens() {
   const { palette } = useTheme();
 
-  useEffect(() => {
-    const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const noteId = response.notification.request.content.data?.noteId;
-      if (typeof noteId === 'string') router.push(`/note/${noteId}`);
-    });
-    return () => sub.remove();
-  }, []);
+  useReminderResponses();
 
   return (
     <Stack
