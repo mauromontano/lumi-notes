@@ -7,39 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06A9C4983F3A4BD6AF44680D /* expo.icon in Resources */ = {isa = PBXBuildFile; fileRef = 43C7148C306E4AEAAF4D8941 /* expo.icon */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		256F6D4B4F4E6124446DE5AB /* libPods-LumiNotes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE3C8D5A1C8859202840ED96 /* libPods-LumiNotes.a */; };
-		316624BB8C444E84A988E3DF /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1197F8EC554D6AB30A26AE /* ShareViewController.swift */; };
+		14E38040B1F76F41E585E2D2 /* libPods-LumiNotes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF937ACC6D14952507690482 /* libPods-LumiNotes.a */; };
+		1D7637DD5AD446FA9FD14A8A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5A7E7D74DF8E4217B7C2A680 /* PrivacyInfo.xcprivacy */; };
+		203C679E7B38FB9FCCC552B8 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0943CBE34943A10E00B3F9F /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		40226C9A5796DB5CB918DC35 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6151015A70C042B4A4E4B590 /* PrivacyInfo.xcprivacy */; };
-		78AE0A3A36ED4983BEE5F4DC /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 261602BEDB594461BB5CDF0B /* ShareExtension.appex */; };
-		7E54092C423A438395D1CBF0 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 13247A1424CB4831B5E0597B /* MainInterface.storyboard */; };
-		90B4F4E734934F44808DE197 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6151015A70C042B4A4E4B590 /* PrivacyInfo.xcprivacy */; };
-		928190882DB64BB2829CF7E5 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = D807D917BE944140B530A523 /* ShareExtensionPreprocessor.js */; };
+		3EBE6378EEE2411399645971 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 60FA32708B9F4A43BCA54936 /* MainInterface.storyboard */; };
+		44A0A6BFE4E1409DAA49D879 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = D7409D86C79E48599309D82A /* ShareExtensionPreprocessor.js */; };
+		74C3F5DF9E4145A7B530A7D4 /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 6E4A34064EF642ABAF03442B /* ShareExtension.appex */; };
+		83F23CA187FE48729467BD43 /* DictarNotaIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8740AAB4F7C54A83B4DF7762 /* DictarNotaIntent.swift */; };
+		88C85C5F338D55EA838F818F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5A7E7D74DF8E4217B7C2A680 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		BCDE4803F1534794AB4BDD3C /* expo.icon in Resources */ = {isa = PBXBuildFile; fileRef = 27F1CB9E6D2D4F8FA6FA9EB2 /* expo.icon */; };
+		D7272D0030F241D491C9CA27 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64622DF6AF84435CA7C2DD91 /* ShareViewController.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F4EA1F4C47EA2BA7946F5516 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027DFC43A8EAE25F237DABD3 /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		62C09D81A9C243B387DF1FBB /* PBXContainerItemProxy */ = {
+		8982C9BA3EA94C4AADDDA996 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 121166804EA145209B2BF1E5;
+			remoteGlobalIDString = 002A003BEDDA46E18D666225;
 			remoteInfo = ShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		7AD0384AA48C4CEA9DA7248C /* Copy Files */ = {
+		222133B594894A8C939EC74B /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				78AE0A3A36ED4983BEE5F4DC /* ShareExtension.appex in Copy Files */,
+				74C3F5DF9E4145A7B530A7D4 /* ShareExtension.appex in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,24 +48,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		027DFC43A8EAE25F237DABD3 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-LumiNotes/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		13247A1424CB4831B5E0597B /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MainInterface.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* LumiNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LumiNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LumiNotes/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LumiNotes/Info.plist; sourceTree = "<group>"; };
-		261602BEDB594461BB5CDF0B /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = ShareExtension.appex; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		27F1CB9E6D2D4F8FA6FA9EB2 /* expo.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = expo.icon; path = LumiNotes/expo.icon; sourceTree = "<group>"; };
-		5CF3989E83625593EF4FFA97 /* Pods-LumiNotes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumiNotes.release.xcconfig"; path = "Target Support Files/Pods-LumiNotes/Pods-LumiNotes.release.xcconfig"; sourceTree = "<group>"; };
-		6151015A70C042B4A4E4B590 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		78CF2F01ECFA47BFA3B54CC1 /* ShareExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "ShareExtension-Info.plist"; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; };
-		A18A54BD8A90C44E1B72D42B /* Pods-LumiNotes.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumiNotes.debug.xcconfig"; path = "Target Support Files/Pods-LumiNotes/Pods-LumiNotes.debug.xcconfig"; sourceTree = "<group>"; };
-		A2E18A7BC74A42A8B1328155 /* ShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtension.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		43C7148C306E4AEAAF4D8941 /* expo.icon */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = expo.icon; path = LumiNotes/expo.icon; sourceTree = "<group>"; };
+		4A0D9DD2643F84D431F8B029 /* Pods-LumiNotes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumiNotes.release.xcconfig"; path = "Target Support Files/Pods-LumiNotes/Pods-LumiNotes.release.xcconfig"; sourceTree = "<group>"; };
+		5A7E7D74DF8E4217B7C2A680 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		60FA32708B9F4A43BCA54936 /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MainInterface.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
+		64622DF6AF84435CA7C2DD91 /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		65CE4BD682421E91B41312D1 /* Pods-LumiNotes.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LumiNotes.debug.xcconfig"; path = "Target Support Files/Pods-LumiNotes/Pods-LumiNotes.debug.xcconfig"; sourceTree = "<group>"; };
+		6E4A34064EF642ABAF03442B /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = ShareExtension.appex; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		82542C8BE27A43F7AB2D8F7D /* ShareExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "ShareExtension-Info.plist"; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; };
+		8740AAB4F7C54A83B4DF7762 /* DictarNotaIntent.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = DictarNotaIntent.swift; path = LumiNotes/DictarNotaIntent.swift; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = LumiNotes/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AE601870BD8D46FBB304E252 /* ShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtension.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		AF937ACC6D14952507690482 /* libPods-LumiNotes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LumiNotes.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CA1197F8EC554D6AB30A26AE /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		D807D917BE944140B530A523 /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtensionPreprocessor.js; path = ShareExtensionPreprocessor.js; sourceTree = "<group>"; };
+		D7409D86C79E48599309D82A /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtensionPreprocessor.js; path = ShareExtensionPreprocessor.js; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		EE3C8D5A1C8859202840ED96 /* libPods-LumiNotes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LumiNotes.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0943CBE34943A10E00B3F9F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-LumiNotes/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = LumiNotes/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* LumiNotes-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LumiNotes-Bridging-Header.h"; path = "LumiNotes/LumiNotes-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,11 +76,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				256F6D4B4F4E6124446DE5AB /* libPods-LumiNotes.a in Frameworks */,
+				14E38040B1F76F41E585E2D2 /* libPods-LumiNotes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CD980B1D06EB4AF88B5DAB7E /* Frameworks */ = {
+		625179CAC3EE4553A6DAF5A0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -97,7 +99,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				27F1CB9E6D2D4F8FA6FA9EB2 /* expo.icon */,
+				43C7148C306E4AEAAF4D8941 /* expo.icon */,
+				8740AAB4F7C54A83B4DF7762 /* DictarNotaIntent.swift */,
 			);
 			name = LumiNotes;
 			sourceTree = "<group>";
@@ -106,9 +109,31 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				EE3C8D5A1C8859202840ED96 /* libPods-LumiNotes.a */,
+				AF937ACC6D14952507690482 /* libPods-LumiNotes.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		76596FB02A6E48D9A357840B /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				64622DF6AF84435CA7C2DD91 /* ShareViewController.swift */,
+				60FA32708B9F4A43BCA54936 /* MainInterface.storyboard */,
+				D7409D86C79E48599309D82A /* ShareExtensionPreprocessor.js */,
+				5A7E7D74DF8E4217B7C2A680 /* PrivacyInfo.xcprivacy */,
+				82542C8BE27A43F7AB2D8F7D /* ShareExtension-Info.plist */,
+				AE601870BD8D46FBB304E252 /* ShareExtension.entitlements */,
+			);
+			name = ShareExtension;
+			path = ShareExtension;
+			sourceTree = "<group>";
+		};
+		7E30254D714B3D17A8D86082 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				B05B207580F2E0D4C505EBB1 /* LumiNotes */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -125,9 +150,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				BECDAD6BB45C4111A951A7E6 /* ShareExtension */,
-				B3B39BEBC158FAAB6BDEB307 /* Pods */,
-				AA4D9B259A558EFBA771300A /* ExpoModulesProviders */,
+				76596FB02A6E48D9A357840B /* ShareExtension */,
+				F1BE5EE1799F91360CD352F2 /* Pods */,
+				7E30254D714B3D17A8D86082 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -138,35 +163,17 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* LumiNotes.app */,
-				261602BEDB594461BB5CDF0B /* ShareExtension.appex */,
+				6E4A34064EF642ABAF03442B /* ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		905AA87623B670283C91F19D /* LumiNotes */ = {
+		B05B207580F2E0D4C505EBB1 /* LumiNotes */ = {
 			isa = PBXGroup;
 			children = (
-				027DFC43A8EAE25F237DABD3 /* ExpoModulesProvider.swift */,
+				F0943CBE34943A10E00B3F9F /* ExpoModulesProvider.swift */,
 			);
 			name = LumiNotes;
-			sourceTree = "<group>";
-		};
-		AA4D9B259A558EFBA771300A /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				905AA87623B670283C91F19D /* LumiNotes */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		B3B39BEBC158FAAB6BDEB307 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				A18A54BD8A90C44E1B72D42B /* Pods-LumiNotes.debug.xcconfig */,
-				5CF3989E83625593EF4FFA97 /* Pods-LumiNotes.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -178,30 +185,26 @@
 			path = LumiNotes/Supporting;
 			sourceTree = "<group>";
 		};
-		BECDAD6BB45C4111A951A7E6 /* ShareExtension */ = {
+		F1BE5EE1799F91360CD352F2 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CA1197F8EC554D6AB30A26AE /* ShareViewController.swift */,
-				13247A1424CB4831B5E0597B /* MainInterface.storyboard */,
-				D807D917BE944140B530A523 /* ShareExtensionPreprocessor.js */,
-				6151015A70C042B4A4E4B590 /* PrivacyInfo.xcprivacy */,
-				78CF2F01ECFA47BFA3B54CC1 /* ShareExtension-Info.plist */,
-				A2E18A7BC74A42A8B1328155 /* ShareExtension.entitlements */,
+				65CE4BD682421E91B41312D1 /* Pods-LumiNotes.debug.xcconfig */,
+				4A0D9DD2643F84D431F8B029 /* Pods-LumiNotes.release.xcconfig */,
 			);
-			name = ShareExtension;
-			path = ShareExtension;
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		121166804EA145209B2BF1E5 /* ShareExtension */ = {
+		002A003BEDDA46E18D666225 /* ShareExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 756E5D850BC3468FBA0AD0A0 /* Build configuration list for PBXNativeTarget "ShareExtension" */;
+			buildConfigurationList = 697B4117A3A64942A37C8822 /* Build configuration list for PBXNativeTarget "ShareExtension" */;
 			buildPhases = (
-				D71951C287504110A533A528 /* Sources */,
-				8B2968563895425D96DBD32F /* Resources */,
-				CD980B1D06EB4AF88B5DAB7E /* Frameworks */,
+				1B64F19CBB8F408189071C01 /* Sources */,
+				C7F9F53285634FC6822474C7 /* Resources */,
+				625179CAC3EE4553A6DAF5A0 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -209,7 +212,7 @@
 			);
 			name = ShareExtension;
 			productName = ShareExtension;
-			productReference = 261602BEDB594461BB5CDF0B /* ShareExtension.appex */;
+			productReference = 6E4A34064EF642ABAF03442B /* ShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		13B07F861A680F5B00A75B9A /* LumiNotes */ = {
@@ -217,20 +220,20 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "LumiNotes" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				85217275620205799639DA42 /* [Expo] Configure project */,
+				68C7B7E8316B4D22D1AB0262 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				70EA527207434B08821031D6 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
-				7AD0384AA48C4CEA9DA7248C /* Copy Files */,
-				E1C9504FEE3CB92E26EE998B /* [CP] Embed Pods Frameworks */,
+				88031BB3083245298A4417C0 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
+				222133B594894A8C939EC74B /* Copy Files */,
+				9C5380B9C000AD1A7EE3489E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				35306882ECDA478098085982 /* PBXTargetDependency */,
+				97DEFB9378C84CBAB7A1F71F /* PBXTargetDependency */,
 			);
 			name = LumiNotes;
 			productName = LumiNotes;
@@ -264,7 +267,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* LumiNotes */,
-				121166804EA145209B2BF1E5 /* ShareExtension */,
+				002A003BEDDA46E18D666225 /* ShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -277,18 +280,18 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				BCDE4803F1534794AB4BDD3C /* expo.icon in Resources */,
-				40226C9A5796DB5CB918DC35 /* PrivacyInfo.xcprivacy in Resources */,
+				06A9C4983F3A4BD6AF44680D /* expo.icon in Resources */,
+				88C85C5F338D55EA838F818F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8B2968563895425D96DBD32F /* Resources */ = {
+		C7F9F53285634FC6822474C7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E54092C423A438395D1CBF0 /* MainInterface.storyboard in Resources */,
-				928190882DB64BB2829CF7E5 /* ShareExtensionPreprocessor.js in Resources */,
-				90B4F4E734934F44808DE197 /* PrivacyInfo.xcprivacy in Resources */,
+				3EBE6378EEE2411399645971 /* MainInterface.storyboard in Resources */,
+				44A0A6BFE4E1409DAA49D879 /* ShareExtensionPreprocessor.js in Resources */,
+				1D7637DD5AD446FA9FD14A8A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,19 +337,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		70EA527207434B08821031D6 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
+		68C7B7E8316B4D22D1AB0262 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
+			inputFileListPaths = (
 			);
-			name = "[Expo Dev Launcher] Strip Local Network Keys for Release";
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/LumiNotes/LumiNotes.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-LumiNotes/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
 			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-LumiNotes/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Strip dev-launcher-specific local network permission keys from non-Debug builds\n# This only removes _expo._tcp Bonjour services and the dev-launcher usage description.\n# Other Bonjour services and custom descriptions are preserved for production use.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n  PLIST_PATH=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  if [ -f \"$PLIST_PATH\" ]; then\n    # Check if NSBonjourServices exists\n    if /usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" >/dev/null 2>&1; then\n      # Get the count of services\n      COUNT=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n\n      # Remove _expo._tcp\n      for ((i=COUNT-1; i>=0; i--)); do\n        SERVICE=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n        if echo \"$SERVICE\" | grep -q \"_expo._tcp\"; then\n          /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || true\n        fi\n      done\n\n      # If the array is now empty, remove it entirely\n      REMAINING=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n      if [ \"$REMAINING\" -eq \"0\" ]; then\n        /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null || true\n      fi\n    fi\n\n    # Only delete the description if it matches the dev-launcher default text\n    DESC=$(/usr/libexec/PlistBuddy -c \"Print :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n    if echo \"$DESC\" | grep -q \"Expo Dev Launcher\"; then\n      /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || true\n    fi\n  fi\nfi\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-LumiNotes/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -390,31 +403,21 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LumiNotes/Pods-LumiNotes-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		85217275620205799639DA42 /* [Expo] Configure project */ = {
+		88031BB3083245298A4417C0 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/LumiNotes/LumiNotes.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-LumiNotes/expo-configure-project.sh",
 			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
+			name = "[Expo Dev Launcher] Strip Local Network Keys for Release";
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-LumiNotes/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-LumiNotes/expo-configure-project.sh\"\n";
+			shellScript = "# Strip dev-launcher-specific local network permission keys from non-Debug builds\n# This only removes _expo._tcp Bonjour services and the dev-launcher usage description.\n# Other Bonjour services and custom descriptions are preserved for production use.\n\nif [ \"$CONFIGURATION\" != \"Debug\" ]; then\n  PLIST_PATH=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n  if [ -f \"$PLIST_PATH\" ]; then\n    # Check if NSBonjourServices exists\n    if /usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" >/dev/null 2>&1; then\n      # Get the count of services\n      COUNT=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n\n      # Remove _expo._tcp\n      for ((i=COUNT-1; i>=0; i--)); do\n        SERVICE=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n        if echo \"$SERVICE\" | grep -q \"_expo._tcp\"; then\n          /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices:$i\" \"$PLIST_PATH\" 2>/dev/null || true\n        fi\n      done\n\n      # If the array is now empty, remove it entirely\n      REMAINING=$(/usr/libexec/PlistBuddy -c \"Print :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null | grep \"^    \" | wc -l | tr -d ' ')\n      if [ \"$REMAINING\" -eq \"0\" ]; then\n        /usr/libexec/PlistBuddy -c \"Delete :NSBonjourServices\" \"$PLIST_PATH\" 2>/dev/null || true\n      fi\n    fi\n\n    # Only delete the description if it matches the dev-launcher default text\n    DESC=$(/usr/libexec/PlistBuddy -c \"Print :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || echo \"\")\n    if echo \"$DESC\" | grep -q \"Expo Dev Launcher\"; then\n      /usr/libexec/PlistBuddy -c \"Delete :NSLocalNetworkUsageDescription\" \"$PLIST_PATH\" 2>/dev/null || true\n    fi\n  fi\nfi\n";
 		};
-		E1C9504FEE3CB92E26EE998B /* [CP] Embed Pods Frameworks */ = {
+		9C5380B9C000AD1A7EE3489E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -466,32 +469,33 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				F4EA1F4C47EA2BA7946F5516 /* ExpoModulesProvider.swift in Sources */,
+				83F23CA187FE48729467BD43 /* DictarNotaIntent.swift in Sources */,
+				203C679E7B38FB9FCCC552B8 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D71951C287504110A533A528 /* Sources */ = {
+		1B64F19CBB8F408189071C01 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				316624BB8C444E84A988E3DF /* ShareViewController.swift in Sources */,
+				D7272D0030F241D491C9CA27 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		35306882ECDA478098085982 /* PBXTargetDependency */ = {
+		97DEFB9378C84CBAB7A1F71F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 121166804EA145209B2BF1E5 /* ShareExtension */;
-			targetProxy = 62C09D81A9C243B387DF1FBB /* PBXContainerItemProxy */;
+			target = 002A003BEDDA46E18D666225 /* ShareExtension */;
+			targetProxy = 8982C9BA3EA94C4AADDDA996 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A18A54BD8A90C44E1B72D42B /* Pods-LumiNotes.debug.xcconfig */;
+			baseConfigurationReference = 65CE4BD682421E91B41312D1 /* Pods-LumiNotes.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = expo;
 				CLANG_ENABLE_MODULES = YES;
@@ -528,7 +532,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CF3989E83625593EF4FFA97 /* Pods-LumiNotes.release.xcconfig */;
+			baseConfigurationReference = 4A0D9DD2643F84D431F8B029 /* Pods-LumiNotes.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = expo;
 				CLANG_ENABLE_MODULES = YES;
@@ -554,6 +558,31 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		4C8690444DD743A0A775D8E8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes.share-extension";
+				PRODUCT_NAME = ShareExtension;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -693,32 +722,7 @@
 			};
 			name = Release;
 		};
-		A2C26B168C864C5D9458A69B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0.0;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes.share-extension";
-				PRODUCT_NAME = ShareExtension;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		E54CA8E55AB54F3D93B4E617 /* Debug */ = {
+		AF6905B8D94C45A5A0406D59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -759,11 +763,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		756E5D850BC3468FBA0AD0A0 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+		697B4117A3A64942A37C8822 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E54CA8E55AB54F3D93B4E617 /* Debug */,
-				A2C26B168C864C5D9458A69B /* Release */,
+				AF6905B8D94C45A5A0406D59 /* Debug */,
+				4C8690444DD743A0A775D8E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
