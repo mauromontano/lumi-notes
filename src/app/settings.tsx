@@ -37,7 +37,7 @@ export default function SettingsScreen() {
           return (
             <Pressable
               key={opt.label}
-              onPress={() => setOverride(opt.value as any)}
+              onPress={() => setOverride(opt.value)}
               style={[
                 styles.chip,
                 { borderColor: active ? palette.accent : palette.cardBorder },
