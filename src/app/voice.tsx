@@ -26,6 +26,7 @@ import { TagChips } from '../components/TagChips';
 import type { Recurrence, Note } from '../notes/types';
 import { isNoteTag } from '../notes/tags';
 import { log } from '../lib/log';
+import { prepareSharedText } from '../notes/sharedText';
 
 type Phase = 'listening' | 'thinking' | 'preview';
 
@@ -35,8 +36,9 @@ export default function VoiceScreen() {
   const { palette } = useTheme();
   const insets = useSafeAreaInsets();
   const dictation = useDictation();
-  const { noteId } = useLocalSearchParams<{ noteId?: string }>();
+  const { noteId, sharedText } = useLocalSearchParams<{ noteId?: string; sharedText?: string }>();
   const isEdit = typeof noteId === 'string' && noteId.length > 0;
+  const isShare = typeof sharedText === 'string' && sharedText.length > 0;
 
   const [phase, setPhase] = useState<Phase>('listening');
   const [orbState, setOrbState] = useState<OrbState>('listening');
@@ -51,6 +53,10 @@ export default function VoiceScreen() {
   const dictationError = dictation.error ? dictationErrorMessage(dictation.error) : null;
 
   useEffect(() => {
+    if (isShare) {
+      void processTranscript(prepareSharedText(sharedText!));
+      return;
+    }
     (async () => {
       const result = await dictation.start();
       if (result === 'denied') setPermissionDenied(true);
@@ -75,17 +81,7 @@ export default function VoiceScreen() {
     if (result === 'denied') setPermissionDenied(true);
   }
 
-  async function finishDictation() {
-    if (isEdit && !original) return;
-    dictation.stop();
-    const transcript = dictation.transcript.trim();
-    if (!transcript) {
-      // no cerramos en silencio: avisamos y volvemos a escuchar
-      setHint('No te escuché nada. Hablá cerca del micrófono y probá de nuevo.');
-      const result = await dictation.start();
-      if (result === 'denied') setPermissionDenied(true);
-      return;
-    }
+  async function processTranscript(transcript: string) {
     setHint(null);
     setPhase('thinking');
     setOrbState('thinking');
@@ -119,7 +115,7 @@ export default function VoiceScreen() {
             : 'Lumi no pudo aplicar la edición (sin conexión o error). La nota queda como estaba.',
         );
       } else {
-        setDraft({ title: 'Nota dictada', body: transcript, tag: null });
+        setDraft({ title: isShare ? 'Nota compartida' : 'Nota dictada', body: transcript, tag: null });
         setUsedRawFallback(
           kind === 'no-key'
             ? 'Sin API key configurada: guardo la transcripción sin formatear.'
@@ -129,6 +125,20 @@ export default function VoiceScreen() {
       setOrbState('error');
     }
     setPhase('preview');
+  }
+
+  async function finishDictation() {
+    if (isEdit && !original) return;
+    dictation.stop();
+    const transcript = dictation.transcript.trim();
+    if (!transcript) {
+      // no cerramos en silencio: avisamos y volvemos a escuchar
+      setHint('No te escuché nada. Hablá cerca del micrófono y probá de nuevo.');
+      const result = await dictation.start();
+      if (result === 'denied') setPermissionDenied(true);
+      return;
+    }
+    await processTranscript(transcript);
   }
 
   async function save() {
@@ -303,9 +313,11 @@ export default function VoiceScreen() {
             <Text style={{ color: palette.text }}>Deshacer</Text>
           </Pressable>
         ) : (
-          <Pressable onPress={redictate} style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}>
-            <Text style={{ color: palette.text }}>Re-dictar</Text>
-          </Pressable>
+          !isShare && (
+            <Pressable onPress={redictate} style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}>
+              <Text style={{ color: palette.text }}>Re-dictar</Text>
+            </Pressable>
+          )
         )}
         <Pressable onPress={save} style={[styles.saveBtn, { backgroundColor: palette.accent, flex: 1 }]}>
           <Text style={styles.saveText}>Guardar</Text>

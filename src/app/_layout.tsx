@@ -1,6 +1,7 @@
-import React from 'react';
-import { Stack } from 'expo-router';
+import React, { useEffect } from 'react';
+import { router, Stack } from 'expo-router';
 import * as Notifications from 'expo-notifications';
+import { useShareIntent } from 'expo-share-intent';
 import { ThemeProvider, useTheme } from '../theme/ThemeContext';
 import { useReminderResponses } from '../reminders/useReminderResponses';
 
@@ -17,6 +18,15 @@ function Screens() {
   const { palette } = useTheme();
 
   useReminderResponses();
+
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+  useEffect(() => {
+    if (!hasShareIntent) return;
+    const text = shareIntent.text ?? shareIntent.webUrl;
+    if (text) router.push({ pathname: '/voice', params: { sharedText: text } });
+    resetShareIntent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasShareIntent]);
 
   return (
     <Stack

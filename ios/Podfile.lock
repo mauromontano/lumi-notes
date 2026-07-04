@@ -3,6 +3,9 @@ PODS:
     - ExpoModulesCore
   - EXConstants (57.0.3):
     - ExpoModulesCore
+  - EXJSONUtils (57.0.0)
+  - EXManifests (57.0.0):
+    - ExpoModulesCore
   - Expo (57.0.2):
     - ExpoModulesCore
     - ExpoModulesJSI
@@ -24,6 +27,154 @@ PODS:
     - React-rendererdebug
     - React-utils
     - ReactAppDependencyProvider
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - expo-dev-client (57.0.5):
+    - EXManifests
+    - expo-dev-launcher
+    - expo-dev-menu
+    - expo-dev-menu-interface
+    - EXUpdatesInterface
+  - expo-dev-launcher (57.0.5):
+    - EXManifests
+    - expo-dev-launcher/Main (= 57.0.5)
+    - expo-dev-menu
+    - expo-dev-menu-interface
+    - ExpoModulesCore
+    - EXUpdatesInterface
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-jsinspector
+    - React-NativeModulesApple
+    - React-RCTAppDelegate
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactAppDependencyProvider
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - expo-dev-launcher/Main (57.0.5):
+    - EXManifests
+    - expo-dev-launcher/Unsafe
+    - expo-dev-menu
+    - expo-dev-menu-interface
+    - ExpoModulesCore
+    - EXUpdatesInterface
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-jsinspector
+    - React-NativeModulesApple
+    - React-RCTAppDelegate
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactAppDependencyProvider
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - expo-dev-launcher/Unsafe (57.0.5):
+    - EXManifests
+    - expo-dev-menu
+    - expo-dev-menu-interface
+    - ExpoModulesCore
+    - EXUpdatesInterface
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-jsinspector
+    - React-NativeModulesApple
+    - React-RCTAppDelegate
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactAppDependencyProvider
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - expo-dev-menu (57.0.5):
+    - expo-dev-menu/Main (= 57.0.5)
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - expo-dev-menu-interface (57.0.0)
+  - expo-dev-menu/Main (57.0.5):
+    - EXManifests
+    - expo-dev-menu-interface
+    - ExpoModulesCore
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-jsinspector
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
@@ -93,6 +244,8 @@ PODS:
     - RNScreens
   - ExpoSecureStore (57.0.0):
     - ExpoModulesCore
+  - ExpoShareIntentModule (8.0.0):
+    - ExpoModulesCore
   - ExpoSpeechRecognition (56.0.1):
     - ExpoModulesCore
   - ExpoSplashScreen (57.0.2):
@@ -108,6 +261,8 @@ PODS:
     - ExpoModulesWorklets
     - React-RCTFabric
   - ExpoWebBrowser (57.0.0):
+    - ExpoModulesCore
+  - EXUpdatesInterface (57.0.0):
     - ExpoModulesCore
   - FBLazyVector (0.86.0)
   - hermes-engine (250829098.0.14):
@@ -2336,7 +2491,13 @@ PODS:
 DEPENDENCIES:
   - EXApplication (from `../node_modules/expo-application/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
+  - EXJSONUtils (from `../node_modules/expo-json-utils/ios`)
+  - EXManifests (from `../node_modules/expo-manifests/ios`)
   - Expo (from `../node_modules/expo`)
+  - expo-dev-client (from `../node_modules/expo-dev-client/ios`)
+  - expo-dev-launcher (from `../node_modules/expo-dev-launcher`)
+  - expo-dev-menu (from `../node_modules/expo-dev-menu`)
+  - expo-dev-menu-interface (from `../node_modules/expo-dev-menu-interface/ios`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
@@ -2355,6 +2516,7 @@ DEPENDENCIES:
   - ExpoNotifications (from `../node_modules/expo-notifications/ios`)
   - ExpoRouter (from `../node_modules/expo-router/ios`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
+  - ExpoShareIntentModule (from `../node_modules/expo-share-intent/ios`)
   - ExpoSpeechRecognition (from `../node_modules/expo-speech-recognition/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSQLite (from `../node_modules/expo-sqlite/ios`)
@@ -2362,6 +2524,7 @@ DEPENDENCIES:
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - "ExpoUI (from `../node_modules/@expo/ui/ios`)"
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
+  - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2453,8 +2616,20 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-application/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
+  EXJSONUtils:
+    :path: "../node_modules/expo-json-utils/ios"
+  EXManifests:
+    :path: "../node_modules/expo-manifests/ios"
   Expo:
     :path: "../node_modules/expo"
+  expo-dev-client:
+    :path: "../node_modules/expo-dev-client/ios"
+  expo-dev-launcher:
+    :path: "../node_modules/expo-dev-launcher"
+  expo-dev-menu:
+    :path: "../node_modules/expo-dev-menu"
+  expo-dev-menu-interface:
+    :path: "../node_modules/expo-dev-menu-interface/ios"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
   ExpoCrypto:
@@ -2491,6 +2666,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-router/ios"
   ExpoSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
+  ExpoShareIntentModule:
+    :path: "../node_modules/expo-share-intent/ios"
   ExpoSpeechRecognition:
     :path: "../node_modules/expo-speech-recognition/ios"
   ExpoSplashScreen:
@@ -2505,6 +2682,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@expo/ui/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
+  EXUpdatesInterface:
+    :path: "../node_modules/expo-updates-interface/ios"
   FBLazyVector:
     :path: "../node_modules/react-native/Libraries/FBLazyVector"
   hermes-engine:
@@ -2678,7 +2857,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   EXApplication: 7283a281903a90230466ab545ab87a8c48cf4e12
   EXConstants: d069b4a2dd469d5a3a4d3d7b09757e708fda8f64
+  EXJSONUtils: 55eca2b6f8fc320cb36933cf45c4f2200a441589
+  EXManifests: 66a0e4af8cdb58c0983d462d886136b6d56eee38
   Expo: 20ef75c4eade4e8e95e9be0a181c6df8e5f3e2af
+  expo-dev-client: 3302134f3f8cce7d15f4ab921d2e47aaafd804cb
+  expo-dev-launcher: 3a5012ec6e2fe5488b3ab1c2a44fb2fcde74b02e
+  expo-dev-menu: ec44430d95774d757adc9524fc4a755b8bd8e6c1
+  expo-dev-menu-interface: 7a59e803916fbfd1b96c75ff91ea8dddac7e722f
   ExpoAsset: 586e89aeaab2e23bfa90b9dce4d7d5e36815c039
   ExpoCrypto: f9db7ec10f772afa112c0e465f34bedbc38adf5f
   ExpoDevice: 090ee05e20e40ca981d39263e3e95c46ed850782
@@ -2697,6 +2882,7 @@ SPEC CHECKSUMS:
   ExpoNotifications: 02cd9efc076d8a4a64d36eee3297c9d84bb7e719
   ExpoRouter: 944c03dd880cfd07c12970402fc2eb5dce638226
   ExpoSecureStore: be2276d312c1f213605c0864772510239605ec37
+  ExpoShareIntentModule: 26ba88995a3a68f977919db0b2091bad9e130429
   ExpoSpeechRecognition: 119acf84448579e53f841d040aad76982f945e2d
   ExpoSplashScreen: ba6bd4b92a47f5da3cd70d82d33fcd8407be9d70
   ExpoSQLite: 8445c219481a384e1471d29a5d36fa8d69ef3174
@@ -2704,6 +2890,7 @@ SPEC CHECKSUMS:
   ExpoSystemUI: 4f343f83e81951d737b199ac9c0d9db0d577f942
   ExpoUI: 811b7e03ff29d426b8690ad5afb4643be3846d02
   ExpoWebBrowser: 32dfd25ad5d384028137a0de71991f28663562e0
+  EXUpdatesInterface: 492cdb30f3889cc35d9e737a4b5fc3aec39d1131
   FBLazyVector: b3e7ad108f0d882e30445c5527d774e3fd432f3d
   hermes-engine: f036e24f1166e26c5a478222cfd302f4fea2641f
   RCTDeprecation: 2a74a2c57675e64419bd89078efde81f7c1de90b
