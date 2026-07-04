@@ -65,4 +65,16 @@ describe('notesRepo', () => {
     await updateNote(d, 'b', { tag: null });
     expect((await getNote(d, 'b'))?.tag).toBeNull();
   });
+
+  it('nota segura: guarda flag y la búsqueda no matchea su cuerpo', async () => {
+    const d = db();
+    await createNote(d, { title: 'Claves banco', body: '', secure: true }, { id: 's1' });
+    await createNote(d, { title: 'Normal', body: 'clave wifi 1234', secure: false }, { id: 'n1' });
+    expect((await getNote(d, 's1'))?.secure).toBe(true);
+    // buscar por título de la segura funciona; por cuerpo (vacío en DB) no expone nada
+    expect((await listNotes(d, 'banco')).map((n) => n.id)).toEqual(['s1']);
+    expect((await listNotes(d, 'clave')).map((n) => n.id)).toEqual(expect.arrayContaining(['n1']));
+    await updateNote(d, 'n1', { secure: true, body: '' });
+    expect((await getNote(d, 'n1'))?.secure).toBe(true);
+  });
 });

@@ -16,4 +16,5 @@ CREATE TABLE IF NOT EXISTS notes (
 CREATE INDEX IF NOT EXISTS idx_notes_order ON notes (pinned DESC, updated_at DESC);
 `,
   `ALTER TABLE notes ADD COLUMN tag TEXT;`,
+  `ALTER TABLE notes ADD COLUMN secure INTEGER NOT NULL DEFAULT 0;`,
 ];

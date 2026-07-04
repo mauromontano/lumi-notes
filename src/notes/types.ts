@@ -9,6 +9,7 @@ export interface Note {
   reminderRecurrence: Recurrence;
   notificationId: string | null;
   tag: string | null;
+  secure: boolean;
   createdAt: string;
   updatedAt: string;
 }
