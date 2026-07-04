@@ -38,8 +38,9 @@ yarn-error.*
 
 example
 
-# generated native folders
-/ios
+# generated native folders (ios se commitea; ver Task 15)
 /android
+/ios/Pods
+/ios/build
 
 .superpowers/
