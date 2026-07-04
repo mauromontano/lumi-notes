@@ -105,8 +105,13 @@ export default function NoteScreen() {
     const storedBody = secure ? '' : body;
     let saved: Note;
     if (isNew) {
-      saved = await createNote(db, { title: finalTitle, body: storedBody, tag, secure }, { id: targetId });
-      if (pinned) saved = await updateNote(db, saved.id, { pinned: true });
+      try {
+        saved = await createNote(db, { title: finalTitle, body: storedBody, tag, secure }, { id: targetId });
+        if (pinned) saved = await updateNote(db, saved.id, { pinned: true });
+      } catch (e) {
+        if (secure) await deleteSecureBody(targetId); // evita huérfano en Keychain
+        throw e;
+      }
     } else {
       saved = await updateNote(db, note!.id, { title: finalTitle, body: storedBody, pinned, tag, secure });
       if (!secure && note!.secure) await deleteSecureBody(note!.id); // descifrada: limpiar Keychain
