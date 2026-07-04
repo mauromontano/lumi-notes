@@ -8,6 +8,7 @@ export interface Note {
   reminderAt: string | null;       // ISO 8601
   reminderRecurrence: Recurrence;
   notificationId: string | null;
+  tag: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,10 +1,10 @@
 import Database from 'better-sqlite3';
 import type { DbLike } from '../../src/db/types';
-import { MIGRATION_SQL } from '../../src/db/schema';
+import { MIGRATIONS } from '../../src/db/schema';
 
 export function createTestDb(): DbLike {
   const db = new Database(':memory:');
-  db.exec(MIGRATION_SQL);
+  for (const sql of MIGRATIONS) db.exec(sql);
   return {
     async execAsync(sql) { db.exec(sql); },
     async runAsync(sql, params = []) {

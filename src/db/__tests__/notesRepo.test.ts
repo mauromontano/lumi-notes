@@ -45,4 +45,24 @@ describe('notesRepo', () => {
     await deleteNote(d, 'a');
     expect(await getNote(d, 'a')).toBeNull();
   });
+
+  it('guarda y filtra por tag', async () => {
+    const d = db();
+    await createNote(d, { title: 'Pan', body: '', tag: 'compras' }, { id: 'a' });
+    await createNote(d, { title: 'Idea app', body: '', tag: 'ideas' }, { id: 'b' });
+    await createNote(d, { title: 'Sin tag', body: '' }, { id: 'c' });
+    expect((await getNote(d, 'a'))?.tag).toBe('compras');
+    expect((await getNote(d, 'c'))?.tag).toBeNull();
+    expect((await listNotes(d, undefined, 'compras')).map((n) => n.id)).toEqual(['a']);
+    expect((await listNotes(d)).length).toBe(3);
+  });
+
+  it('combina búsqueda y tag, y actualiza el tag', async () => {
+    const d = db();
+    await createNote(d, { title: 'Pan lactal', body: '', tag: 'compras' }, { id: 'a' });
+    await createNote(d, { title: 'Pan de campo', body: '', tag: 'ideas' }, { id: 'b' });
+    expect((await listNotes(d, 'pan', 'compras')).map((n) => n.id)).toEqual(['a']);
+    await updateNote(d, 'b', { tag: null });
+    expect((await getNote(d, 'b'))?.tag).toBeNull();
+  });
 });
