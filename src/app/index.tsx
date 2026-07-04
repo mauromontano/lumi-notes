@@ -56,8 +56,12 @@ export default function NotesListScreen() {
         <Pressable onPress={() => router.push('/voice')} hitSlop={16}>
           <LumiOrb state="idle" volume={idleVolume} size={84} />
         </Pressable>
-        <Pressable onPress={() => router.push('/note/new')} style={styles.textBtn} hitSlop={12}>
-          <Text style={{ color: palette.textMuted, fontSize: 13 }}>＋ nota de texto</Text>
+        <Pressable
+          onPress={() => router.push('/note/new')}
+          style={[styles.textBtn, { borderColor: palette.cardBorder, backgroundColor: palette.card }]}
+          hitSlop={8}
+        >
+          <Text style={{ color: palette.text, fontSize: 15 }}>＋ Nota de texto</Text>
         </Pressable>
       </View>
     </View>
@@ -66,6 +70,12 @@ export default function NotesListScreen() {
 
 const styles = StyleSheet.create({
   empty: { textAlign: 'center', marginTop: 60, fontSize: 15, paddingHorizontal: 40 },
-  orbDock: { position: 'absolute', bottom: 28, left: 0, right: 0, alignItems: 'center' },
-  textBtn: { marginTop: 6 },
+  orbDock: { position: 'absolute', bottom: 32, left: 0, right: 0, alignItems: 'center' },
+  textBtn: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+  },
 });

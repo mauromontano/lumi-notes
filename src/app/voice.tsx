@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   Text,
@@ -12,6 +13,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/ThemeContext';
 import { useDictation } from '../voice/useDictation';
+import { dictationErrorMessage } from '../voice/dictationUtils';
 import { LumiOrb } from '../orb/LumiOrb';
 import type { OrbState } from '../orb/orbState';
 import { createClaudeFormatter } from '../ai/claudeFormatter';
@@ -42,8 +44,8 @@ export default function VoiceScreen() {
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
   const [original, setOriginal] = useState<Note | null>(null);
   const [undone, setUndone] = useState(false);
-  const transcriptRef = useRef('');
-  transcriptRef.current = dictation.transcript;
+  const [hint, setHint] = useState<string | null>(null);
+  const dictationError = dictation.error ? dictationErrorMessage(dictation.error) : null;
 
   useEffect(() => {
     (async () => {
@@ -63,14 +65,25 @@ export default function VoiceScreen() {
     })();
   }, [isEdit, noteId]);
 
+  async function retryDictation() {
+    setHint(null);
+    dictation.reset();
+    const result = await dictation.start();
+    if (result === 'denied') setPermissionDenied(true);
+  }
+
   async function finishDictation() {
     if (isEdit && !original) return;
     dictation.stop();
-    const transcript = transcriptRef.current.trim();
+    const transcript = dictation.transcript.trim();
     if (!transcript) {
-      router.back();
+      // no cerramos en silencio: avisamos y volvemos a escuchar
+      setHint('No te escuché nada. Hablá cerca del micrófono y probá de nuevo.');
+      const result = await dictation.start();
+      if (result === 'denied') setPermissionDenied(true);
       return;
     }
+    setHint(null);
     setPhase('thinking');
     setOrbState('thinking');
     try {
@@ -121,21 +134,29 @@ export default function VoiceScreen() {
         reminderRecurrence: reminderAt ? recurrence : 'none',
         notificationId,
       });
-    } catch {
-      // permisos denegados: la nota ya quedó guardada, el aviso vive en el editor
+    } catch (e) {
+      // la nota ya quedó guardada; avisamos que el recordatorio no se pudo agendar
+      if ((e as Error).message === 'permisos-denegados') {
+        Alert.alert(
+          'Notificaciones desactivadas',
+          'La nota se guardó, pero para recibir recordatorios activá las notificaciones en Ajustes de iOS.',
+        );
+      }
     }
     router.back();
   }
 
-  function redictate() {
+  async function redictate() {
     dictation.reset();
     setDraft({ title: '', body: '' });
     setUsedRawFallback(null);
     setReminderAt(null);
     setRecurrence('none');
+    setHint(null);
     setPhase('listening');
     setOrbState('listening');
-    dictation.start();
+    const result = await dictation.start();
+    if (result === 'denied') setPermissionDenied(true);
   }
 
   function undo() {
@@ -165,21 +186,36 @@ export default function VoiceScreen() {
           <Text style={{ color: palette.textMuted, fontSize: 22 }}>✕</Text>
         </Pressable>
 
-        <LumiOrb state={orbState} volume={dictation.volume} size={220} />
+        <LumiOrb
+          state={phase === 'listening' && dictationError ? 'error' : orbState}
+          volume={dictation.volume}
+          size={220}
+        />
 
         {phase === 'listening' ? (
-          <>
-            <Text style={[styles.transcript, { color: palette.text }]} numberOfLines={6}>
-              {dictation.transcript || (isEdit ? '¿Qué le cambio a la nota?' : 'Te escucho…')}
-            </Text>
-            <Pressable
-              onPress={finishDictation}
-              disabled={isEdit && !original}
-              style={[styles.saveBtn, { backgroundColor: palette.accent, opacity: isEdit && !original ? 0.4 : 1 }]}
-            >
-              <Text style={styles.saveText}>Listo</Text>
-            </Pressable>
-          </>
+          dictationError ? (
+            <>
+              <Text style={[styles.transcript, { color: palette.text }]} numberOfLines={6}>
+                {dictationError}
+              </Text>
+              <Pressable onPress={retryDictation} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
+                <Text style={styles.saveText}>Reintentar</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Text style={[styles.transcript, { color: palette.text }]} numberOfLines={6}>
+                {dictation.transcript || hint || (isEdit ? '¿Qué le cambio a la nota?' : 'Te escucho…')}
+              </Text>
+              <Pressable
+                onPress={finishDictation}
+                disabled={isEdit && !original}
+                style={[styles.saveBtn, { backgroundColor: palette.accent, opacity: isEdit && !original ? 0.4 : 1 }]}
+              >
+                <Text style={styles.saveText}>Listo</Text>
+              </Pressable>
+            </>
+          )
         ) : (
           <>
             <ActivityIndicator color={palette.accent} style={{ marginTop: 24 }} />

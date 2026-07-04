@@ -28,6 +28,7 @@ function Screens() {
       screenOptions={{
         headerStyle: { backgroundColor: palette.bg },
         headerTintColor: palette.text,
+        headerBackButtonDisplayMode: 'minimal',
         contentStyle: { backgroundColor: palette.bg },
       }}
     >

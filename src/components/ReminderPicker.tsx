@@ -28,16 +28,14 @@ function tomorrowAt9(): string {
 export function ReminderPicker({ reminderAt, recurrence, onChange }: Props) {
   const { palette } = useTheme();
   const enabled = reminderAt !== null;
+  const toggle = (on: boolean) => onChange(on ? tomorrowAt9() : null, on ? recurrence : 'none');
 
   return (
     <View style={[styles.wrap, { backgroundColor: palette.card, borderColor: palette.cardBorder }]}>
-      <View style={styles.row}>
+      <Pressable style={styles.row} onPress={() => toggle(!enabled)} hitSlop={6}>
         <Text style={[styles.label, { color: palette.text }]}>⏰ Recordarme</Text>
-        <Switch
-          value={enabled}
-          onValueChange={(on) => onChange(on ? tomorrowAt9() : null, on ? recurrence : 'none')}
-        />
-      </View>
+        <Switch value={enabled} onValueChange={toggle} />
+      </Pressable>
 
       {enabled && (
         <>

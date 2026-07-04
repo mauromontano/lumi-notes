@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Canvas, Circle, RadialGradient, vec, Group, BlurMask } from '@shopify/react-native-skia';
+import { Canvas, Circle, RadialGradient, vec } from '@shopify/react-native-skia';
 import Animated, {
   SharedValue,
   useSharedValue,
@@ -7,7 +7,6 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withTiming,
-  withSpring,
   cancelAnimation,
   Easing,
 } from 'react-native-reanimated';
@@ -31,7 +30,14 @@ export function LumiOrb({ state, volume, size }: Props) {
     cancelAnimation(spin);
     if (state === 'idle') {
       breath.value = withRepeat(
-        withTiming(1.06, { duration: 3000, easing: Easing.inOut(Easing.sin) }),
+        withTiming(1.09, { duration: 2600, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      );
+    } else if (state === 'listening') {
+      // pulso propio: el orbe respira aunque el volumen no llegue
+      breath.value = withRepeat(
+        withTiming(1.07, { duration: 1100, easing: Easing.inOut(Easing.sin) }),
         -1,
         true,
       );
@@ -48,7 +54,7 @@ export function LumiOrb({ state, volume, size }: Props) {
   }, [state, breath, spin]);
 
   const scaleStyle = useAnimatedStyle(() => {
-    const s = state === 'listening' ? withSpring(1 + volume.value * 0.25, { damping: 12 }) : breath.value;
+    const s = state === 'listening' ? breath.value * (1 + volume.value * 0.25) : breath.value;
     return { transform: [{ scale: s }] };
   });
 
@@ -67,12 +73,15 @@ export function LumiOrb({ state, volume, size }: Props) {
   return (
     <Animated.View style={[{ width: size, height: size }, scaleStyle]}>
       <Canvas style={{ width: size, height: size }}>
-        {/* halo */}
-        <Group>
-          <Circle cx={r} cy={r} r={r * 0.92} color={palette.orb.glow} opacity={0.5}>
-            <BlurMask blur={r * 0.35} style="normal" />
-          </Circle>
-        </Group>
+        {/* halo: gradiente que se desvanece a transparente para fundirse con cualquier fondo */}
+        <Circle cx={r} cy={r} r={r}>
+          <RadialGradient
+            c={vec(r, r)}
+            r={r}
+            colors={[`${palette.orb.glow}66`, `${palette.orb.glow}00`]}
+            positions={[0.45, 1]}
+          />
+        </Circle>
         {/* cuerpo del orbe */}
         <Circle cx={r} cy={r} r={r * 0.72}>
           <RadialGradient c={gradientCenter} r={r * 0.95} colors={colors} />

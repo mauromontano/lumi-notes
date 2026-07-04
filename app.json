@@ -10,7 +10,11 @@
     "ios": {
       "bundleIdentifier": "com.mauro.luminotes",
       "supportsTablet": false,
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "infoPlist": {
+        "NSSpeechRecognitionUsageDescription": "Lumi usa el reconocimiento de voz para transcribir tus notas.",
+        "NSMicrophoneUsageDescription": "Lumi usa el micrófono para dictar notas."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +23,10 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "static",
@@ -36,7 +43,10 @@
           "speechRecognitionPermission": "Lumi usa el reconocimiento de voz para transcribir tus notas."
         }
       ],
-      ["expo-notifications", {}],
+      [
+        "expo-notifications",
+        {}
+      ],
       [
         "expo-splash-screen",
         {
@@ -50,6 +60,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ffc6e8b0-3c9e-4f69-b836-ec8a24bcf437"
+      }
+    },
+    "owner": "mauro-montano"
   }
 }
