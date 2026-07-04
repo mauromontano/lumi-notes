@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
-import { mergeTranscript, normalizeVolume } from './dictationUtils';
+import { mergeTranscript, normalizeVolume, pickSpanishLocale } from './dictationUtils';
+import { log } from '@/lib/log';
 
 export interface Dictation {
   listening: boolean;
@@ -42,6 +43,7 @@ export function useDictation(): Dictation {
 
   useSpeechRecognitionEvent('error', (event) => {
     if (event.error === 'aborted') return; // lo disparamos nosotros al frenar
+    log.warn('error de dictado:', event.error, '-', event.message);
     setError(event.error);
   });
 
@@ -54,8 +56,26 @@ export function useDictation(): Dictation {
       const perms = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
       if (!perms.granted) return 'denied';
       setError(null);
+      if (!ExpoSpeechRecognitionModule.isRecognitionAvailable()) {
+        log.warn('dictado no disponible en el dispositivo (isRecognitionAvailable=false)');
+        setError('recognition-unavailable');
+        return 'ok';
+      }
+      let supportedLocales: string[] = [];
+      try {
+        const result = await ExpoSpeechRecognitionModule.getSupportedLocales({});
+        supportedLocales = result.locales;
+      } catch (e) {
+        log.warn('getSupportedLocales falló:', (e as Error).message);
+      }
+      const lang = pickSpanishLocale(supportedLocales);
+      log.debug('locales soportados:', supportedLocales.length, '· locale elegido:', lang);
+      if (!lang) {
+        setError('language-not-supported');
+        return 'ok';
+      }
       ExpoSpeechRecognitionModule.start({
-        lang: 'es-AR',
+        lang,
         interimResults: true,
         continuous: true,
         volumeChangeEventOptions: { enabled: true, intervalMillis: 100 },

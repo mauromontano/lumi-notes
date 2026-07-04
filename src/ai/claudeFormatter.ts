@@ -1,5 +1,6 @@
 import { FormatterError, parseFormatterResponse, type FormattedNote, type NoteFormatter } from './formatter';
 import { getApiKey as defaultGetApiKey } from '@/settings/secrets';
+import { log } from '@/lib/log';
 
 const SYSTEM_PROMPT = `Sos Lumi, el asistente de una app de notas. Convertís dictados en notas prolijas en español.
 Respondé SOLO con JSON válido, sin texto extra, con esta forma exacta:
@@ -48,12 +49,16 @@ export function createClaudeFormatter(deps: Deps = {}): NoteFormatter {
         });
       } catch (e) {
         const aborted = (e as Error).name === 'AbortError';
+        log.warn('llamada a Claude falló:', aborted ? 'timeout' : 'network', '-', (e as Error).message);
         throw new FormatterError(aborted ? 'timeout' : 'network', (e as Error).message);
       } finally {
         clearTimeout(timer);
       }
-      if (!res.ok) throw new FormatterError('api', `HTTP ${res.status}`);
-      const data = (await res.json()) as { content: Array<{ type: string; text?: string }> };
+      if (!res.ok) {
+        log.warn('llamada a Claude falló: HTTP', res.status);
+        throw new FormatterError('api', `HTTP ${res.status}`);
+      }
+      const data = (await res.json()) as { content: { type: string; text?: string }[] };
       const text = data.content?.find((c) => c.type === 'text')?.text ?? '';
       return parseFormatterResponse(text);
     }

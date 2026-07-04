@@ -30,11 +30,18 @@ export default function NotesListScreen() {
     <View style={{ flex: 1, backgroundColor: palette.bg }}>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <Pressable onPress={() => router.push('/settings')} hitSlop={12}>
-              <Text style={{ color: palette.textMuted, fontSize: 18 }}>⚙︎</Text>
-            </Pressable>
-          ),
+          // custom + hidesSharedBackground: sin la cápsula glass/highlight de iOS 26
+          unstable_headerRightItems: () => [
+            {
+              type: 'custom',
+              hidesSharedBackground: true,
+              element: (
+                <Pressable onPress={() => router.push('/settings')} hitSlop={12}>
+                  <Text style={{ color: palette.textMuted, fontSize: 26 }}>⚙︎</Text>
+                </Pressable>
+              ),
+            },
+          ],
         }}
       />
       <SearchBar value={search} onChange={setSearch} />

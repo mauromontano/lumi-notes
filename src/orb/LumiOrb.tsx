@@ -58,10 +58,9 @@ export function LumiOrb({ state, volume, size }: Props) {
     return { transform: [{ scale: s }] };
   });
 
-  const colors =
-    state === 'success' ? orbStateColors.success
-    : state === 'error' ? orbStateColors.error
-    : palette.orb.colors;
+  const stateColors = state === 'success' || state === 'error' ? orbStateColors[state] : null;
+  const colors = stateColors ? stateColors.colors : palette.orb.colors;
+  const glow = stateColors ? stateColors.glow : palette.orb.glow;
 
   const r = size / 2;
   const gradientCenter = useDerivedValue(() => {
@@ -78,7 +77,7 @@ export function LumiOrb({ state, volume, size }: Props) {
           <RadialGradient
             c={vec(r, r)}
             r={r}
-            colors={[`${palette.orb.glow}66`, `${palette.orb.glow}00`]}
+            colors={[`${glow}66`, `${glow}00`]}
             positions={[0.45, 1]}
           />
         </Circle>

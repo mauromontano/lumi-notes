@@ -1,4 +1,4 @@
-import { normalizeVolume, mergeTranscript, dictationErrorMessage } from '../dictationUtils';
+import { normalizeVolume, mergeTranscript, dictationErrorMessage, pickSpanishLocale } from '../dictationUtils';
 
 describe('normalizeVolume', () => {
   it('mapea -2..10 a 0..1', () => {
@@ -26,6 +26,30 @@ describe('dictationErrorMessage', () => {
   });
   it('errores desconocidos incluyen el código', () => {
     expect(dictationErrorMessage('busy')).toContain('busy');
+  });
+});
+
+describe('pickSpanishLocale', () => {
+  it('prefiere es-AR si está disponible', () => {
+    expect(pickSpanishLocale(['en-US', 'es-ES', 'es-AR'])).toBe('es-AR');
+  });
+  it('cae a otra variante preferida en orden', () => {
+    expect(pickSpanishLocale(['en-US', 'es-ES', 'es-MX'])).toBe('es-MX');
+    expect(pickSpanishLocale(['en-US', 'es-ES'])).toBe('es-ES');
+  });
+  it('acepta cualquier variante es-* fuera de la lista de preferencia', () => {
+    expect(pickSpanishLocale(['en-US', 'es-CL'])).toBe('es-CL');
+    expect(pickSpanishLocale(['en-US', 'es'])).toBe('es');
+  });
+  it('normaliza guiones bajos y mayúsculas', () => {
+    expect(pickSpanishLocale(['en_US', 'es_AR'])).toBe('es-AR');
+    expect(pickSpanishLocale(['ES-es'])).toBe('ES-es');
+  });
+  it('lista vacía: intento optimista con es-AR', () => {
+    expect(pickSpanishLocale([])).toBe('es-AR');
+  });
+  it('sin español devuelve null', () => {
+    expect(pickSpanishLocale(['en-US', 'pt-BR', 'estonio'])).toBeNull();
   });
 });
 

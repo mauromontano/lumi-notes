@@ -23,6 +23,7 @@ import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
 import type { Recurrence, Note } from '../notes/types';
+import { log } from '../lib/log';
 
 type Phase = 'listening' | 'thinking' | 'preview';
 
@@ -98,6 +99,7 @@ export default function VoiceScreen() {
       setOrbState('success');
     } catch (e) {
       const kind = e instanceof FormatterError ? e.kind : 'api';
+      log.warn('formatter falló:', kind, '-', (e as Error).message);
       if (isEdit) {
         // en edición no pisamos la nota con la transcripción: mostramos la original y avisamos
         setDraft({ title: original!.title, body: original!.body });

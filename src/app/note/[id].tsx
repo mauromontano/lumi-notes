@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../theme/ThemeContext';
+import { getApiKey } from '../../settings/secrets';
 import { getDb, newId } from '../../db/database';
 import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo';
 import { cancelReminder, syncReminder } from '../../reminders/scheduler';
@@ -19,6 +20,14 @@ export default function NoteScreen() {
   const [pinned, setPinned] = useState(false);
   const [reminderAt, setReminderAt] = useState<string | null>(null);
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  // re-chequea al volver del stack (p.ej. después de cargar la key en Ajustes)
+  useFocusEffect(
+    useCallback(() => {
+      getApiKey().then((key) => setHasApiKey(!!key));
+    }, []),
+  );
 
   useEffect(() => {
     if (isNew) return;
@@ -91,11 +100,18 @@ export default function NoteScreen() {
       <Stack.Screen
         options={{
           title: isNew ? 'Nueva nota' : 'Nota',
-          headerRight: () => (
-            <Pressable onPress={() => setPinned((p) => !p)} hitSlop={12}>
-              <Text style={{ fontSize: 18, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
-            </Pressable>
-          ),
+          // custom + hidesSharedBackground: sin la cápsula glass/highlight de iOS 26
+          unstable_headerRightItems: () => [
+            {
+              type: 'custom',
+              hidesSharedBackground: true,
+              element: (
+                <Pressable onPress={() => setPinned((p) => !p)} hitSlop={12}>
+                  <Text style={{ fontSize: 22, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
+                </Pressable>
+              ),
+            },
+          ],
         }}
       />
 
@@ -124,7 +140,7 @@ export default function NoteScreen() {
         }}
       />
 
-      {!isNew && (
+      {!isNew && hasApiKey && (
         <Pressable
           onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
           style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}

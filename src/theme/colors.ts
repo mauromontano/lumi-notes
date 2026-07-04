@@ -28,9 +28,13 @@ export const palettes: Record<ThemeName, Palette> = {
   },
 };
 
-export const orbStateColors: { success: [string, string, string]; error: [string, string, string] } = {
-  success: ['#b0ffd9', '#6be8a8', '#2f9668'],
-  error: ['#ffe9b0', '#e8b96b', '#b07a2f'],
+// el error usa rojizos (tonos de danger) para no confundirse con el orbe del tema light
+export const orbStateColors: Record<
+  'success' | 'error',
+  { colors: [string, string, string]; glow: string }
+> = {
+  success: { colors: ['#b0ffd9', '#6be8a8', '#2f9668'], glow: '#6be8a8' },
+  error: { colors: ['#ffc9c9', '#ff7a7a', '#96322f'], glow: '#ff7a7a' },
 };
 
 export function resolveTheme(
