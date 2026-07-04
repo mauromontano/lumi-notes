@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Alert, Pressable, ScrollView, Switch, Text, TextInput, View, StyleSheet } from 'react-native';
 import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../theme/ThemeContext';
 import { getApiKey } from '../../settings/secrets';
@@ -8,6 +8,8 @@ import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo'
 import { cancelReminder, syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
 import { TagChips } from '../../components/TagChips';
+import { readSecureBody, deleteSecureBody, saveSecureBody, SecureBodyError } from '../../notes/secureBody';
+import { log } from '../../lib/log';
 import type { Note, Recurrence } from '../../notes/types';
 import { isNoteTag, type NoteTag } from '../../notes/tags';
 
@@ -24,6 +26,8 @@ export default function NoteScreen() {
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
   const [tag, setTag] = useState<NoteTag | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [secure, setSecure] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   // re-chequea al volver del stack (p.ej. después de cargar la key en Ajustes)
   useFocusEffect(
@@ -42,23 +46,70 @@ export default function NoteScreen() {
       }
       setNote(n);
       setTitle(n.title);
-      setBody(n.body);
       setPinned(n.pinned);
       setReminderAt(n.reminderAt);
       setRecurrence(n.reminderRecurrence);
       setTag(isNoteTag(n.tag) ? n.tag : null);
+      setSecure(n.secure);
+      if (n.secure) {
+        try {
+          const body = await readSecureBody(n.id);
+          if (body === null) {
+            setLocked(true);
+          } else {
+            setBody(body);
+            setLocked(false);
+          }
+        } catch (e) {
+          log.warn('lectura de nota cifrada falló:', (e as Error).message);
+          setLocked(true);
+        }
+      } else {
+        setBody(n.body);
+      }
     })();
   }, [id, isNew]);
+
+  async function reloadSecureBody() {
+    if (!note) return;
+    try {
+      const b = await readSecureBody(note.id);
+      if (b === null) {
+        setLocked(true);
+      } else {
+        setBody(b);
+        setLocked(false);
+      }
+    } catch (e) {
+      log.warn('lectura de nota cifrada falló:', (e as Error).message);
+      setLocked(true);
+    }
+  }
 
   async function save() {
     const db = getDb();
     const finalTitle = title.trim() || 'Sin título';
+    const targetId = isNew ? newId() : note!.id;
+    try {
+      if (secure) {
+        await saveSecureBody(targetId, body); // Face ID + valida tamaño
+      }
+    } catch (e) {
+      if (e instanceof SecureBodyError && e.kind === 'too-long') {
+        Alert.alert('Nota muy larga', 'Las notas cifradas soportan hasta ~2000 caracteres. Acortá el contenido.');
+        return;
+      }
+      Alert.alert('No se pudo cifrar', 'Verificá que el iPhone tenga código de bloqueo configurado.');
+      return;
+    }
+    const storedBody = secure ? '' : body;
     let saved: Note;
     if (isNew) {
-      saved = await createNote(db, { title: finalTitle, body, tag }, { id: newId() });
+      saved = await createNote(db, { title: finalTitle, body: storedBody, tag, secure }, { id: targetId });
       if (pinned) saved = await updateNote(db, saved.id, { pinned: true });
     } else {
-      saved = await updateNote(db, note!.id, { title: finalTitle, body, pinned, tag });
+      saved = await updateNote(db, note!.id, { title: finalTitle, body: storedBody, pinned, tag, secure });
+      if (!secure && note!.secure) await deleteSecureBody(note!.id); // descifrada: limpiar Keychain
     }
     try {
       const notificationId = await syncReminder(saved, reminderAt ? new Date(reminderAt) : null, recurrence);
@@ -88,6 +139,7 @@ export default function NoteScreen() {
         style: 'destructive',
         onPress: async () => {
           await cancelReminder(note?.notificationId ?? null);
+          if (note!.secure) await deleteSecureBody(note!.id);
           await deleteNote(getDb(), note!.id);
           router.back();
         },
@@ -126,16 +178,32 @@ export default function NoteScreen() {
         placeholderTextColor={palette.textMuted}
         style={[styles.title, { color: palette.text }]}
       />
-      <TextInput
-        value={body}
-        onChangeText={setBody}
-        placeholder="Escribí tu nota…"
-        placeholderTextColor={palette.textMuted}
-        style={[styles.body, { color: palette.text }]}
-        multiline
-      />
+      {locked ? (
+        <View style={{ alignItems: 'center', gap: 10, paddingVertical: 30 }}>
+          <Text style={{ color: palette.textMuted }}>🔒 Contenido bloqueado</Text>
+          <Pressable onPress={reloadSecureBody} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
+            <Text style={styles.saveText}>Desbloquear</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <TextInput
+          value={body}
+          onChangeText={setBody}
+          placeholder="Escribí tu nota…"
+          placeholderTextColor={palette.textMuted}
+          style={[styles.body, { color: palette.text }]}
+          multiline
+        />
+      )}
 
-      <TagChips selected={tag} onSelect={setTag} includeNone />
+      {!locked && <TagChips selected={tag} onSelect={setTag} includeNone />}
+
+      {!locked && (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ color: palette.text, fontSize: 15 }}>🔒 Nota cifrada</Text>
+          <Switch value={secure} onValueChange={setSecure} />
+        </View>
+      )}
 
       <ReminderPicker
         reminderAt={reminderAt}
@@ -146,7 +214,7 @@ export default function NoteScreen() {
         }}
       />
 
-      {!isNew && hasApiKey && (
+      {!isNew && hasApiKey && !secure && (
         <Pressable
           onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
           style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}
@@ -155,9 +223,11 @@ export default function NoteScreen() {
         </Pressable>
       )}
 
-      <Pressable onPress={save} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
-        <Text style={styles.saveText}>Guardar</Text>
-      </Pressable>
+      {!locked && (
+        <Pressable onPress={save} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
+          <Text style={styles.saveText}>Guardar</Text>
+        </Pressable>
+      )}
 
       {!isNew && (
         <Pressable onPress={confirmDelete} style={styles.deleteBtn}>

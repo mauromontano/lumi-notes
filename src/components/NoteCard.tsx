@@ -22,7 +22,11 @@ export function NoteCard({ note, onPress }: Props) {
         {note.pinned ? <Text style={[styles.pin, { color: palette.accent }]}>✦ </Text> : null}
         <Text numberOfLines={1} style={[styles.title, { color: palette.text }]}>{note.title}</Text>
       </View>
-      <Text numberOfLines={2} style={[styles.body, { color: palette.textMuted }]}>{note.body}</Text>
+      {note.secure ? (
+        <Text style={[styles.body, { color: palette.textMuted }]}>🔒 Nota cifrada</Text>
+      ) : (
+        <Text numberOfLines={2} style={[styles.body, { color: palette.textMuted }]}>{note.body}</Text>
+      )}
       {badge || note.tag ? (
         <View style={styles.badgeRow}>
           {badge ? (
