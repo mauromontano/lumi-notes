@@ -27,12 +27,16 @@ async function handleResponse(response: Notifications.NotificationResponse): Pro
   await applyReminderAction(db, noteId, plan);
 }
 
+function safeHandleResponse(response: Notifications.NotificationResponse): void {
+  handleResponse(response).catch((e) => log.warn('respuesta de notificación falló:', (e as Error).message));
+}
+
 export function useReminderResponses(): void {
   useEffect(() => {
     void registerReminderCategory();
     // respuesta recibida con la app cerrada
-    void Notifications.getLastNotificationResponseAsync().then((r) => { if (r) void handleResponse(r); });
-    const sub = Notifications.addNotificationResponseReceivedListener((r) => { void handleResponse(r); });
+    void Notifications.getLastNotificationResponseAsync().then((r) => { if (r) safeHandleResponse(r); });
+    const sub = Notifications.addNotificationResponseReceivedListener((r) => { safeHandleResponse(r); });
     return () => sub.remove();
   }, []);
 }
