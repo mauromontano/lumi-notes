@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import type { Note, Recurrence } from '@/notes/types';
 import { buildTrigger, type ReminderTrigger } from './triggers';
+import { REMINDER_CATEGORY, ACTION_SNOOZE_1H, ACTION_COMPLETE } from './actions';
 
 function toExpoTrigger(t: ReminderTrigger): Notifications.NotificationTriggerInput {
   const T = Notifications.SchedulableTriggerInputTypes;
@@ -13,6 +14,13 @@ function toExpoTrigger(t: ReminderTrigger): Notifications.NotificationTriggerInp
   }
 }
 
+export async function registerReminderCategory(): Promise<void> {
+  await Notifications.setNotificationCategoryAsync(REMINDER_CATEGORY, [
+    { identifier: ACTION_SNOOZE_1H, buttonTitle: 'Posponer 1h', options: { opensAppToForeground: false } },
+    { identifier: ACTION_COMPLETE, buttonTitle: 'Completar', options: { opensAppToForeground: false } },
+  ]);
+}
+
 export async function scheduleReminder(
   note: { id: string; title: string },
   reminderAt: Date,
@@ -21,7 +29,7 @@ export async function scheduleReminder(
   const perms = await Notifications.requestPermissionsAsync();
   if (!perms.granted) throw new Error('permisos-denegados');
   return Notifications.scheduleNotificationAsync({
-    content: { title: 'Lumi ✦', body: note.title, sound: true, data: { noteId: note.id } },
+    content: { title: 'Lumi ✦', body: note.title, sound: true, data: { noteId: note.id }, categoryIdentifier: REMINDER_CATEGORY },
     trigger: toExpoTrigger(buildTrigger(reminderAt, recurrence)),
   });
 }
