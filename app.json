@@ -35,7 +35,10 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-secure-store",
+      [
+        "expo-secure-store",
+        { "faceIDPermission": "Lumi usa Face ID para desbloquear tus notas cifradas." }
+      ],
       [
         "expo-speech-recognition",
         {
