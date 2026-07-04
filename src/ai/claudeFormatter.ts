@@ -4,11 +4,12 @@ import { log } from '@/lib/log';
 
 const SYSTEM_PROMPT = `Sos Lumi, el asistente de una app de notas. Convertís dictados en notas prolijas en español.
 Respondé SOLO con JSON válido, sin texto extra, con esta forma exacta:
-{"titulo": "título corto y claro", "cuerpo": "texto de la nota"}
+{"titulo": "título corto y claro", "cuerpo": "texto de la nota", "tag": "una categoría o null"}
 Reglas:
 - Si el dictado enumera cosas, el cuerpo usa bullets markdown: "- item" (uno por línea).
 - Corregí puntuación y muletillas, pero NO inventes contenido que no se dictó.
-- El título resume la nota en pocas palabras.`;
+- El título resume la nota en pocas palabras.
+- "tag" debe ser exactamente una de: "compras", "trabajo", "ideas", "personal", "salud", "viajes". Si ninguna aplica bien, usá null.`;
 
 interface Deps {
   getApiKey?: () => Promise<string | null>;
@@ -77,7 +78,7 @@ export function createClaudeFormatter(deps: Deps = {}): NoteFormatter {
     },
     editNote(current: FormattedNote, instruction: string) {
       return callClaude(
-        `Nota actual:\n{"titulo": ${JSON.stringify(current.title)}, "cuerpo": ${JSON.stringify(current.body)}}\n\nInstrucción del usuario: """${instruction}"""\n\nDevolvé la nota modificada aplicando SOLO lo que pide la instrucción.`,
+        `Nota actual:\n{"titulo": ${JSON.stringify(current.title)}, "cuerpo": ${JSON.stringify(current.body)}, "tag": ${JSON.stringify(current.tag)}}\n\nInstrucción del usuario: """${instruction}"""\n\nDevolvé la nota modificada aplicando SOLO lo que pide la instrucción.`,
       );
     },
   };

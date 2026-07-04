@@ -1,4 +1,6 @@
-export interface FormattedNote { title: string; body: string }
+import { isNoteTag, type NoteTag } from '@/notes/tags';
+
+export interface FormattedNote { title: string; body: string; tag: NoteTag | null }
 
 export interface NoteFormatter {
   formatNote(transcript: string): Promise<FormattedNote>;
@@ -29,5 +31,6 @@ export function parseFormatterResponse(text: string): FormattedNote {
   if (typeof titulo !== 'string' || !titulo.trim() || typeof cuerpo !== 'string') {
     throw new FormatterError('parse', 'faltan campos titulo/cuerpo');
   }
-  return { title: titulo.trim(), body: cuerpo };
+  const tag = isNoteTag(rec['tag']) ? rec['tag'] : null;
+  return { title: titulo.trim(), body: cuerpo, tag };
 }

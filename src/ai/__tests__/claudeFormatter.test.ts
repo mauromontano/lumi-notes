@@ -21,12 +21,12 @@ const deps = (fetchFn: typeof fetch) => ({
 describe('createClaudeFormatter', () => {
   it('formatea una transcripción', async () => {
     const f = createClaudeFormatter(deps(fakeFetchOnce(['{"titulo":"Cena","cuerpo":"- Pan"}'])));
-    expect(await f.formatNote('comprar pan para la cena')).toEqual({ title: 'Cena', body: '- Pan' });
+    expect(await f.formatNote('comprar pan para la cena')).toEqual({ title: 'Cena', body: '- Pan', tag: null });
   });
 
   it('reintenta una vez si el primer parseo falla', async () => {
     const f = createClaudeFormatter(deps(fakeFetchOnce(['basura sin json', '{"titulo":"Ok","cuerpo":"x"}'])));
-    expect(await f.formatNote('hola')).toEqual({ title: 'Ok', body: 'x' });
+    expect(await f.formatNote('hola')).toEqual({ title: 'Ok', body: 'x', tag: null });
   });
 
   it('lanza parse si falla dos veces', async () => {
@@ -47,7 +47,7 @@ describe('createClaudeFormatter', () => {
 
   it('editNote envía la nota actual y la instrucción', async () => {
     const f = createClaudeFormatter(deps(fakeFetchOnce(['{"titulo":"Cena","cuerpo":"- Pan\\n- Agua"}'])));
-    const res = await f.editNote({ title: 'Cena', body: '- Pan' }, 'agregá agua');
+    const res = await f.editNote({ title: 'Cena', body: '- Pan', tag: null }, 'agregá agua');
     expect(res.body).toContain('Agua');
   });
 });

@@ -23,6 +23,7 @@ import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
 import type { Recurrence, Note } from '../notes/types';
+import { isNoteTag } from '../notes/tags';
 import { log } from '../lib/log';
 
 type Phase = 'listening' | 'thinking' | 'preview';
@@ -39,7 +40,7 @@ export default function VoiceScreen() {
   const [phase, setPhase] = useState<Phase>('listening');
   const [orbState, setOrbState] = useState<OrbState>('listening');
   const [permissionDenied, setPermissionDenied] = useState(false);
-  const [draft, setDraft] = useState<FormattedNote>({ title: '', body: '' });
+  const [draft, setDraft] = useState<FormattedNote>({ title: '', body: '', tag: null });
   const [usedRawFallback, setUsedRawFallback] = useState<string | null>(null);
   const [reminderAt, setReminderAt] = useState<string | null>(null);
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
@@ -90,7 +91,11 @@ export default function VoiceScreen() {
     try {
       const formatted = isEdit
         ? await formatter.editNote(
-            { title: original!.title, body: original!.body },
+            {
+              title: original!.title,
+              body: original!.body,
+              tag: isNoteTag(original!.tag) ? original!.tag : null,
+            },
             transcript,
           )
         : await formatter.formatNote(transcript);
@@ -102,14 +107,18 @@ export default function VoiceScreen() {
       log.warn('formatter falló:', kind, '-', (e as Error).message);
       if (isEdit) {
         // en edición no pisamos la nota con la transcripción: mostramos la original y avisamos
-        setDraft({ title: original!.title, body: original!.body });
+        setDraft({
+          title: original!.title,
+          body: original!.body,
+          tag: isNoteTag(original!.tag) ? original!.tag : null,
+        });
         setUsedRawFallback(
           kind === 'no-key'
             ? 'Sin API key configurada: no puedo editar por voz. Configurala en Ajustes.'
             : 'Lumi no pudo aplicar la edición (sin conexión o error). La nota queda como estaba.',
         );
       } else {
-        setDraft({ title: 'Nota dictada', body: transcript });
+        setDraft({ title: 'Nota dictada', body: transcript, tag: null });
         setUsedRawFallback(
           kind === 'no-key'
             ? 'Sin API key configurada: guardo la transcripción sin formatear.'
@@ -150,7 +159,7 @@ export default function VoiceScreen() {
 
   async function redictate() {
     dictation.reset();
-    setDraft({ title: '', body: '' });
+    setDraft({ title: '', body: '', tag: null });
     setUsedRawFallback(null);
     setReminderAt(null);
     setRecurrence('none');
@@ -162,7 +171,11 @@ export default function VoiceScreen() {
   }
 
   function undo() {
-    setDraft({ title: original!.title, body: original!.body });
+    setDraft({
+      title: original!.title,
+      body: original!.body,
+      tag: isNoteTag(original!.tag) ? original!.tag : null,
+    });
     setUndone(true);
   }
 
