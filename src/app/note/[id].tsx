@@ -3,11 +3,14 @@ import { Alert, Pressable, ScrollView, Switch, Text, TextInput, View, StyleSheet
 import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../theme/ThemeContext';
 import { getApiKey } from '../../settings/secrets';
+import { getAiEnabled } from '../../settings/prefs';
 import { getDb, newId } from '../../db/database';
 import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo';
 import { cancelReminder, syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
 import { TagChips } from '../../components/TagChips';
+import { FormatToolbar } from '../../components/FormatToolbar';
+import { toggleLine, type FormatAction } from '../../notes/markdown';
 import { readSecureBody, deleteSecureBody, saveSecureBody, SecureBodyError } from '../../notes/secureBody';
 import { log } from '../../lib/log';
 import type { Note, Recurrence } from '../../notes/types';
@@ -28,11 +31,16 @@ export default function NoteScreen() {
   const [hasApiKey, setHasApiKey] = useState(false);
   const [secure, setSecure] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [bodyCursor, setBodyCursor] = useState(0);
+
+  function applyFormat(action: FormatAction) {
+    setBody((prev) => toggleLine(prev, bodyCursor, action).text);
+  }
 
   // re-chequea al volver del stack (p.ej. después de cargar la key en Ajustes)
   useFocusEffect(
     useCallback(() => {
-      getApiKey().then((key) => setHasApiKey(!!key));
+      Promise.all([getApiKey(), getAiEnabled()]).then(([key, on]) => setHasApiKey(!!key && on));
     }, []),
   );
 
@@ -194,14 +202,18 @@ export default function NoteScreen() {
           </Pressable>
         </View>
       ) : (
-        <TextInput
-          value={body}
-          onChangeText={setBody}
-          placeholder="Escribí tu nota…"
-          placeholderTextColor={palette.textMuted}
-          style={[styles.body, { color: palette.text }]}
-          multiline
-        />
+        <View style={{ gap: 10 }}>
+          <FormatToolbar onAction={applyFormat} />
+          <TextInput
+            value={body}
+            onChangeText={setBody}
+            onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
+            placeholder="Escribí tu nota…"
+            placeholderTextColor={palette.textMuted}
+            style={[styles.body, { color: palette.text }]}
+            multiline
+          />
+        </View>
       )}
 
       {!locked && <TagChips selected={tag} onSelect={setTag} includeNone />}

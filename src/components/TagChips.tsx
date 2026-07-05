@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Pressable, Text, StyleSheet } from 'react-native';
+import { ScrollView, Pressable, Text, View, StyleSheet } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { NOTE_TAGS, tagColors, type NoteTag } from '../notes/tags';
 
@@ -12,16 +12,20 @@ type Props = {
 export function TagChips({ selected, onSelect, includeNone }: Props) {
   const { theme, palette } = useTheme();
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={styles.scroll}
+      contentContainerStyle={styles.row}
+    >
       {includeNone ? (
         <Pressable
           onPress={() => onSelect(null)}
-          style={[styles.chip, {
-            borderColor: palette.cardBorder,
-            backgroundColor: selected === null ? palette.card : 'transparent',
-          }]}
+          style={[styles.chip, selected === null && { borderBottomColor: palette.text }]}
         >
-          <Text style={{ color: palette.textMuted, fontSize: 13 }}>sin tag</Text>
+          <Text style={[styles.label, { color: selected === null ? palette.text : palette.textMuted }]}>
+            sin tag
+          </Text>
         </Pressable>
       ) : null}
       {NOTE_TAGS.map((t) => {
@@ -31,12 +35,12 @@ export function TagChips({ selected, onSelect, includeNone }: Props) {
           <Pressable
             key={t}
             onPress={() => onSelect(active ? null : t)}
-            style={[styles.chip, {
-              backgroundColor: active ? c.bg : 'transparent',
-              borderColor: active ? c.text : palette.cardBorder,
-            }]}
+            style={[styles.chip, active && { borderBottomColor: c.text }]}
           >
-            <Text style={{ color: active ? c.text : palette.textMuted, fontSize: 13 }}>{t}</Text>
+            <View
+              style={[styles.dot, { backgroundColor: active ? c.text : palette.textMuted, opacity: active ? 1 : 0.5 }]}
+            />
+            <Text style={[styles.label, { color: active ? c.text : palette.textMuted }]}>{t}</Text>
           </Pressable>
         );
       })}
@@ -45,6 +49,18 @@ export function TagChips({ selected, onSelect, includeNone }: Props) {
 }
 
 const styles = StyleSheet.create({
-  row: { gap: 8, paddingHorizontal: 16, paddingVertical: 4 },
-  chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+  // flexGrow: 0 evita que el ScrollView horizontal se estire verticalmente
+  // (era la causa de los "óvalos gigantes"); alignItems center centra los chips.
+  scroll: { flexGrow: 0 },
+  row: { gap: 16, paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center' },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    paddingVertical: 4,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  dot: { width: 7, height: 7, borderRadius: 3.5 },
+  label: { fontSize: 14, fontWeight: '600' },
 });

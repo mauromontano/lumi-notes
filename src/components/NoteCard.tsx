@@ -4,12 +4,15 @@ import { useTheme } from '../theme/ThemeContext';
 import type { Note } from '../notes/types';
 import { formatReminderBadge } from '../notes/format';
 import { isNoteTag, tagColors } from '../notes/tags';
+import { previewText } from '../notes/markdown';
 
 type Props = { note: Note; onPress: () => void };
 
 export function NoteCard({ note, onPress }: Props) {
   const { theme, palette } = useTheme();
   const badge = formatReminderBadge(note.reminderAt, note.reminderRecurrence);
+  const tag = note.tag && isNoteTag(note.tag) ? note.tag : null;
+  const tagColor = tag ? tagColors[theme][tag].text : null;
   return (
     <Pressable
       onPress={onPress}
@@ -21,24 +24,21 @@ export function NoteCard({ note, onPress }: Props) {
       <View style={styles.titleRow}>
         {note.pinned ? <Text style={[styles.pin, { color: palette.accent }]}>✦ </Text> : null}
         <Text numberOfLines={1} style={[styles.title, { color: palette.text }]}>{note.title}</Text>
+        {tag ? (
+          <View style={styles.tagChip}>
+            <View style={[styles.dot, { backgroundColor: tagColor! }]} />
+            <Text style={[styles.tagText, { color: tagColor! }]}>{tag}</Text>
+          </View>
+        ) : null}
       </View>
       {note.secure ? (
         <Text style={[styles.body, { color: palette.textMuted }]}>🔒 Nota cifrada</Text>
       ) : (
-        <Text numberOfLines={2} style={[styles.body, { color: palette.textMuted }]}>{note.body}</Text>
+        <Text numberOfLines={2} style={[styles.body, { color: palette.textMuted }]}>{previewText(note.body)}</Text>
       )}
-      {badge || note.tag ? (
-        <View style={styles.badgeRow}>
-          {badge ? (
-            <View style={[styles.badge, { backgroundColor: palette.badgeBg }]}>
-              <Text style={[styles.badgeText, { color: palette.badgeText }]}>⏰ {badge}</Text>
-            </View>
-          ) : null}
-          {note.tag && isNoteTag(note.tag) ? (
-            <View style={[styles.badge, { backgroundColor: tagColors[theme][note.tag].bg }]}>
-              <Text style={[styles.badgeText, { color: tagColors[theme][note.tag].text }]}>{note.tag}</Text>
-            </View>
-          ) : null}
+      {badge ? (
+        <View style={[styles.footer, { borderTopColor: palette.cardBorder }]}>
+          <Text style={[styles.footerText, { color: palette.textMuted }]}>⏰ {badge}</Text>
         </View>
       ) : null}
     </Pressable>
@@ -50,8 +50,16 @@ const styles = StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center' },
   pin: { fontSize: 14 },
   title: { fontSize: 16, fontWeight: '600', flexShrink: 1 },
-  body: { fontSize: 14, marginTop: 4 },
-  badgeRow: { flexDirection: 'row', gap: 6, marginTop: 8 },
-  badge: { alignSelf: 'flex-start', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
-  badgeText: { fontSize: 12, fontWeight: '500' },
+  tagChip: { flexDirection: 'row', alignItems: 'center', gap: 5, marginLeft: 'auto', paddingLeft: 10 },
+  dot: { width: 7, height: 7, borderRadius: 3.5 },
+  tagText: { fontSize: 12, fontWeight: '600' },
+  body: { fontSize: 14, marginTop: 4, lineHeight: 20 },
+  footer: {
+    marginTop: 10,
+    paddingTop: 9,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  footerText: { fontSize: 12.5, fontWeight: '500' },
 });

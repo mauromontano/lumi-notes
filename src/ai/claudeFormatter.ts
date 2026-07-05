@@ -1,5 +1,6 @@
 import { FormatterError, parseFormatterResponse, type FormattedNote, type NoteFormatter } from './formatter';
 import { getApiKey as defaultGetApiKey } from '@/settings/secrets';
+import { getAiEnabled } from '@/settings/prefs';
 import { log } from '@/lib/log';
 
 const SYSTEM_PROMPT = `Sos Lumi, el asistente de una app de notas. Convertís dictados en notas prolijas en español.
@@ -19,7 +20,9 @@ interface Deps {
 }
 
 export function createClaudeFormatter(deps: Deps = {}): NoteFormatter {
-  const getKey = deps.getApiKey ?? defaultGetApiKey;
+  // Sin override de test: la key efectiva es null si el usuario apagó la IA en Ajustes.
+  const getKey =
+    deps.getApiKey ?? (async () => ((await getAiEnabled()) ? defaultGetApiKey() : null));
   const fetchFn = deps.fetchFn ?? fetch;
   const model = deps.model ?? 'claude-haiku-4-5';
   const timeoutMs = deps.timeoutMs ?? 15000;

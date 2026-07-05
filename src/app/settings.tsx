@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, View, StyleSheet, Alert } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { getApiKey, setApiKey } from '../settings/secrets';
+import { getAiEnabled, setAiEnabled } from '../settings/prefs';
 
 const THEME_OPTIONS = [
   { value: 'system', label: 'Sistema' },
@@ -13,13 +14,20 @@ export default function SettingsScreen() {
   const { palette, override, setOverride } = useTheme();
   const [key, setKey] = useState('');
   const [hasStoredKey, setHasStoredKey] = useState(false);
+  const [aiEnabled, setAiEnabledState] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const stored = await getApiKey();
+      const [stored, enabled] = await Promise.all([getApiKey(), getAiEnabled()]);
       setHasStoredKey(!!stored);
+      setAiEnabledState(enabled);
     })();
   }, []);
+
+  async function toggleAi(on: boolean) {
+    setAiEnabledState(on);
+    await setAiEnabled(on);
+  }
 
   async function saveKey() {
     await setApiKey(key.trim());
@@ -51,10 +59,31 @@ export default function SettingsScreen() {
       </View>
 
       <Text style={[styles.section, { color: palette.text }]}>API key de Anthropic</Text>
+
+      <View style={[styles.segmented, { borderColor: palette.cardBorder, backgroundColor: palette.card }]}>
+        {([
+          { value: true, label: 'Activada' },
+          { value: false, label: 'Desactivada' },
+        ] as const).map((opt) => {
+          const active = aiEnabled === opt.value;
+          return (
+            <Pressable
+              key={opt.label}
+              onPress={() => toggleAi(opt.value)}
+              style={[styles.seg, active && { backgroundColor: palette.accent }]}
+            >
+              <Text style={{ color: active ? '#fff' : palette.textMuted, fontWeight: '600' }}>{opt.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
       <Text style={{ color: palette.textMuted, fontSize: 13 }}>
-        {hasStoredKey
-          ? 'Hay una key guardada. Pegá una nueva para reemplazarla.'
-          : 'Sin key configurada: el dictado guarda la transcripción sin formatear.'}
+        {!aiEnabled
+          ? 'IA desactivada: el dictado guarda la transcripción sin formatear. La key queda guardada.'
+          : hasStoredKey
+            ? 'Hay una key guardada. Pegá una nueva para reemplazarla.'
+            : 'Sin key configurada: el dictado guarda la transcripción sin formatear.'}
       </Text>
       <TextInput
         value={key}
@@ -82,6 +111,8 @@ const styles = StyleSheet.create({
   section: { fontSize: 17, fontWeight: '700', marginTop: 12 },
   chipsRow: { flexDirection: 'row', gap: 8 },
   chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 8 },
+  segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: 12, padding: 3, gap: 3, alignSelf: 'flex-start' },
+  seg: { paddingHorizontal: 20, paddingVertical: 9, borderRadius: 9 },
   input: { borderWidth: 1, borderRadius: 12, padding: 12, fontSize: 15 },
   saveBtn: { borderRadius: 14, padding: 14, alignItems: 'center' },
   saveText: { color: '#fff', fontSize: 15, fontWeight: '700' },

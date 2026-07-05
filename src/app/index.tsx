@@ -40,7 +40,7 @@ export default function NotesListScreen() {
               hidesSharedBackground: true,
               element: (
                 <Pressable onPress={() => router.push('/settings')} hitSlop={12}>
-                  <Text style={{ color: palette.textMuted, fontSize: 26 }}>⚙︎</Text>
+                  <Text style={{ color: palette.textMuted, fontSize: 30 }}>⚙︎</Text>
                 </Pressable>
               ),
             },

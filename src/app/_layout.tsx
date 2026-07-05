@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Pressable, Text } from 'react-native';
 import { router, Stack } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import { useShareIntent } from 'expo-share-intent';
@@ -41,7 +42,26 @@ function Screens() {
       <Stack.Screen name="index" options={{ title: 'Lumi Notes' }} />
       <Stack.Screen name="note/[id]" options={{ title: 'Nota' }} />
       <Stack.Screen name="voice" options={{ presentation: 'fullScreenModal', headerShown: false }} />
-      <Stack.Screen name="settings" options={{ title: 'Ajustes' }} />
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: 'Ajustes',
+          // back custom + hidesSharedBackground: sin la cápsula glass/highlight de iOS 26
+          // que aparecía "activa" al entrar. El resaltado ahora es solo al tocar.
+          headerBackVisible: false,
+          unstable_headerLeftItems: () => [
+            {
+              type: 'custom',
+              hidesSharedBackground: true,
+              element: (
+                <Pressable onPress={() => router.back()} hitSlop={12}>
+                  <Text style={{ color: palette.accent, fontSize: 28, marginTop: -2 }}>‹</Text>
+                </Pressable>
+              ),
+            },
+          ],
+        }}
+      />
     </Stack>
   );
 }

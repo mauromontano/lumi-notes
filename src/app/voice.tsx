@@ -23,6 +23,8 @@ import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
 import { TagChips } from '../components/TagChips';
+import { FormatToolbar } from '../components/FormatToolbar';
+import { toggleLine, type FormatAction } from '../notes/markdown';
 import type { Recurrence, Note } from '../notes/types';
 import { isNoteTag } from '../notes/tags';
 import { log } from '../lib/log';
@@ -50,7 +52,12 @@ export default function VoiceScreen() {
   const [original, setOriginal] = useState<Note | null>(null);
   const [undone, setUndone] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
+  const [bodyCursor, setBodyCursor] = useState(0);
   const dictationError = dictation.error ? dictationErrorMessage(dictation.error) : null;
+
+  function applyFormat(action: FormatAction) {
+    setDraft((d) => ({ ...d, body: toggleLine(d.body, bodyCursor, action).text }));
+  }
 
   useEffect(() => {
     if (isShare) {
@@ -284,12 +291,14 @@ export default function VoiceScreen() {
         placeholder="Título"
         placeholderTextColor={palette.textMuted}
       />
+      <FormatToolbar onAction={applyFormat} />
       <TextInput
         value={draft.body}
         onChangeText={(t) => {
           setDraft((d) => ({ ...d, body: t }));
           setUndone(false);
         }}
+        onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
         style={[styles.body, { color: palette.text }]}
         multiline
       />

@@ -39,16 +39,8 @@ export function ReminderPicker({ reminderAt, recurrence, onChange }: Props) {
 
       {enabled && (
         <>
-          <View style={styles.row}>
-            <Pressable
-              onPress={() => onChange(tomorrowAt9(), recurrence)}
-              style={[styles.chip, { borderColor: palette.cardBorder }]}
-            >
-              <Text style={{ color: palette.textMuted, fontSize: 13 }}>Mañana 9:00</Text>
-            </Pressable>
-          </View>
-
           <DateTimePicker
+            style={styles.picker}
             value={new Date(reminderAt!)}
             mode="datetime"
             minimumDate={recurrence === 'none' ? new Date() : undefined}
@@ -90,6 +82,9 @@ const styles = StyleSheet.create({
   wrap: { borderRadius: 16, borderWidth: 1, padding: 14, gap: 10 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   label: { fontSize: 16, fontWeight: '600' },
+  // picker y chips arrancan en el mismo borde izquierdo (antes quedaban desalineados
+  // porque el picker nativo se alineaba a la derecha)
+  picker: { alignSelf: 'flex-start', marginLeft: -4 },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
 });

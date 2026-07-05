@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumi Notes · Rediseño UI v1.1</title>
+<style>
+  :root {
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  }
+  /* ---- paletas reales de la app (src/theme/colors.ts) ---- */
+  [data-theme="dark"] {
+    --bg: #0b0e1d; --bg-end: #101430;
+    --card: rgba(255,255,255,0.06); --card-border: rgba(255,255,255,0.09);
+    --text: #f2f3fa; --muted: rgba(242,243,250,0.6);
+    --accent: #7c6bff; --badge-bg: rgba(139,125,255,0.2); --badge-text: #b3a7ff;
+    --danger: #ff7a7a; --hairline: rgba(255,255,255,0.08);
+    --page: #05060f;
+    /* tags */
+    --t-compras-bg: rgba(107,232,168,0.18); --t-compras-tx: #8ef0bd;
+    --t-trabajo-bg: rgba(124,107,255,0.20); --t-trabajo-tx: #b3a7ff;
+    --t-ideas-bg: rgba(155,232,255,0.18); --t-ideas-tx: #9be8ff;
+    --t-personal-bg: rgba(231,139,181,0.20); --t-personal-tx: #f2a9cc;
+    --t-salud-bg: rgba(255,122,122,0.18); --t-salud-tx: #ff9d9d;
+    --t-viajes-bg: rgba(255,184,138,0.20); --t-viajes-tx: #ffc9a3;
+  }
+  [data-theme="light"] {
+    --bg: #fbf8f3; --bg-end: #f6efe6;
+    --card: #ffffff; --card-border: rgba(160,140,110,0.18);
+    --text: #3a3733; --muted: rgba(58,55,51,0.55);
+    --accent: #e78bb5; --badge-bg: #ffe8d6; --badge-text: #c97b3d;
+    --danger: #c0392b; --hairline: rgba(160,140,110,0.16);
+    --page: #ece4d8;
+    --t-compras-bg: #e0f7e9; --t-compras-tx: #2f9668;
+    --t-trabajo-bg: #e8e4ff; --t-trabajo-tx: #6b5bd6;
+    --t-ideas-bg: #e0f3fa; --t-ideas-tx: #2a7f9e;
+    --t-personal-bg: #ffe4ef; --t-personal-tx: #c05585;
+    --t-salud-bg: #ffe3e3; --t-salud-tx: #c0392b;
+    --t-viajes-bg: #ffe8d6; --t-viajes-tx: #c97b3d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--page); color: var(--text); font-family: var(--font); }
+  body { padding: 32px 24px 96px; transition: background .25s; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10; display: flex; align-items: center;
+    justify-content: space-between; gap: 16px; padding: 14px 20px; margin: -32px -24px 28px;
+    background: color-mix(in srgb, var(--page) 82%, transparent);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--hairline);
+  }
+  .topbar h1 { font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
+  .topbar h1 span { color: var(--muted); font-weight: 500; }
+  .toggle {
+    appearance: none; cursor: pointer; border: 1px solid var(--card-border);
+    background: var(--card); color: var(--text); font: inherit; font-size: 13px;
+    font-weight: 600; padding: 8px 16px; border-radius: 999px;
+  }
+
+  .section { max-width: 1180px; margin: 0 auto 56px; }
+  .section > header { margin-bottom: 6px; }
+  .section h2 { font-size: 22px; letter-spacing: -.4px; }
+  .section .sub { color: var(--muted); font-size: 14px; margin: 6px 0 22px; max-width: 720px; line-height: 1.5; }
+  .section .sub code { font-size: 12.5px; padding: 1px 5px; border-radius: 5px; background: var(--card); border: 1px solid var(--card-border); }
+
+  .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; align-items: start; }
+
+  .variant { }
+  .variant .vhead { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .variant .tag { font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+    color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    padding: 3px 8px; border-radius: 6px; }
+  .variant .vname { font-size: 15px; font-weight: 650; }
+  .variant .vdesc { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 8px 2px 0; }
+
+  /* ---- phone-ish surface, fondo real de la app ---- */
+  .surface {
+    background: linear-gradient(180deg, var(--bg), var(--bg-end));
+    border: 1px solid var(--card-border); border-radius: 26px; padding: 18px 14px 20px;
+    box-shadow: 0 20px 50px -30px rgba(0,0,0,.6);
+  }
+
+  /* ================= CARDS (item 1) ================= */
+  .cardlist { display: flex; flex-direction: column; gap: 12px; }
+  .note {
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+    padding: 14px; position: relative; overflow: hidden;
+  }
+  .note .trow { display: flex; align-items: center; gap: 6px; }
+  .note .pin { color: var(--accent); font-size: 13px; }
+  .note .title { font-size: 16px; font-weight: 650; color: var(--text); flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .note .body { font-size: 14px; color: var(--muted); margin-top: 4px; line-height: 1.42;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .note .meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+
+  /* badge base */
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+    border-radius: 8px; padding: 3px 9px; }
+  .badge.remind { background: var(--badge-bg); color: var(--badge-text); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+
+  /* --- A: spine de color --- */
+  .note.spine { padding-left: 18px; }
+  .note.spine::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--spine, var(--card-border)); }
+  .note.spine .toprow { display: flex; align-items: flex-start; gap: 10px; }
+  .note.spine .tagtx { font-size: 12px; font-weight: 700; color: var(--spine-tx, var(--muted));
+    text-transform: lowercase; white-space: nowrap; }
+
+  /* --- B: header dot + footer hairline --- */
+  .note.hf .toprow { display: flex; align-items: center; gap: 10px; }
+  .note.hf .tagchip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+    font-weight: 650; color: var(--spine-tx, var(--muted)); white-space: nowrap; }
+  .note.hf .foot { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--hairline);
+    display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+
+  /* --- C: minimal sin borde --- */
+  .surface.minimal { padding: 8px 6px; }
+  .note.min { background: transparent; border: none; border-radius: 0; padding: 14px 12px; }
+  .note.min + .note.min { border-top: 1px solid var(--hairline); }
+  .note.min .title { font-size: 17px; }
+  .note.min .toprow { display: flex; align-items: center; gap: 10px; }
+  .note.min .tagtx { font-size: 12.5px; font-weight: 650; color: var(--spine-tx, var(--muted)); white-space: nowrap; }
+
+  /* ================= TAGS (item 2) ================= */
+  .searchbar { background: var(--card); border: 1px solid var(--card-border); border-radius: 14px;
+    padding: 11px 14px; color: var(--muted); font-size: 15px; margin-bottom: 12px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px; margin-bottom: 16px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+
+  /* current (roto) */
+  .chip-broken { border: 1px solid var(--card-border); border-radius: 999px; min-width: 96px;
+    height: 150px; display: flex; justify-content: center; padding-top: 14px; color: var(--muted);
+    font-size: 14px; flex: none; }
+
+  /* A: pill compacta con punto */
+  .chip-a { flex: none; height: 34px; display: inline-flex; align-items: center; gap: 7px;
+    padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    border: 1px solid var(--card-border); color: var(--muted); background: transparent; }
+  .chip-a.active { border-color: transparent; color: var(--ctx, var(--badge-text)); background: var(--cbg, var(--badge-bg)); }
+
+  /* B: dot + texto sin borde */
+  .chip-b { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 6px 4px;
+    font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; }
+  .chip-b.active { color: var(--ctx); border-bottom-color: var(--ctx); }
+
+  /* C: pill siempre con color */
+  .chip-c { flex: none; height: 34px; display: inline-flex; align-items: center; padding: 0 14px;
+    border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ctx);
+    background: var(--cbg); border: 1px solid transparent; }
+  .chip-c.active { border-color: var(--ctx); filter: saturate(1.35) brightness(1.05); }
+
+  /* badge previews inside note (reuse .badge/.dot) */
+  .badge-soft { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650;
+    border-radius: 8px; padding: 3px 9px; color: var(--ctx); background: var(--cbg); }
+
+  /* ================= SETTINGS (item 3) ================= */
+  .setwrap { }
+  .navsim { display: flex; align-items: center; gap: 6px; padding: 4px 2px 16px; }
+  .backbtn { display: inline-flex; align-items: center; gap: 2px; color: var(--accent); font-size: 17px; font-weight: 500; }
+  .backbtn.ghosted { background: color-mix(in srgb, var(--text) 12%, transparent); border-radius: 10px; padding: 4px 10px; color: var(--text); }
+  .navtitle { flex: 1; text-align: center; font-weight: 700; font-size: 16px; margin-right: 40px; }
+  .setlabel { font-size: 17px; font-weight: 700; margin: 18px 0 6px; }
+  .setnote { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 13px 14px; margin-top: 10px; }
+  .row .rlabel { font-size: 15px; font-weight: 600; }
+  .switch { width: 50px; height: 30px; border-radius: 999px; background: var(--accent); position: relative; flex: none; }
+  .switch.off { background: color-mix(in srgb, var(--text) 22%, transparent); }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
+    border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: left .15s; }
+  .switch.off::after { left: 23px; }
+  .keyrow { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .keyfield { flex: 1; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px;
+    padding: 12px 14px; color: var(--muted); font-size: 15px; }
+  .btn { border: 1px solid var(--card-border); background: var(--card); color: var(--text);
+    border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 650; white-space: nowrap; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: transparent; }
+  .segmented { display: inline-flex; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 3px; gap: 3px; margin-top: 10px; }
+  .segmented .seg { padding: 9px 20px; border-radius: 9px; font-size: 14px; font-weight: 650; color: var(--muted); }
+  .segmented .seg.active { background: var(--accent); color: #fff; }
+  .gearrow { display: flex; align-items: center; gap: 18px; margin-top: 10px; }
+  .gear { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); }
+  .gear .g26 { font-size: 22px; } .gear .g30 { font-size: 27px; }
+  .fixlist { margin-top: 12px; font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+  .fixlist b { color: var(--text); font-weight: 650; }
+
+  .pill-note { display:inline-block; margin-top:14px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>Lumi Notes · <span>rediseño UI v1.1 — mockups para decidir</span></h1>
+    <button class="toggle" onclick="const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';this.textContent=r.dataset.theme==='dark'?'☾ Dark':'☀ Light'">☾ Dark</button>
+  </div>
+
+  <!-- ============ ITEM 1: CARD ============ -->
+  <section class="section">
+    <header><h2>1 · Card de nota</h2></header>
+    <p class="sub">Hoy: título + cuerpo + badges chicos, jerarquía plana. Tres variantes para elegir. Reusan <code>tagColors[theme]</code> y <code>formatReminderBadge</code>.</p>
+    <div class="variants">
+
+      <!-- A -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">A</span><span class="vname">Spine de color del tag</span></div>
+        <div class="surface"><div class="cardlist">
+          <div class="note spine" style="--spine:var(--t-trabajo-bg);--spine-tx:var(--t-trabajo-tx)">
+            <div class="toprow"><div class="title">Test</div><div class="tagtx">trabajo</div></div>
+            <div class="body">Están raros los hover de los botones de la navbar, aumentar tamaño icono settings…</div>
+            <div class="meta">⏰ 4 jul · 14:17</div>
+          </div>
+          <div class="note spine" style="--spine:var(--card-border)">
+            <div class="toprow"><div class="title">🔒 Nota dictada</div></div>
+            <div class="body">Contenido cifrado</div>
+          </div>
+          <div class="note spine" style="--spine:var(--t-compras-bg);--spine-tx:var(--t-compras-tx)">
+            <div class="toprow"><span class="pin">✦</span><div class="title">Lista del súper</div><div class="tagtx">compras</div></div>
+            <div class="body">Leche, café, pan integral, huevos, y algo para la cena del viernes.</div>
+          </div>
+        </div></div>
+        <p class="vdesc">Franja de 4px con el color del tag (gris si no tiene). Tag arriba-derecha, meta en una línea. Distintivo y usa el color como señal.</p>
+      </div>
+
+      <!-- B -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">B</span><span class="vname">Header dot + footer hairline</span></div>
+        <div class="surface"><div class="cardlist">
+          <div class="note hf" style="--spine-tx:var(--t-trabajo-tx)">
+            <div class="toprow"><div class="title">Test</div><span class="tagchip"><span class="dot" style="background:var(--t-trabajo-tx)"></span>trabajo</span></div>
+            <div class="body">Están raros los hover de los botones de la navbar, aumentar tamaño icono settings…</div>
+            <div class="foot">⏰ 4 jul 14:17</div>
+          </div>
+          <div class="note hf">
+            <div class="toprow"><div class="title">🔒 Nota dictada</div></div>
+            <div class="body">Contenido cifrado</div>
+          </div>
+          <div class="note hf" style="--spine-tx:var(--t-compras-tx)">
+            <div class="toprow"><span class="pin">✦</span><div class="title">Lista del súper</div><span class="tagchip"><span class="dot" style="background:var(--t-compras-tx)"></span>compras</span></div>
+            <div class="body">Leche, café, pan integral, huevos, y algo para la cena del viernes.</div>
+          </div>
+        </div></div>
+        <p class="vdesc">Tag = punto + texto en el header. Meta separada por una línea fina abajo. Ordenado y clásico.</p>
+      </div>
+
+      <!-- C -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">C</span><span class="vname">Minimal sin borde</span></div>
+        <div class="surface minimal"><div class="cardlist" style="gap:0">
+          <div class="note min" style="--spine-tx:var(--t-trabajo-tx)">
+            <div class="toprow"><div class="title">Test</div><div class="tagtx">trabajo</div></div>
+            <div class="body">Están raros los hover de los botones de la navbar, aumentar tamaño icono settings…</div>
+            <div class="meta">4 jul · 14:17 · ⏰</div>
+          </div>
+          <div class="note min">
+            <div class="toprow"><div class="title">🔒 Nota dictada</div></div>
+            <div class="body">Contenido cifrado</div>
+          </div>
+          <div class="note min" style="--spine-tx:var(--t-compras-tx)">
+            <div class="toprow"><span class="pin">✦</span><div class="title">Lista del súper</div><div class="tagtx">compras</div></div>
+            <div class="body">Leche, café, pan integral, huevos, y algo para la cena del viernes.</div>
+          </div>
+        </div></div>
+        <p class="vdesc">Sin cajas: más aire y un separador fino entre notas. Título más grande, todo discreto. Muy limpio.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ITEM 2: TAGS ============ -->
+  <section class="section">
+    <header><h2>2 · Tags — chips de filtro + badges</h2></header>
+    <p class="sub">El bug actual: el <code>ScrollView</code> horizontal se estira y los chips salen como óvalos gigantes. Se arregla con altura fija. Elegí el estilo (aplica a chip de filtro <b>y</b> badge de la card, para que sean consistentes).</p>
+    <div class="variants">
+
+      <!-- current broken -->
+      <div class="variant">
+        <div class="vhead"><span class="tag" style="color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,transparent)">HOY</span><span class="vname">Roto</span></div>
+        <div class="surface">
+          <div class="searchbar">Buscar notas…</div>
+          <div class="chips">
+            <div class="chip-broken">compras</div>
+            <div class="chip-broken">trabajo</div>
+            <div class="chip-broken">ideas</div>
+          </div>
+        </div>
+        <p class="vdesc">Óvalos altísimos, texto arriba. Es lo que muestra tu captura.</p>
+      </div>
+
+      <!-- A -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">A</span><span class="vname">Pill compacta + punto</span></div>
+        <div class="surface">
+          <div class="searchbar">Buscar notas…</div>
+          <div class="chips">
+            <div class="chip-a active" style="--ctx:var(--t-compras-tx);--cbg:var(--t-compras-bg)"><span class="dot" style="background:var(--t-compras-tx)"></span>compras</div>
+            <div class="chip-a"><span class="dot" style="background:var(--t-trabajo-tx)"></span>trabajo</div>
+            <div class="chip-a"><span class="dot" style="background:var(--t-ideas-tx)"></span>ideas</div>
+            <div class="chip-a"><span class="dot" style="background:var(--t-personal-tx)"></span>personal</div>
+          </div>
+          <div class="note" style="border:none;background:transparent;padding:4px 2px">
+            <div class="title" style="font-size:15px">Badge en la card →</div>
+            <div class="meta"><span class="badge-soft" style="--ctx:var(--t-trabajo-tx);--cbg:var(--t-trabajo-bg)"><span class="dot" style="background:var(--t-trabajo-tx)"></span>trabajo</span></div>
+          </div>
+        </div>
+        <p class="vdesc">Inactivo: outline + punto de color. Activo: relleno con su color. Badge = punto + texto suave.</p>
+      </div>
+
+      <!-- B -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">B</span><span class="vname">Dot + texto, sin borde</span></div>
+        <div class="surface">
+          <div class="searchbar">Buscar notas…</div>
+          <div class="chips">
+            <div class="chip-b active" style="--ctx:var(--t-compras-tx)"><span class="dot" style="background:var(--t-compras-tx)"></span>compras</div>
+            <div class="chip-b"><span class="dot" style="background:var(--muted)"></span>trabajo</div>
+            <div class="chip-b"><span class="dot" style="background:var(--muted)"></span>ideas</div>
+            <div class="chip-b"><span class="dot" style="background:var(--muted)"></span>personal</div>
+          </div>
+          <div class="note" style="border:none;background:transparent;padding:4px 2px">
+            <div class="title" style="font-size:15px">Badge en la card →</div>
+            <div class="meta"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:650;color:var(--t-trabajo-tx)"><span class="dot" style="background:var(--t-trabajo-tx)"></span>trabajo</span></div>
+          </div>
+        </div>
+        <p class="vdesc">Cero globos: punto + texto. Activo con subrayado en color. Lo más liviano y moderno.</p>
+      </div>
+
+      <!-- C -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">C</span><span class="vname">Pill siempre con color</span></div>
+        <div class="surface">
+          <div class="searchbar">Buscar notas…</div>
+          <div class="chips">
+            <div class="chip-c active" style="--ctx:var(--t-compras-tx);--cbg:var(--t-compras-bg)">compras</div>
+            <div class="chip-c" style="--ctx:var(--t-trabajo-tx);--cbg:var(--t-trabajo-bg)">trabajo</div>
+            <div class="chip-c" style="--ctx:var(--t-ideas-tx);--cbg:var(--t-ideas-bg)">ideas</div>
+            <div class="chip-c" style="--ctx:var(--t-personal-tx);--cbg:var(--t-personal-bg)">personal</div>
+          </div>
+          <div class="note" style="border:none;background:transparent;padding:4px 2px">
+            <div class="title" style="font-size:15px">Badge en la card →</div>
+            <div class="meta"><span class="badge-soft" style="--ctx:var(--t-trabajo-tx);--cbg:var(--t-trabajo-bg)">trabajo</span></div>
+          </div>
+        </div>
+        <p class="vdesc">Todos con su color de fondo suave siempre. Activo: más saturado + borde. Chip = badge, consistente.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ITEM 3: SETTINGS ============ -->
+  <section class="section">
+    <header><h2>3 · Ajustes</h2></header>
+    <p class="sub">Fixes ya definidos: back sin cápsula “hover” de iOS 26 y engranaje 26→30px. Lo que elegís acá es el estilo del control <b>enable/disable</b> de la API key.</p>
+    <div class="variants">
+
+      <!-- fixes -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">FIX</span><span class="vname">Back button + engranaje</span></div>
+        <div class="surface">
+          <div class="navsim">
+            <span class="backbtn ghosted">‹ Atrás</span>
+            <span class="navtitle" style="color:var(--danger)">hoy: con cápsula</span>
+          </div>
+          <div class="navsim">
+            <span class="backbtn">‹ Atrás</span>
+            <span class="navtitle">nuevo: limpio</span>
+          </div>
+          <div class="gearrow">
+            <span class="gear"><span class="g26">⚙︎</span> 26 (hoy)</span>
+            <span class="gear"><span class="g30">⚙︎</span> 30 (nuevo)</span>
+          </div>
+          <div class="fixlist">
+            <b>Back:</b> <code>hidesSharedBackground</code> en headerLeft custom → sin resaltado al entrar.<br>
+            <b>Engranaje:</b> +4px, más tocable.
+          </div>
+        </div>
+        <p class="vdesc">Sin decisión: se aplican tal cual. Se muestran para que confirmes el antes/después.</p>
+      </div>
+
+      <!-- A switch -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">A</span><span class="vname">Switch “Usar IA”</span></div>
+        <div class="surface">
+          <div class="setlabel">API key de Anthropic</div>
+          <div class="row"><span class="rlabel">Usar IA (Anthropic)</span><span class="switch"></span></div>
+          <div class="keyrow"><span class="keyfield">sk-ant-••••••••••</span><span class="btn">Cambiar</span></div>
+          <p class="setnote" style="margin-top:10px">Off → el dictado guarda la transcripción sin formatear. La key queda guardada.</p>
+        </div>
+        <p class="vdesc">Switch nativo iOS. Idiomático y compacto. Recomendado.</p>
+      </div>
+
+      <!-- B segmented -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">B</span><span class="vname">Segmentado On/Off</span></div>
+        <div class="surface">
+          <div class="setlabel">API key de Anthropic</div>
+          <div class="segmented"><span class="seg active">Activada</span><span class="seg">Desactivada</span></div>
+          <div class="keyrow" style="margin-top:14px"><span class="keyfield">sk-ant-••••••••••</span><span class="btn primary">Guardar</span></div>
+          <p class="setnote" style="margin-top:10px">Desactivada → dictado sin IA, key conservada en el keychain.</p>
+        </div>
+        <p class="vdesc">Control segmentado, más explícito y visible que el switch.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section" style="text-align:center;color:var(--muted);font-size:13px">
+    Usá el botón ☾/☀ arriba a la derecha para ver dark y light · colores tomados de <code>src/theme/colors.ts</code> y <code>src/notes/tags.ts</code>
+  </div>
+</body>
+</html>
