@@ -23,7 +23,7 @@ import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
 import { ReminderPicker } from '../components/ReminderPicker';
 import { TagChips } from '../components/TagChips';
-import { FormatAccessory, FORMAT_ACCESSORY_ID } from '../components/FormatAccessory';
+import { FormatToolbar } from '../components/FormatToolbar';
 import { toggleLine, type FormatAction } from '../notes/markdown';
 import type { Recurrence, Note } from '../notes/types';
 import { isNoteTag } from '../notes/tags';
@@ -291,6 +291,7 @@ export default function VoiceScreen() {
         placeholder="Título"
         placeholderTextColor={palette.textMuted}
       />
+      <FormatToolbar onAction={applyFormat} />
       <TextInput
         value={draft.body}
         onChangeText={(t) => {
@@ -299,10 +300,8 @@ export default function VoiceScreen() {
         }}
         onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
         style={[styles.body, { color: palette.text }]}
-        inputAccessoryViewID={FORMAT_ACCESSORY_ID}
         multiline
       />
-      <FormatAccessory onAction={applyFormat} />
 
       <TagChips
         selected={draft.tag}

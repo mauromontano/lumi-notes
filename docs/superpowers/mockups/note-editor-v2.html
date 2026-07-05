@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumi Notes · Pantalla de nota v2 (toolbar visible + bottom sheets)</title>
+<style>
+  :root { --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+  [data-theme="dark"] {
+    --bg:#0b0e1d; --bg-end:#101430; --card:rgba(255,255,255,0.06); --card-border:rgba(255,255,255,0.09);
+    --text:#f2f3fa; --muted:rgba(242,243,250,0.6); --accent:#7c6bff; --badge-bg:rgba(139,125,255,0.2);
+    --badge-text:#b3a7ff; --danger:#ff7a7a; --danger-bg:rgba(255,122,122,0.16); --hairline:rgba(255,255,255,0.08); --page:#05060f;
+    --sheet:#161a30;
+    --t-trabajo-tx:#b3a7ff; --t-trabajo-bg:rgba(124,107,255,0.22);
+    --green-tx:#8ef0bd; --green-bg:rgba(107,232,168,0.18);
+    --orange-tx:#ffc9a3; --orange-bg:rgba(255,184,138,0.20);
+  }
+  [data-theme="light"] {
+    --bg:#fbf8f3; --bg-end:#f6efe6; --card:#ffffff; --card-border:rgba(160,140,110,0.18);
+    --text:#3a3733; --muted:rgba(58,55,51,0.55); --accent:#e78bb5; --badge-bg:#ffe8d6;
+    --badge-text:#c97b3d; --danger:#c0392b; --danger-bg:#ffe3e3; --hairline:rgba(160,140,110,0.16); --page:#ece4d8;
+    --sheet:#fffdfa;
+    --t-trabajo-tx:#6b5bd6; --t-trabajo-bg:#e8e4ff;
+    --green-tx:#2f9668; --green-bg:#e0f7e9; --orange-tx:#c97b3d; --orange-bg:#ffe8d6;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { background:var(--page); color:var(--text); font-family:var(--font); }
+  body { padding:32px 24px 96px; }
+  .topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:14px 20px; margin:-32px -24px 28px; background:color-mix(in srgb,var(--page) 82%,transparent);
+    backdrop-filter:blur(16px); border-bottom:1px solid var(--hairline); }
+  .topbar h1 { font-size:16px; font-weight:700; } .topbar h1 span { color:var(--muted); font-weight:500; }
+  .toggle { cursor:pointer; border:1px solid var(--card-border); background:var(--card); color:var(--text);
+    font:inherit; font-size:13px; font-weight:600; padding:8px 16px; border-radius:999px; }
+  .section { max-width:1180px; margin:0 auto 56px; }
+  .section h2 { font-size:22px; letter-spacing:-.4px; }
+  .section .sub { color:var(--muted); font-size:14px; margin:6px 0 22px; max-width:780px; line-height:1.5; }
+  .variants { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:26px; align-items:start; }
+  .vhead { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .vtag { font-size:11px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; color:var(--accent);
+    border:1px solid color-mix(in srgb,var(--accent) 45%,transparent); padding:3px 8px; border-radius:6px; }
+  .vname { font-size:15px; font-weight:650; }
+  .vdesc { color:var(--muted); font-size:13px; line-height:1.55; margin:10px 2px 0; }
+  .vdesc b { color:var(--text); font-weight:650; }
+
+  .phone { position:relative; background:linear-gradient(180deg,var(--bg),var(--bg-end)); border:1px solid var(--card-border);
+    border-radius:30px; overflow:hidden; height:640px; display:flex; flex-direction:column; box-shadow:0 20px 50px -30px rgba(0,0,0,.6); }
+  .nav { display:flex; align-items:center; gap:10px; padding:14px 16px 8px; }
+  .nav .back { color:var(--accent); font-size:24px; } .nav .spacer { flex:1; }
+  .nav .save { color:var(--accent); font-weight:700; font-size:15px; }
+  .seg { display:inline-flex; background:var(--card); border:1px solid var(--card-border); border-radius:9px; padding:2px; }
+  .seg span { font-size:12px; font-weight:650; color:var(--muted); padding:5px 12px; border-radius:7px; }
+  .seg span.on { background:var(--accent); color:#fff; }
+  .pin { color:var(--muted); font-size:19px; } .pin.on { color:var(--accent); }
+  .titin { padding:6px 18px 6px; font-size:23px; font-weight:800; letter-spacing:-.3px; }
+
+  /* format toolbar visible */
+  .ftbar { display:flex; gap:8px; padding:6px 16px 8px; }
+  .fbtn { display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:11px; font-size:14px; font-weight:700;
+    color:var(--badge-text); background:var(--badge-bg); border:1px solid color-mix(in srgb,var(--accent) 30%,transparent); }
+  .fbtn .ic { font-size:15px; }
+  /* variant B squares */
+  .ftbar.sq .fbtn { flex-direction:column; gap:3px; min-width:64px; justify-content:center; padding:8px 6px; font-size:11px; border-radius:12px; }
+  .ftbar.sq .fbtn .ic { font-size:19px; }
+
+  .bodyarea { flex:1; padding:4px 18px; font-size:16px; line-height:1.55; color:var(--text); overflow:hidden; }
+  .bodyarea .muted { color:var(--muted); }
+
+  /* options bar colorful */
+  .optbar { display:flex; gap:10px; padding:12px 16px 16px; border-top:1px solid var(--hairline); overflow-x:auto; }
+  .opt { flex:none; display:inline-flex; flex-direction:column; align-items:center; gap:6px; }
+  .opt .bubble { width:54px; height:54px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:22px;
+    border:1px solid var(--card-border); }
+  .opt .lbl { font-size:11px; font-weight:600; color:var(--muted); }
+  .opt.tag .bubble { background:var(--t-trabajo-bg); border-color:transparent; color:var(--t-trabajo-tx); }
+  .opt.tag .lbl { color:var(--t-trabajo-tx); }
+  .opt.rem .bubble { background:var(--badge-bg); border-color:transparent; color:var(--badge-text); }
+  .opt.sec .bubble { background:var(--green-bg); border-color:transparent; color:var(--green-tx); }
+  .opt.voz .bubble { background:var(--orange-bg); border-color:transparent; color:var(--orange-tx); }
+  .opt.del .bubble { background:var(--danger-bg); border-color:transparent; color:var(--danger); }
+
+  /* bottom sheet */
+  .backdrop { position:absolute; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:flex-end; }
+  .sheet { width:100%; background:var(--sheet); border-top-left-radius:22px; border-top-right-radius:22px; padding:10px 18px 26px;
+    border-top:1px solid var(--hairline); }
+  .grab { width:38px; height:5px; border-radius:3px; background:var(--muted); opacity:.5; margin:6px auto 14px; }
+  .sheet h3 { font-size:17px; font-weight:800; margin-bottom:12px; }
+  .chips { display:flex; gap:10px; flex-wrap:wrap; }
+  .chip { display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:999px; font-size:14px; font-weight:600;
+    border:1px solid var(--card-border); color:var(--muted); }
+  .chip.on { background:var(--t-trabajo-bg); border-color:transparent; color:var(--t-trabajo-tx); }
+  .chip .d { width:8px; height:8px; border-radius:50%; }
+  .srow { display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
+  .switch { width:46px; height:28px; border-radius:999px; background:var(--accent); position:relative; }
+  .switch::after { content:""; position:absolute; top:3px; right:3px; width:22px; height:22px; border-radius:50%; background:#fff; }
+  .primary { margin-top:14px; background:var(--accent); color:#fff; border-radius:14px; padding:14px; text-align:center; font-weight:700; }
+
+  .legend { font-size:12px; color:var(--muted); margin-top:8px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>Lumi Notes · <span>pantalla de nota v2</span></h1>
+    <button class="toggle" onclick="const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';this.textContent=r.dataset.theme==='dark'?'☾ Dark':'☀ Light'">☾ Dark</button>
+  </div>
+
+  <!-- ===== FORMAT TOOLBAR STYLE ===== -->
+  <section class="section">
+    <header><h2>1 · Barra de formato visible (modo Editar)</h2></header>
+    <p class="sub">Vuelve a estar <b>siempre visible</b> arriba del cuerpo mientras editás — no depende del teclado. Dos estilos, más grandes y con color para que se toquen fácil.</p>
+    <div class="variants">
+      <div>
+        <div class="vhead"><span class="vtag">A</span><span class="vname">Pills con ícono + texto</span></div>
+        <div class="phone" style="height:420px">
+          <div class="nav"><span class="back">‹</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span><span class="pin">✦</span><span class="save">Guardar</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="ftbar">
+            <span class="fbtn"><span class="ic">H</span>Título</span>
+            <span class="fbtn"><span class="ic">•</span>Lista</span>
+            <span class="fbtn"><span class="ic">☑</span>Check</span>
+          </div>
+          <div class="bodyarea"><span class="muted">## </span>Para el finde<br><span class="muted">- [ ] </span>Leche<br><span class="muted">- [ ] </span>Pan integral<br><span class="muted">- [x] </span>Café</div>
+        </div>
+        <p class="vdesc">Botones grandes tinte acento, ícono + palabra. Claros y fáciles de tocar.</p>
+      </div>
+      <div>
+        <div class="vhead"><span class="vtag">B</span><span class="vname">Botones cuadrados (ícono arriba)</span></div>
+        <div class="phone" style="height:420px">
+          <div class="nav"><span class="back">‹</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span><span class="pin">✦</span><span class="save">Guardar</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="ftbar sq">
+            <span class="fbtn"><span class="ic">H</span>Título</span>
+            <span class="fbtn"><span class="ic">•</span>Lista</span>
+            <span class="fbtn"><span class="ic">☑</span>Check</span>
+          </div>
+          <div class="bodyarea"><span class="muted">## </span>Para el finde<br><span class="muted">- [ ] </span>Leche<br><span class="muted">- [ ] </span>Pan integral<br><span class="muted">- [x] </span>Café</div>
+        </div>
+        <p class="vdesc">Ícono grande + etiqueta chica. Estilo “tiles”, aún más visibles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OPTIONS BAR + BOTTOM SHEET ===== -->
+  <section class="section">
+    <header><h2>2 · Barra de opciones colorida → bottom sheet</h2></header>
+    <p class="sub">Adiós a la card gris chiquita. Cada opción es un botón con color propio; al tocarlo <b>sube un modal desde abajo</b> con sus controles. Más grande, más claro, más fácil de tocar.</p>
+    <div class="variants">
+      <div>
+        <div class="vhead"><span class="vtag">BARRA</span><span class="vname">Opciones siempre visibles</span></div>
+        <div class="phone">
+          <div class="nav"><span class="back">‹</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span><span class="pin on">✦</span><span class="save">Guardar</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="ftbar">
+            <span class="fbtn"><span class="ic">H</span>Título</span>
+            <span class="fbtn"><span class="ic">•</span>Lista</span>
+            <span class="fbtn"><span class="ic">☑</span>Check</span>
+          </div>
+          <div class="bodyarea"><span class="muted">## </span>Para el finde<br><span class="muted">- [ ] </span>Leche<br><span class="muted">- [ ] </span>Pan integral<br><span class="muted">- [x] </span>Café<br><br>El cuerpo sigue teniendo la mayor parte.</div>
+          <div class="optbar">
+            <span class="opt tag"><span class="bubble">🏷</span><span class="lbl">trabajo</span></span>
+            <span class="opt rem"><span class="bubble">⏰</span><span class="lbl">Recordar</span></span>
+            <span class="opt sec"><span class="bubble">🔒</span><span class="lbl">Cifrar</span></span>
+            <span class="opt voz"><span class="bubble">🎙</span><span class="lbl">Voz</span></span>
+            <span class="opt del"><span class="bubble">🗑</span><span class="lbl">Borrar</span></span>
+          </div>
+        </div>
+        <p class="vdesc">Fila de botones con color por función (tag usa el color de su categoría). Etiqueta debajo. Cero “card gris”.</p>
+      </div>
+
+      <div>
+        <div class="vhead"><span class="vtag">SHEET</span><span class="vname">Ej.: tocar “Recordar”</span></div>
+        <div class="phone">
+          <div class="nav"><span class="back">‹</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span><span class="pin on">✦</span><span class="save">Guardar</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="ftbar"><span class="fbtn"><span class="ic">H</span>Título</span><span class="fbtn"><span class="ic">•</span>Lista</span><span class="fbtn"><span class="ic">☑</span>Check</span></div>
+          <div class="bodyarea"><span class="muted">## </span>Para el finde<br><span class="muted">- [ ] </span>Leche</div>
+          <div class="backdrop">
+            <div class="sheet">
+              <div class="grab"></div>
+              <h3>⏰ Recordatorio</h3>
+              <div class="srow"><span style="font-weight:600">Recordarme</span><span class="switch"></span></div>
+              <div style="color:var(--muted); font-size:14px; padding:8px 0">mié 9 jul, 09:00</div>
+              <div class="chips">
+                <span class="chip on" style="--t-trabajo-bg:var(--badge-bg); --t-trabajo-tx:var(--badge-text)">Una vez</span>
+                <span class="chip">Diario</span><span class="chip">Semanal</span><span class="chip">Mensual</span>
+              </div>
+              <div class="primary">Listo</div>
+            </div>
+          </div>
+        </div>
+        <p class="vdesc">Modal desde abajo con los controles de esa opción (acá el recordatorio). Igual para <b>Tag</b> (chips de categoría) y <b>Cifrar</b> (switch + aviso). <b>Borrar</b> = confirmación; <b>Voz</b> navega al dictado.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section" style="text-align:center;color:var(--muted);font-size:13px">Botón ☾/☀ arriba a la derecha para dark/light</div>
+</body>
+</html>

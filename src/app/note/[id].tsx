@@ -10,17 +10,20 @@ import { cancelReminder, syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
 import { TagChips } from '../../components/TagChips';
 import { NoteBodyView } from '../../components/NoteBodyView';
-import { FormatAccessory, FORMAT_ACCESSORY_ID } from '../../components/FormatAccessory';
+import { FormatToolbar } from '../../components/FormatToolbar';
+import { BottomSheet } from '../../components/BottomSheet';
 import { toggleLine, toggleTaskByIndex, type FormatAction } from '../../notes/markdown';
 import { readSecureBody, deleteSecureBody, saveSecureBody, SecureBodyError } from '../../notes/secureBody';
 import { log } from '../../lib/log';
 import type { Note, Recurrence } from '../../notes/types';
-import { isNoteTag, type NoteTag } from '../../notes/tags';
+import { isNoteTag, tagColors, type NoteTag } from '../../notes/tags';
+
+type SheetKind = 'tag' | 'reminder' | 'secure';
 
 export default function NoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const isNew = id === 'new';
-  const { palette } = useTheme();
+  const { theme, palette } = useTheme();
 
   const [note, setNote] = useState<Note | null>(null);
   const [title, setTitle] = useState('');
@@ -34,7 +37,7 @@ export default function NoteScreen() {
   const [locked, setLocked] = useState(false);
   const [bodyCursor, setBodyCursor] = useState(0);
   const [mode, setMode] = useState<'edit' | 'view'>(isNew ? 'edit' : 'view');
-  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [sheet, setSheet] = useState<SheetKind | null>(null);
 
   function applyFormat(action: FormatAction) {
     setBody((prev) => toggleLine(prev, bodyCursor, action).text);
@@ -166,13 +169,10 @@ export default function NoteScreen() {
     ]);
   }
 
-  const summary = [
-    tag ?? 'sin tag',
-    reminderAt ? 'con recordatorio' : 'sin recordatorio',
-    secure ? 'cifrada' : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  const tagBubble = tag ? tagColors[theme][tag] : { bg: palette.card, text: palette.textMuted };
+  const green = tagColors[theme].compras;
+  const orange = tagColors[theme].viajes;
+  const showVoz = !isNew && hasApiKey && !note?.secure && !secure;
 
   return (
     <ScrollView
@@ -239,16 +239,18 @@ export default function NoteScreen() {
           </View>
 
           {mode === 'edit' ? (
-            <TextInput
-              value={body}
-              onChangeText={setBody}
-              onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
-              placeholder="Escribí tu nota…"
-              placeholderTextColor={palette.textMuted}
-              style={[styles.body, { color: palette.text }]}
-              inputAccessoryViewID={FORMAT_ACCESSORY_ID}
-              multiline
-            />
+            <>
+              <FormatToolbar onAction={applyFormat} />
+              <TextInput
+                value={body}
+                onChangeText={setBody}
+                onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
+                placeholder="Escribí tu nota…"
+                placeholderTextColor={palette.textMuted}
+                style={[styles.body, { color: palette.text }]}
+                multiline
+              />
+            </>
           ) : (
             <View style={styles.bodyView}>
               <NoteBodyView
@@ -259,56 +261,83 @@ export default function NoteScreen() {
             </View>
           )}
 
-          {/* opciones plegables */}
-          <Pressable
-            onPress={() => setOptionsOpen((o) => !o)}
-            style={[styles.optBar, { borderColor: palette.cardBorder }]}
+          {/* barra de opciones colorida → bottom sheets */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={[styles.optScroll, { borderTopColor: palette.cardBorder }]}
+            contentContainerStyle={styles.optBar}
           >
-            <Text style={{ color: palette.textMuted, fontSize: 13 }} numberOfLines={1}>
-              ⚙︎ Opciones · {summary}
-            </Text>
-            <Text style={{ color: palette.textMuted, fontSize: 13 }}>{optionsOpen ? '▾' : '▸'}</Text>
-          </Pressable>
-
-          {optionsOpen && (
-            <View style={styles.optPanel}>
-              <TagChips selected={tag} onSelect={setTag} includeNone />
-
-              <View style={styles.secureRow}>
-                <Text style={{ color: palette.text, fontSize: 15 }}>🔒 Nota cifrada</Text>
-                <Switch value={secure} onValueChange={setSecure} />
-              </View>
-
-              <ReminderPicker
-                reminderAt={reminderAt}
-                recurrence={recurrence}
-                onChange={(at, rec) => {
-                  setReminderAt(at);
-                  setRecurrence(rec);
-                }}
+            <OptionButton emoji="🏷" label={tag ?? 'Sin tag'} bg={tagBubble.bg} color={tagBubble.text} onPress={() => setSheet('tag')} />
+            <OptionButton emoji="⏰" label={reminderAt ? 'Recordatorio' : 'Recordar'} bg={palette.badgeBg} color={palette.badgeText} onPress={() => setSheet('reminder')} />
+            <OptionButton emoji="🔒" label={secure ? 'Cifrada' : 'Cifrar'} bg={green.bg} color={green.text} onPress={() => setSheet('secure')} />
+            {showVoz && (
+              <OptionButton
+                emoji="🎙"
+                label="Voz"
+                bg={orange.bg}
+                color={orange.text}
+                onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
               />
-
-              {!isNew && hasApiKey && !note?.secure && !secure && (
-                <Pressable
-                  onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
-                  style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}
-                >
-                  <Text style={{ color: palette.text }}>🎙 Editar con voz</Text>
-                </Pressable>
-              )}
-
-              {!isNew && (
-                <Pressable onPress={confirmDelete} style={styles.deleteBtn}>
-                  <Text style={{ color: palette.danger }}>Borrar nota</Text>
-                </Pressable>
-              )}
-            </View>
-          )}
+            )}
+            {!isNew && (
+              <OptionButton emoji="🗑" label="Borrar" bg={palette.danger + '22'} color={palette.danger} onPress={confirmDelete} />
+            )}
+          </ScrollView>
         </>
       )}
 
-      {!locked && <FormatAccessory onAction={applyFormat} />}
+      <BottomSheet visible={sheet === 'tag'} onClose={() => setSheet(null)} title="🏷 Categoría">
+        <TagChips selected={tag} onSelect={setTag} includeNone />
+      </BottomSheet>
+
+      <BottomSheet visible={sheet === 'reminder'} onClose={() => setSheet(null)} title="⏰ Recordatorio">
+        <ReminderPicker
+          reminderAt={reminderAt}
+          recurrence={recurrence}
+          onChange={(at, rec) => {
+            setReminderAt(at);
+            setRecurrence(rec);
+          }}
+        />
+      </BottomSheet>
+
+      <BottomSheet visible={sheet === 'secure'} onClose={() => setSheet(null)} title="🔒 Nota cifrada">
+        <View style={styles.secureRow}>
+          <Text style={{ color: palette.text, fontSize: 15 }}>Guardar cifrada (Face ID)</Text>
+          <Switch value={secure} onValueChange={setSecure} />
+        </View>
+        <Text style={{ color: palette.textMuted, fontSize: 13, lineHeight: 19 }}>
+          El cuerpo se guarda en el Keychain con Face ID. Pensada para claves o datos sensibles (hasta ~2000
+          caracteres). Nunca pasa por la IA.
+        </Text>
+      </BottomSheet>
     </ScrollView>
+  );
+}
+
+function OptionButton({
+  emoji,
+  label,
+  bg,
+  color,
+  onPress,
+}: {
+  emoji: string;
+  label: string;
+  bg: string;
+  color: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable onPress={onPress} style={styles.opt} hitSlop={4}>
+      <View style={[styles.bubble, { backgroundColor: bg }]}>
+        <Text style={{ fontSize: 22 }}>{emoji}</Text>
+      </View>
+      <Text style={[styles.optLbl, { color }]} numberOfLines={1}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -323,18 +352,12 @@ const styles = StyleSheet.create({
   // el cuerpo domina: al menos la mitad de la pantalla
   body: { fontSize: 16, minHeight: WINDOW_H * 0.5, lineHeight: 24, textAlignVertical: 'top' },
   bodyView: { minHeight: WINDOW_H * 0.5 },
-  optBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    paddingTop: 12,
-    marginTop: 4,
-  },
-  optPanel: { gap: 14 },
-  secureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  secondaryBtn: { borderWidth: 1, borderRadius: 14, padding: 14, alignItems: 'center' },
+  optScroll: { flexGrow: 0, borderTopWidth: StyleSheet.hairlineWidth, marginTop: 4 },
+  optBar: { gap: 14, paddingTop: 12, paddingHorizontal: 2 },
+  opt: { alignItems: 'center', gap: 6, width: 62 },
+  bubble: { width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  optLbl: { fontSize: 11, fontWeight: '600' },
+  secureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },
   unlockBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
   unlockText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  deleteBtn: { alignItems: 'center', padding: 10 },
 });
