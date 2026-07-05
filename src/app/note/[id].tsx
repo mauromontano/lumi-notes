@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, Switch, Text, TextInput, View, StyleSheet } from 'react-native';
+import { Alert, Dimensions, Pressable, ScrollView, Switch, Text, TextInput, View, StyleSheet } from 'react-native';
 import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '../../theme/ThemeContext';
 import { getApiKey } from '../../settings/secrets';
@@ -9,8 +9,9 @@ import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo'
 import { cancelReminder, syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
 import { TagChips } from '../../components/TagChips';
-import { FormatToolbar } from '../../components/FormatToolbar';
-import { toggleLine, type FormatAction } from '../../notes/markdown';
+import { NoteBodyView } from '../../components/NoteBodyView';
+import { FormatAccessory, FORMAT_ACCESSORY_ID } from '../../components/FormatAccessory';
+import { toggleLine, toggleTaskByIndex, type FormatAction } from '../../notes/markdown';
 import { readSecureBody, deleteSecureBody, saveSecureBody, SecureBodyError } from '../../notes/secureBody';
 import { log } from '../../lib/log';
 import type { Note, Recurrence } from '../../notes/types';
@@ -32,6 +33,8 @@ export default function NoteScreen() {
   const [secure, setSecure] = useState(false);
   const [locked, setLocked] = useState(false);
   const [bodyCursor, setBodyCursor] = useState(0);
+  const [mode, setMode] = useState<'edit' | 'view'>(isNew ? 'edit' : 'view');
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   function applyFormat(action: FormatAction) {
     setBody((prev) => toggleLine(prev, bodyCursor, action).text);
@@ -163,6 +166,14 @@ export default function NoteScreen() {
     ]);
   }
 
+  const summary = [
+    tag ?? 'sin tag',
+    reminderAt ? 'con recordatorio' : 'sin recordatorio',
+    secure ? 'cifrada' : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: palette.bg }}
@@ -173,17 +184,20 @@ export default function NoteScreen() {
         options={{
           title: isNew ? 'Nueva nota' : 'Nota',
           // custom + hidesSharedBackground: sin la cápsula glass/highlight de iOS 26
-          unstable_headerRightItems: () => [
-            {
-              type: 'custom',
-              hidesSharedBackground: true,
-              element: (
-                <Pressable onPress={() => setPinned((p) => !p)} hitSlop={12}>
-                  <Text style={{ fontSize: 22, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
-                </Pressable>
-              ),
-            },
-          ],
+          unstable_headerRightItems: () =>
+            locked
+              ? []
+              : [
+                  {
+                    type: 'custom',
+                    hidesSharedBackground: true,
+                    element: (
+                      <Pressable onPress={save} hitSlop={12}>
+                        <Text style={{ fontSize: 16, fontWeight: '700', color: palette.accent }}>Guardar</Text>
+                      </Pressable>
+                    ),
+                  },
+                ],
         }}
       />
 
@@ -194,76 +208,133 @@ export default function NoteScreen() {
         placeholderTextColor={palette.textMuted}
         style={[styles.title, { color: palette.text }]}
       />
+
       {locked ? (
         <View style={{ alignItems: 'center', gap: 10, paddingVertical: 30 }}>
           <Text style={{ color: palette.textMuted }}>🔒 Contenido bloqueado</Text>
-          <Pressable onPress={reloadSecureBody} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
-            <Text style={styles.saveText}>Desbloquear</Text>
+          <Pressable onPress={reloadSecureBody} style={[styles.unlockBtn, { backgroundColor: palette.accent }]}>
+            <Text style={styles.unlockText}>Desbloquear</Text>
           </Pressable>
         </View>
       ) : (
-        <View style={{ gap: 10 }}>
-          <FormatToolbar onAction={applyFormat} />
-          <TextInput
-            value={body}
-            onChangeText={setBody}
-            onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
-            placeholder="Escribí tu nota…"
-            placeholderTextColor={palette.textMuted}
-            style={[styles.body, { color: palette.text }]}
-            multiline
-          />
-        </View>
+        <>
+          {/* fila de modo: Editar/Vista + pin */}
+          <View style={styles.modeRow}>
+            <View style={[styles.segmented, { borderColor: palette.cardBorder, backgroundColor: palette.card }]}>
+              {(['edit', 'view'] as const).map((m) => {
+                const active = mode === m;
+                return (
+                  <Pressable key={m} onPress={() => setMode(m)} style={[styles.seg, active && { backgroundColor: palette.accent }]}>
+                    <Text style={{ color: active ? '#fff' : palette.textMuted, fontSize: 13, fontWeight: '600' }}>
+                      {m === 'edit' ? 'Editar' : 'Vista'}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <View style={{ flex: 1 }} />
+            <Pressable onPress={() => setPinned((p) => !p)} hitSlop={10}>
+              <Text style={{ fontSize: 22, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
+            </Pressable>
+          </View>
+
+          {mode === 'edit' ? (
+            <TextInput
+              value={body}
+              onChangeText={setBody}
+              onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
+              placeholder="Escribí tu nota…"
+              placeholderTextColor={palette.textMuted}
+              style={[styles.body, { color: palette.text }]}
+              inputAccessoryViewID={FORMAT_ACCESSORY_ID}
+              multiline
+            />
+          ) : (
+            <View style={styles.bodyView}>
+              <NoteBodyView
+                body={body}
+                onToggleTask={(i) => setBody((prev) => toggleTaskByIndex(prev, i))}
+                onPressText={() => setMode('edit')}
+              />
+            </View>
+          )}
+
+          {/* opciones plegables */}
+          <Pressable
+            onPress={() => setOptionsOpen((o) => !o)}
+            style={[styles.optBar, { borderColor: palette.cardBorder }]}
+          >
+            <Text style={{ color: palette.textMuted, fontSize: 13 }} numberOfLines={1}>
+              ⚙︎ Opciones · {summary}
+            </Text>
+            <Text style={{ color: palette.textMuted, fontSize: 13 }}>{optionsOpen ? '▾' : '▸'}</Text>
+          </Pressable>
+
+          {optionsOpen && (
+            <View style={styles.optPanel}>
+              <TagChips selected={tag} onSelect={setTag} includeNone />
+
+              <View style={styles.secureRow}>
+                <Text style={{ color: palette.text, fontSize: 15 }}>🔒 Nota cifrada</Text>
+                <Switch value={secure} onValueChange={setSecure} />
+              </View>
+
+              <ReminderPicker
+                reminderAt={reminderAt}
+                recurrence={recurrence}
+                onChange={(at, rec) => {
+                  setReminderAt(at);
+                  setRecurrence(rec);
+                }}
+              />
+
+              {!isNew && hasApiKey && !note?.secure && !secure && (
+                <Pressable
+                  onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
+                  style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}
+                >
+                  <Text style={{ color: palette.text }}>🎙 Editar con voz</Text>
+                </Pressable>
+              )}
+
+              {!isNew && (
+                <Pressable onPress={confirmDelete} style={styles.deleteBtn}>
+                  <Text style={{ color: palette.danger }}>Borrar nota</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+        </>
       )}
 
-      {!locked && <TagChips selected={tag} onSelect={setTag} includeNone />}
-
-      {!locked && (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ color: palette.text, fontSize: 15 }}>🔒 Nota cifrada</Text>
-          <Switch value={secure} onValueChange={setSecure} />
-        </View>
-      )}
-
-      <ReminderPicker
-        reminderAt={reminderAt}
-        recurrence={recurrence}
-        onChange={(at, rec) => {
-          setReminderAt(at);
-          setRecurrence(rec);
-        }}
-      />
-
-      {!isNew && hasApiKey && !note?.secure && !secure && (
-        <Pressable
-          onPress={() => router.push({ pathname: '/voice', params: { noteId: note!.id } })}
-          style={[styles.secondaryBtn, { borderColor: palette.cardBorder }]}
-        >
-          <Text style={{ color: palette.text }}>🎙 Editar con voz</Text>
-        </Pressable>
-      )}
-
-      {!locked && (
-        <Pressable onPress={save} style={[styles.saveBtn, { backgroundColor: palette.accent }]}>
-          <Text style={styles.saveText}>Guardar</Text>
-        </Pressable>
-      )}
-
-      {!isNew && (
-        <Pressable onPress={confirmDelete} style={styles.deleteBtn}>
-          <Text style={{ color: palette.danger }}>Borrar nota</Text>
-        </Pressable>
-      )}
+      {!locked && <FormatAccessory onAction={applyFormat} />}
     </ScrollView>
   );
 }
 
+const { height: WINDOW_H } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
-  content: { padding: 16, gap: 14, paddingBottom: 60 },
-  title: { fontSize: 22, fontWeight: '700' },
-  body: { fontSize: 16, minHeight: 160, textAlignVertical: 'top' },
+  content: { padding: 16, gap: 12, paddingBottom: 40 },
+  title: { fontSize: 23, fontWeight: '800' },
+  modeRow: { flexDirection: 'row', alignItems: 'center' },
+  segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: 10, padding: 2, gap: 2 },
+  seg: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 8 },
+  // el cuerpo domina: al menos la mitad de la pantalla
+  body: { fontSize: 16, minHeight: WINDOW_H * 0.5, lineHeight: 24, textAlignVertical: 'top' },
+  bodyView: { minHeight: WINDOW_H * 0.5 },
+  optBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    paddingTop: 12,
+    marginTop: 4,
+  },
+  optPanel: { gap: 14 },
+  secureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   secondaryBtn: { borderWidth: 1, borderRadius: 14, padding: 14, alignItems: 'center' },
-  saveBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
-  saveText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  unlockBtn: { borderRadius: 14, padding: 16, alignItems: 'center' },
+  unlockText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   deleteBtn: { alignItems: 'center', padding: 10 },
 });

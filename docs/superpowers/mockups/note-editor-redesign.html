@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lumi Notes · Rediseño pantalla de nota</title>
+<style>
+  :root { --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+  [data-theme="dark"] {
+    --bg: #0b0e1d; --bg-end: #101430;
+    --card: rgba(255,255,255,0.06); --card-border: rgba(255,255,255,0.09);
+    --text: #f2f3fa; --muted: rgba(242,243,250,0.6);
+    --accent: #7c6bff; --badge-bg: rgba(139,125,255,0.2); --badge-text: #b3a7ff;
+    --danger: #ff7a7a; --hairline: rgba(255,255,255,0.08); --page: #05060f;
+    --accessory: #171a2e;
+    --t-trabajo-tx: #b3a7ff; --t-trabajo-bg: rgba(124,107,255,0.20);
+  }
+  [data-theme="light"] {
+    --bg: #fbf8f3; --bg-end: #f6efe6;
+    --card: #ffffff; --card-border: rgba(160,140,110,0.18);
+    --text: #3a3733; --muted: rgba(58,55,51,0.55);
+    --accent: #e78bb5; --badge-bg: #ffe8d6; --badge-text: #c97b3d;
+    --danger: #c0392b; --hairline: rgba(160,140,110,0.16); --page: #ece4d8;
+    --accessory: #efe7db;
+    --t-trabajo-tx: #6b5bd6; --t-trabajo-bg: #e8e4ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--page); color: var(--text); font-family: var(--font); }
+  body { padding: 32px 24px 96px; }
+  .topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 14px 20px; margin: -32px -24px 28px; background: color-mix(in srgb, var(--page) 82%, transparent);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--hairline); }
+  .topbar h1 { font-size: 16px; font-weight: 700; } .topbar h1 span { color: var(--muted); font-weight: 500; }
+  .toggle { cursor: pointer; border: 1px solid var(--card-border); background: var(--card); color: var(--text);
+    font: inherit; font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; }
+  .section { max-width: 1180px; margin: 0 auto 56px; }
+  .section h2 { font-size: 22px; letter-spacing: -.4px; }
+  .section .sub { color: var(--muted); font-size: 14px; margin: 6px 0 22px; max-width: 760px; line-height: 1.5; }
+  .section .sub code { font-size: 12.5px; padding: 1px 5px; border-radius: 5px; background: var(--card); border: 1px solid var(--card-border); }
+  .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 26px; align-items: start; }
+  .variant .vhead { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .variant .tag { font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); padding: 3px 8px; border-radius: 6px; }
+  .variant .vname { font-size: 15px; font-weight: 650; }
+  .variant .vdesc { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 10px 2px 0; }
+  .variant .vdesc b { color: var(--text); font-weight: 650; }
+
+  /* phone */
+  .phone { background: linear-gradient(180deg, var(--bg), var(--bg-end)); border: 1px solid var(--card-border);
+    border-radius: 30px; overflow: hidden; height: 620px; display: flex; flex-direction: column;
+    box-shadow: 0 20px 50px -30px rgba(0,0,0,.6); }
+  .nav { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; }
+  .nav .back { color: var(--accent); font-size: 24px; }
+  .nav .ntitle { color: var(--muted); font-size: 15px; }
+  .nav .spacer { flex: 1; }
+  .seg { display: inline-flex; background: var(--card); border: 1px solid var(--card-border); border-radius: 9px; padding: 2px; }
+  .seg span { font-size: 12px; font-weight: 650; color: var(--muted); padding: 5px 11px; border-radius: 7px; }
+  .seg span.on { background: var(--accent); color: #fff; }
+  .pin { color: var(--muted); font-size: 19px; }
+  .pin.on { color: var(--accent); }
+  .titin { padding: 4px 18px 8px; font-size: 23px; font-weight: 800; letter-spacing: -.3px; }
+  .titin.ph { color: var(--muted); }
+  .bodyarea { flex: 1; padding: 6px 18px; font-size: 16px; line-height: 1.55; color: var(--text); overflow: hidden; }
+  .bodyarea.ph { color: var(--muted); }
+
+  /* accessory format bar (icon-only, above keyboard) */
+  .accessory { display: flex; align-items: center; gap: 4px; padding: 8px 10px; background: var(--accessory);
+    border-top: 1px solid var(--hairline); }
+  .accessory .ic { flex: none; min-width: 40px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+    gap: 4px; border-radius: 9px; color: var(--text); font-size: 15px; font-weight: 700; }
+  .accessory .ic:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
+  .accessory .grow { flex: 1; }
+  .accessory .done { color: var(--accent); font-weight: 700; font-size: 15px; padding: 0 8px; }
+  .kb { height: 96px; background: repeating-linear-gradient(90deg, transparent 0 6px, color-mix(in srgb, var(--text) 4%, transparent) 6px 7px),
+    color-mix(in srgb, var(--text) 7%, transparent); display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+
+  /* collapsible options bar */
+  .optbar { border-top: 1px solid var(--hairline); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 14px; }
+  .optbar .chev { color: var(--muted); }
+  .optpanel { border-top: 1px solid var(--hairline); padding: 12px 16px; display: flex; flex-direction: column; gap: 12px; background: color-mix(in srgb, var(--text) 3%, transparent); }
+
+  /* meta chips row (variant B) */
+  .metarow { display: flex; gap: 8px; padding: 4px 16px 8px; flex-wrap: wrap; }
+  .mchip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 6px 12px;
+    border-radius: 999px; border: 1px solid var(--card-border); color: var(--muted); }
+  .mchip.tag { color: var(--t-trabajo-tx); border-color: transparent; background: var(--t-trabajo-bg); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--t-trabajo-tx); }
+
+  /* rendered body (Vista) */
+  .r-h { font-size: 18px; font-weight: 800; margin: 10px 0 4px; }
+  .r-li { display: flex; gap: 9px; align-items: flex-start; padding: 3px 0; }
+  .r-bullet { color: var(--accent); font-weight: 800; }
+  .r-box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--muted); flex: none; margin-top: 1px; }
+  .r-box.on { background: var(--accent); border-color: var(--accent); position: relative; }
+  .r-box.on::after { content: "✓"; color: #fff; font-size: 13px; font-weight: 800; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .r-done { color: var(--muted); text-decoration: line-through; }
+  .tapnote { font-size: 11px; color: var(--accent); }
+
+  /* small tag chips + reminder inside options panel */
+  .chips { display: flex; gap: 14px; }
+  .chips .c { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .chips .c .d { width: 7px; height: 7px; border-radius: 50%; }
+  .rowline { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--text); }
+  .switch { width: 44px; height: 26px; border-radius: 999px; background: var(--accent); position: relative; }
+  .switch::after { content: ""; position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; }
+  .del { color: var(--danger); font-size: 14px; }
+  .legend { font-size: 12px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>Lumi Notes · <span>rediseño pantalla de nota</span></h1>
+    <button class="toggle" onclick="const r=document.documentElement;r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';this.textContent=r.dataset.theme==='dark'?'☾ Dark':'☀ Light'">☾ Dark</button>
+  </div>
+
+  <!-- ===== LAYOUT VARIANTS ===== -->
+  <section class="section">
+    <header><h2>Distribución de la pantalla</h2></header>
+    <p class="sub">Hoy: título + toolbar (card) + cuerpo + tags + toggle cifrada + recordatorio + editar con voz + guardar + borrar, todo apilado → el texto queda apretado. Dos variantes que dan el protagonismo al texto y esconden lo secundario.</p>
+    <div class="variants">
+
+      <!-- A -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">A</span><span class="vname">Opciones plegables + barra de teclado</span></div>
+        <div class="phone">
+          <div class="nav">
+            <span class="back">‹</span><span class="ntitle">Nota</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span>
+            <span class="pin">✦</span>
+          </div>
+          <div class="titin">Lista del súper</div>
+          <div class="bodyarea">## Para el finde<br>- [ ] Leche<br>- [ ] Pan integral<br>- [x] Café<br><br>Escribí tu nota… el cuerpo ocupa <b>casi toda</b> la pantalla.</div>
+          <div class="optbar"><span>⚙ Opciones · <span style="color:var(--t-trabajo-tx)">trabajo</span> · sin recordatorio</span><span class="chev">▸</span></div>
+          <div class="accessory">
+            <span class="ic">H</span><span class="ic">•</span><span class="ic">☑</span>
+            <span class="grow"></span><span class="done">Listo</span>
+          </div>
+        </div>
+        <p class="vdesc">La <b>toolbar de formato</b> vive sobre el teclado (accesorio), solo cuando editás — no ocupa layout fijo. Tags/recordatorio/cifrada/borrar se pliegan en <b>“⚙ Opciones”</b> (colapsado por defecto, muestra un resumen). Toggle <b>Editar/Vista</b> arriba.</p>
+      </div>
+
+      <!-- B -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">B</span><span class="vname">Meta en una fila + sheets</span></div>
+        <div class="phone">
+          <div class="nav">
+            <span class="back">‹</span><span class="ntitle">Nota</span><span class="spacer"></span>
+            <span class="seg"><span class="on">Editar</span><span>Vista</span></span>
+            <span class="pin on">✦</span>
+          </div>
+          <div class="titin">Lista del súper</div>
+          <div class="metarow">
+            <span class="mchip tag"><span class="dot"></span>trabajo</span>
+            <span class="mchip">⏰ Recordar</span>
+            <span class="mchip">🔒</span>
+            <span class="mchip">···</span>
+          </div>
+          <div class="bodyarea">## Para el finde<br>- [ ] Leche<br>- [ ] Pan integral<br>- [x] Café<br><br>El cuerpo arranca alto y ocupa el resto.</div>
+          <div class="accessory">
+            <span class="ic">H</span><span class="ic">•</span><span class="ic">☑</span>
+            <span class="grow"></span><span class="done">Listo</span>
+          </div>
+        </div>
+        <p class="vdesc">Una sola <b>fila de chips</b> resume tag/recordatorio/cifrada; al tocar cada uno se abre un <b>bottom sheet</b> con el picker. <b>···</b> = borrar/más. Cero cards grandes; el cuerpo respira. Toolbar de formato también como accesorio.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== RENDER APPROACH ===== -->
+  <section class="section">
+    <header><h2>Formateo renderizado — dos enfoques</h2></header>
+    <p class="sub">En ambos, el <b>render</b> es igual: título en negrita, viñetas con punto y <b>checkboxes tocables</b> (marca/desmarca y se guarda). Lo que cambia es <b>cómo se entra a editar</b>. Elegí uno.</p>
+    <div class="variants">
+
+      <!-- Approach 1: toggle -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">R1</span><span class="vname">Toggle Editar / Vista</span></div>
+        <div class="phone" style="height:540px">
+          <div class="nav"><span class="back">‹</span><span class="ntitle">Nota</span><span class="spacer"></span>
+            <span class="seg"><span>Editar</span><span class="on">Vista</span></span><span class="pin">✦</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="bodyarea">
+            <div class="r-h">Para el finde</div>
+            <div class="r-li"><span class="r-box"></span><span>Leche</span></div>
+            <div class="r-li"><span class="r-box"></span><span>Pan integral</span></div>
+            <div class="r-li"><span class="r-box on"></span><span class="r-done">Café</span></div>
+            <div class="tapnote">tocás un casillero → marca/desmarca</div>
+          </div>
+          <div class="optbar"><span>⚙ Opciones · <span style="color:var(--t-trabajo-tx)">trabajo</span></span><span class="chev">▸</span></div>
+        </div>
+        <p class="vdesc">Botón <b>Editar/Vista</b> en la nav. En <b>Vista</b> ves esto (render + checks tocables); en <b>Editar</b> aparece el TextInput con markdown crudo y el accesorio de teclado. Explícito y robusto. <b>Recomendado.</b></p>
+      </div>
+
+      <!-- Approach 2: always view, tap to edit -->
+      <div class="variant">
+        <div class="vhead"><span class="tag">R2</span><span class="vname">Abre en Vista · tocás para editar</span></div>
+        <div class="phone" style="height:540px">
+          <div class="nav"><span class="back">‹</span><span class="ntitle">Nota</span><span class="spacer"></span>
+            <span style="color:var(--muted);font-size:19px">✎</span><span class="pin">✦</span></div>
+          <div class="titin">Lista del súper</div>
+          <div class="bodyarea">
+            <div class="r-h">Para el finde</div>
+            <div class="r-li"><span class="r-box"></span><span>Leche</span></div>
+            <div class="r-li"><span class="r-box"></span><span>Pan integral</span></div>
+            <div class="r-li"><span class="r-box on"></span><span class="r-done">Café</span></div>
+            <div class="tapnote">tocás el texto → pasa a edición · el casillero solo marca</div>
+          </div>
+          <div class="optbar"><span>⚙ Opciones · <span style="color:var(--t-trabajo-tx)">trabajo</span></span><span class="chev">▸</span></div>
+        </div>
+        <p class="vdesc">Abre siempre renderizada; tocás el cuerpo (no un casillero) y entra en edición con el accesorio. Más fluido, pero distinguir “tap para editar” de “tap para marcar” es más frágil en RN.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FORMAT CONTROL: compact vs current ===== -->
+  <section class="section">
+    <header><h2>Barra de formato — compacta</h2></header>
+    <p class="sub">La card actual ocupa espacio fijo dentro de la nota. La versión compacta es un accesorio de teclado con íconos, que aparece solo al editar.</p>
+    <div class="variants">
+      <div class="variant">
+        <div class="vhead"><span class="tag" style="color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,transparent)">HOY</span><span class="vname">Card con texto</span></div>
+        <div style="background:linear-gradient(180deg,var(--bg),var(--bg-end));border:1px solid var(--card-border);border-radius:20px;padding:16px">
+          <div style="display:inline-flex;gap:4px;border:1px solid var(--card-border);background:var(--card);border-radius:12px;padding:4px">
+            <span style="padding:8px 14px;border-radius:8px">Título</span>
+            <span style="padding:8px 14px;border-radius:8px">• Lista</span>
+            <span style="padding:8px 14px;border-radius:8px">☑ Check</span>
+          </div>
+          <p class="legend">Ocupa una fila fija arriba del cuerpo, siempre visible.</p>
+        </div>
+      </div>
+      <div class="variant">
+        <div class="vhead"><span class="tag">NUEVO</span><span class="vname">Accesorio de teclado (íconos)</span></div>
+        <div style="background:linear-gradient(180deg,var(--bg),var(--bg-end));border:1px solid var(--card-border);border-radius:20px;overflow:hidden">
+          <div class="accessory"><span class="ic">H</span><span class="ic">•</span><span class="ic">☑</span><span class="grow"></span><span class="done">Listo</span></div>
+          <div class="kb">teclado iOS</div>
+        </div>
+        <p class="vdesc">Flota sobre el teclado, solo al editar. Íconos <b>H / • / ☑</b> + “Listo”. No roba espacio permanente a la nota.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section" style="text-align:center;color:var(--muted);font-size:13px">Botón ☾/☀ arriba a la derecha para dark/light</div>
+</body>
+</html>

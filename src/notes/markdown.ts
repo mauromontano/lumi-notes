@@ -57,6 +57,14 @@ export function toggleLine(
   return { text: newText, cursor: newCursor };
 }
 
+// Alterna el tildado de la tarea en la línea `index` (para tocar el checkbox en modo Vista).
+export function toggleTaskByIndex(body: string, index: number): string {
+  const lines = body.split('\n');
+  if (index < 0 || index >= lines.length) return body;
+  const offset = lines.slice(0, index).reduce((acc, l) => acc + l.length + 1, 0);
+  return toggleLine(body, offset, 'task').text;
+}
+
 // Texto “renderizado” para el preview de la card (una nota puede ser multilínea).
 export function previewText(body: string): string {
   return body

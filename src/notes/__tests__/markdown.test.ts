@@ -1,4 +1,4 @@
-import { classifyLine, stripMarkers, toggleLine, previewText } from '../markdown';
+import { classifyLine, stripMarkers, toggleLine, toggleTaskByIndex, previewText } from '../markdown';
 
 describe('markdown · classifyLine', () => {
   it('reconoce cada tipo de línea', () => {
@@ -41,6 +41,17 @@ describe('markdown · toggleLine', () => {
     const cursor = text.indexOf('dos') + 1;
     const out = toggleLine(text, cursor, 'heading');
     expect(out.text).toBe('uno\n## dos\ntres');
+  });
+});
+
+describe('markdown · toggleTaskByIndex', () => {
+  it('alterna la tarea de la línea indicada sin tocar el resto', () => {
+    const body = '- [ ] uno\n- [ ] dos\n- [ ] tres';
+    expect(toggleTaskByIndex(body, 1)).toBe('- [ ] uno\n- [x] dos\n- [ ] tres');
+    expect(toggleTaskByIndex('- [x] uno', 0)).toBe('- [ ] uno');
+  });
+  it('ignora índices fuera de rango', () => {
+    expect(toggleTaskByIndex('- [ ] uno', 9)).toBe('- [ ] uno');
   });
 });
 
