@@ -5,7 +5,7 @@
 export type FormatAction = 'heading' | 'bullet' | 'task';
 export type BlockKind = 'heading' | 'bullet' | 'task' | 'text';
 
-const TASK_RE = /^-\s+\[([ xX])\]\s?(.*)$/;
+const TASK_RE = /^-\s+\[([ xX]?)\]\s?(.*)$/; // tolera `- []` (sin espacio interno)
 const BULLET_RE = /^-\s+(.*)$/;
 const HEADING_RE = /^(#{1,6})\s+(.*)$/;
 

@@ -35,6 +35,17 @@ export async function createNote(
   return (await getNote(db, id))!;
 }
 
+// Inserta una nota completa preservando timestamps y flags (para importar backups).
+// notification_id queda NULL: se re-agenda aparte porque no es portable.
+export async function restoreNote(db: DbLike, n: Omit<Note, 'notificationId'>): Promise<Note> {
+  await db.runAsync(
+    `INSERT INTO notes (id, title, body, pinned, reminder_at, reminder_recurrence, notification_id, tag, secure, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)`,
+    [n.id, n.title, n.body, n.pinned ? 1 : 0, n.reminderAt, n.reminderRecurrence, n.tag, n.secure ? 1 : 0, n.createdAt, n.updatedAt],
+  );
+  return (await getNote(db, n.id))!;
+}
+
 export async function getNote(db: DbLike, id: string): Promise<Note | null> {
   const row = await db.getFirstAsync<Row>('SELECT * FROM notes WHERE id = ?', [id]);
   return row ? toNote(row) : null;

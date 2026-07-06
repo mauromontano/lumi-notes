@@ -1,5 +1,5 @@
 import { createTestDb } from '../../../tests/helpers/testDb';
-import { createNote, getNote, listNotes, updateNote, deleteNote } from '../notesRepo';
+import { createNote, getNote, listNotes, restoreNote, updateNote, deleteNote } from '../notesRepo';
 
 const db = () => createTestDb();
 
@@ -64,6 +64,29 @@ describe('notesRepo', () => {
     expect((await listNotes(d, 'pan', 'compras')).map((n) => n.id)).toEqual(['a']);
     await updateNote(d, 'b', { tag: null });
     expect((await getNote(d, 'b'))?.tag).toBeNull();
+  });
+
+  it('restoreNote inserta preservando timestamps y flags, sin notificationId', async () => {
+    const d = db();
+    const restored = await restoreNote(d, {
+      id: 'r1',
+      title: 'Restaurada',
+      body: '- [ ] pan',
+      pinned: true,
+      reminderAt: '2026-08-01T09:00:00.000Z',
+      reminderRecurrence: 'weekly',
+      tag: 'compras',
+      secure: false,
+      createdAt: '2025-05-01T10:00:00.000Z',
+      updatedAt: '2025-06-01T10:00:00.000Z',
+    });
+    expect(restored.pinned).toBe(true);
+    expect(restored.createdAt).toBe('2025-05-01T10:00:00.000Z');
+    expect(restored.updatedAt).toBe('2025-06-01T10:00:00.000Z');
+    expect(restored.reminderAt).toBe('2026-08-01T09:00:00.000Z');
+    expect(restored.reminderRecurrence).toBe('weekly');
+    expect(restored.notificationId).toBeNull();
+    expect((await getNote(d, 'r1'))?.title).toBe('Restaurada');
   });
 
   it('nota segura: guarda flag y la búsqueda no matchea su cuerpo', async () => {

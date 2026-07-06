@@ -186,6 +186,8 @@ PODS:
     - ExpoModulesCore
   - ExpoDevice (57.0.0):
     - ExpoModulesCore
+  - ExpoDocumentPicker (57.0.0):
+    - ExpoModulesCore
   - ExpoDomWebView (57.0.0):
     - ExpoModulesCore
   - ExpoFileSystem (57.0.0):
@@ -245,6 +247,8 @@ PODS:
   - ExpoSecureStore (57.0.0):
     - ExpoModulesCore
   - ExpoShareIntentModule (8.0.0):
+    - ExpoModulesCore
+  - ExpoSharing (57.0.2):
     - ExpoModulesCore
   - ExpoSpeechRecognition (56.0.1):
     - ExpoModulesCore
@@ -2501,6 +2505,7 @@ DEPENDENCIES:
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
   - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
+  - ExpoDocumentPicker (from `../node_modules/expo-document-picker/ios`)
   - "ExpoDomWebView (from `../node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios/ExpoFileSystem.podspec`)
   - ExpoFont (from `../node_modules/expo-font/ios/ExpoFont.podspec`)
@@ -2517,6 +2522,7 @@ DEPENDENCIES:
   - ExpoRouter (from `../node_modules/expo-router/ios`)
   - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoShareIntentModule (from `../node_modules/expo-share-intent/ios`)
+  - ExpoSharing (from `../node_modules/expo-sharing/ios`)
   - ExpoSpeechRecognition (from `../node_modules/expo-speech-recognition/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSQLite (from `../node_modules/expo-sqlite/ios`)
@@ -2636,6 +2642,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-crypto/ios"
   ExpoDevice:
     :path: "../node_modules/expo-device/ios"
+  ExpoDocumentPicker:
+    :path: "../node_modules/expo-document-picker/ios"
   ExpoDomWebView:
     :path: "../node_modules/@expo/dom-webview/ios"
   ExpoFileSystem:
@@ -2668,6 +2676,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-secure-store/ios"
   ExpoShareIntentModule:
     :path: "../node_modules/expo-share-intent/ios"
+  ExpoSharing:
+    :path: "../node_modules/expo-sharing/ios"
   ExpoSpeechRecognition:
     :path: "../node_modules/expo-speech-recognition/ios"
   ExpoSplashScreen:
@@ -2867,6 +2877,7 @@ SPEC CHECKSUMS:
   ExpoAsset: 586e89aeaab2e23bfa90b9dce4d7d5e36815c039
   ExpoCrypto: f9db7ec10f772afa112c0e465f34bedbc38adf5f
   ExpoDevice: 090ee05e20e40ca981d39263e3e95c46ed850782
+  ExpoDocumentPicker: 1160f4221c6ed4fed906aad0761549ea163b7a01
   ExpoDomWebView: 73ba90107a5acc0017a09b06e66d8eb238e089b8
   ExpoFileSystem: ffcd56066188802f263254b6b2e60f74b6a0bdae
   ExpoFont: 35fd7ad72f697d3a9656545909972d8b9f60d5da
@@ -2883,6 +2894,7 @@ SPEC CHECKSUMS:
   ExpoRouter: 944c03dd880cfd07c12970402fc2eb5dce638226
   ExpoSecureStore: be2276d312c1f213605c0864772510239605ec37
   ExpoShareIntentModule: 26ba88995a3a68f977919db0b2091bad9e130429
+  ExpoSharing: b73e18f97704aefd8f5cfe446b4643b80ac9860d
   ExpoSpeechRecognition: 119acf84448579e53f841d040aad76982f945e2d
   ExpoSplashScreen: ba6bd4b92a47f5da3cd70d82d33fcd8407be9d70
   ExpoSQLite: 8445c219481a384e1471d29a5d36fa8d69ef3174

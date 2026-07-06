@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, Pressable, ScrollView, Switch, Text, TextInput, View, StyleSheet } from 'react-native';
 import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../theme/ThemeContext';
 import { getApiKey } from '../../settings/secrets';
 import { getAiEnabled } from '../../settings/prefs';
@@ -24,6 +25,7 @@ export default function NoteScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const isNew = id === 'new';
   const { theme, palette } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [note, setNote] = useState<Note | null>(null);
   const [title, setTitle] = useState('');
@@ -35,12 +37,20 @@ export default function NoteScreen() {
   const [hasApiKey, setHasApiKey] = useState(false);
   const [secure, setSecure] = useState(false);
   const [locked, setLocked] = useState(false);
-  const [bodyCursor, setBodyCursor] = useState(0);
   const [mode, setMode] = useState<'edit' | 'view'>(isNew ? 'edit' : 'view');
   const [sheet, setSheet] = useState<SheetKind | null>(null);
+  // cursor en ref (no state): onSelectionChange no re-renderiza y nunca queda stale
+  const bodyCursorRef = useRef(0);
+  const bodyInputRef = useRef<TextInput>(null);
 
   function applyFormat(action: FormatAction) {
-    setBody((prev) => toggleLine(prev, bodyCursor, action).text);
+    const res = toggleLine(body, bodyCursorRef.current, action);
+    setBody(res.text);
+    bodyCursorRef.current = res.cursor;
+    // esperar al commit del re-render para que texto nativo y selección coincidan
+    requestAnimationFrame(() => {
+      bodyInputRef.current?.setSelection(res.cursor, res.cursor);
+    });
   }
 
   // re-chequea al volver del stack (p.ej. después de cargar la key en Ajustes)
@@ -175,11 +185,7 @@ export default function NoteScreen() {
   const showVoz = !isNew && hasApiKey && !note?.secure && !secure;
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: palette.bg }}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-    >
+    <View style={{ flex: 1, backgroundColor: palette.bg }}>
       <Stack.Screen
         options={{
           title: isNew ? 'Nueva nota' : 'Nota',
@@ -201,73 +207,83 @@ export default function NoteScreen() {
         }}
       />
 
-      <TextInput
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Título"
-        placeholderTextColor={palette.textMuted}
-        style={[styles.title, { color: palette.text }]}
-      />
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+      >
+        <TextInput
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Título"
+          placeholderTextColor={palette.textMuted}
+          style={[styles.title, { color: palette.text }]}
+        />
 
-      {locked ? (
-        <View style={{ alignItems: 'center', gap: 10, paddingVertical: 30 }}>
-          <Text style={{ color: palette.textMuted }}>🔒 Contenido bloqueado</Text>
-          <Pressable onPress={reloadSecureBody} style={[styles.unlockBtn, { backgroundColor: palette.accent }]}>
-            <Text style={styles.unlockText}>Desbloquear</Text>
-          </Pressable>
-        </View>
-      ) : (
-        <>
-          {/* fila de modo: Editar/Vista + pin */}
-          <View style={styles.modeRow}>
-            <View style={[styles.segmented, { borderColor: palette.cardBorder, backgroundColor: palette.card }]}>
-              {(['edit', 'view'] as const).map((m) => {
-                const active = mode === m;
-                return (
-                  <Pressable key={m} onPress={() => setMode(m)} style={[styles.seg, active && { backgroundColor: palette.accent }]}>
-                    <Text style={{ color: active ? '#fff' : palette.textMuted, fontSize: 13, fontWeight: '600' }}>
-                      {m === 'edit' ? 'Editar' : 'Vista'}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-            <View style={{ flex: 1 }} />
-            <Pressable onPress={() => setPinned((p) => !p)} hitSlop={10}>
-              <Text style={{ fontSize: 22, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
+        {locked ? (
+          <View style={{ alignItems: 'center', gap: 10, paddingVertical: 30 }}>
+            <Text style={{ color: palette.textMuted }}>🔒 Contenido bloqueado</Text>
+            <Pressable onPress={reloadSecureBody} style={[styles.unlockBtn, { backgroundColor: palette.accent }]}>
+              <Text style={styles.unlockText}>Desbloquear</Text>
             </Pressable>
           </View>
-
-          {mode === 'edit' ? (
-            <>
-              <FormatToolbar onAction={applyFormat} />
-              <TextInput
-                value={body}
-                onChangeText={setBody}
-                onSelectionChange={(e) => setBodyCursor(e.nativeEvent.selection.start)}
-                placeholder="Escribí tu nota…"
-                placeholderTextColor={palette.textMuted}
-                style={[styles.body, { color: palette.text }]}
-                multiline
-              />
-            </>
-          ) : (
-            <View style={styles.bodyView}>
-              <NoteBodyView
-                body={body}
-                onToggleTask={(i) => setBody((prev) => toggleTaskByIndex(prev, i))}
-                onPressText={() => setMode('edit')}
-              />
+        ) : (
+          <>
+            {/* fila de modo: Editar/Vista + pin */}
+            <View style={styles.modeRow}>
+              <View style={[styles.segmented, { borderColor: palette.cardBorder, backgroundColor: palette.card }]}>
+                {(['edit', 'view'] as const).map((m) => {
+                  const active = mode === m;
+                  return (
+                    <Pressable key={m} onPress={() => setMode(m)} style={[styles.seg, active && { backgroundColor: palette.accent }]}>
+                      <Text style={{ color: active ? '#fff' : palette.textMuted, fontSize: 13, fontWeight: '600' }}>
+                        {m === 'edit' ? 'Editar' : 'Vista'}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <View style={{ flex: 1 }} />
+              <Pressable onPress={() => setPinned((p) => !p)} hitSlop={10}>
+                <Text style={{ fontSize: 22, color: pinned ? palette.accent : palette.textMuted }}>✦</Text>
+              </Pressable>
             </View>
-          )}
 
-          {/* barra de opciones colorida → bottom sheets */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={[styles.optScroll, { borderTopColor: palette.cardBorder }]}
-            contentContainerStyle={styles.optBar}
-          >
+            {mode === 'edit' ? (
+              <>
+                <FormatToolbar onAction={applyFormat} />
+                <TextInput
+                  ref={bodyInputRef}
+                  value={body}
+                  onChangeText={setBody}
+                  onSelectionChange={(e) => {
+                    bodyCursorRef.current = e.nativeEvent.selection.start;
+                  }}
+                  placeholder="Escribí tu nota…"
+                  placeholderTextColor={palette.textMuted}
+                  style={[styles.body, { color: palette.text }]}
+                  multiline
+                />
+              </>
+            ) : (
+              <View style={styles.bodyView}>
+                <NoteBodyView
+                  body={body}
+                  onToggleTask={(i) => setBody((prev) => toggleTaskByIndex(prev, i))}
+                  onPressText={() => setMode('edit')}
+                />
+              </View>
+            )}
+          </>
+        )}
+      </ScrollView>
+
+      {/* barra de opciones colorida, fija al borde inferior → bottom sheets */}
+      {!locked && (
+        <View style={[styles.footer, { borderTopColor: palette.cardBorder, paddingBottom: Math.max(insets.bottom, 10) }]}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.optBar}>
             <OptionButton emoji="🏷" label={tag ?? 'Sin tag'} bg={tagBubble.bg} color={tagBubble.text} onPress={() => setSheet('tag')} />
             <OptionButton emoji="⏰" label={reminderAt ? 'Recordatorio' : 'Recordar'} bg={palette.badgeBg} color={palette.badgeText} onPress={() => setSheet('reminder')} />
             <OptionButton emoji="🔒" label={secure ? 'Cifrada' : 'Cifrar'} bg={green.bg} color={green.text} onPress={() => setSheet('secure')} />
@@ -284,7 +300,7 @@ export default function NoteScreen() {
               <OptionButton emoji="🗑" label="Borrar" bg={palette.danger + '22'} color={palette.danger} onPress={confirmDelete} />
             )}
           </ScrollView>
-        </>
+        </View>
       )}
 
       <BottomSheet visible={sheet === 'tag'} onClose={() => setSheet(null)} title="🏷 Categoría">
@@ -312,7 +328,7 @@ export default function NoteScreen() {
           caracteres). Nunca pasa por la IA.
         </Text>
       </BottomSheet>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -344,7 +360,7 @@ function OptionButton({
 const { height: WINDOW_H } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  content: { padding: 16, gap: 12, paddingBottom: 40 },
+  content: { padding: 16, gap: 12, paddingBottom: 24 },
   title: { fontSize: 23, fontWeight: '800' },
   modeRow: { flexDirection: 'row', alignItems: 'center' },
   segmented: { flexDirection: 'row', borderWidth: 1, borderRadius: 10, padding: 2, gap: 2 },
@@ -352,8 +368,8 @@ const styles = StyleSheet.create({
   // el cuerpo domina: al menos la mitad de la pantalla
   body: { fontSize: 16, minHeight: WINDOW_H * 0.5, lineHeight: 24, textAlignVertical: 'top' },
   bodyView: { minHeight: WINDOW_H * 0.5 },
-  optScroll: { flexGrow: 0, borderTopWidth: StyleSheet.hairlineWidth, marginTop: 4 },
-  optBar: { gap: 14, paddingTop: 12, paddingHorizontal: 2 },
+  footer: { borderTopWidth: StyleSheet.hairlineWidth },
+  optBar: { gap: 14, paddingTop: 10, paddingHorizontal: 16 },
   opt: { alignItems: 'center', gap: 6, width: 62 },
   bubble: { width: 54, height: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   optLbl: { fontSize: 11, fontWeight: '600' },

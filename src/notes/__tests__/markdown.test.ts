@@ -8,6 +8,10 @@ describe('markdown · classifyLine', () => {
     expect(classifyLine('- [x] hecha')).toEqual({ kind: 'task', checked: true });
     expect(classifyLine('texto normal').kind).toBe('text');
   });
+
+  it('tolera checkbox sin espacio interno `- []`', () => {
+    expect(classifyLine('- [] tarea')).toEqual({ kind: 'task', checked: false });
+  });
 });
 
 describe('markdown · stripMarkers', () => {
@@ -16,6 +20,10 @@ describe('markdown · stripMarkers', () => {
     expect(stripMarkers('- item')).toBe('item');
     expect(stripMarkers('- [x] hecha')).toBe('hecha');
     expect(stripMarkers('sin marcador')).toBe('sin marcador');
+  });
+
+  it('tolera checkbox sin espacio interno `- []`', () => {
+    expect(stripMarkers('- [] tarea')).toBe('tarea');
   });
 });
 
@@ -34,6 +42,16 @@ describe('markdown · toggleLine', () => {
     expect(checked.text).toBe('- [x] comprar');
     const unchecked = toggleLine(checked.text, 0, 'task');
     expect(unchecked.text).toBe('- [ ] comprar');
+  });
+
+  it('tilda una tarea escrita como `- []` sin espacio interno', () => {
+    expect(toggleLine('- [] tarea', 0, 'task').text).toBe('- [x] tarea');
+  });
+
+  it('devuelve el cursor desplazado por el marcador insertado', () => {
+    const r = toggleLine('comprar', 3, 'task');
+    expect(r.text).toBe('- [ ] comprar');
+    expect(r.cursor).toBe(3 + '- [ ] '.length);
   });
 
   it('opera solo sobre la línea del cursor en texto multilínea', () => {

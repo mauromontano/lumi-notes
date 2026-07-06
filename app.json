@@ -37,7 +37,9 @@
       "expo-sqlite",
       [
         "expo-secure-store",
-        { "faceIDPermission": "Lumi usa Face ID para desbloquear tus notas cifradas." }
+        {
+          "faceIDPermission": "Lumi usa Face ID para desbloquear tus notas cifradas."
+        }
       ],
       [
         "expo-speech-recognition",
@@ -60,7 +62,8 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-share-intent",
-      "./plugins/withAppIntents.js"
+      "./plugins/withAppIntents.js",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

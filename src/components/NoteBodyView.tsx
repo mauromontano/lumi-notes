@@ -39,7 +39,7 @@ export function NoteBodyView({ body, onToggleTask, onPressText }: Props) {
               >
                 {c.checked ? <Text style={styles.check}>✓</Text> : null}
               </View>
-              <Text style={[styles.liText, { color: c.checked ? palette.textMuted : palette.text }, c.checked && styles.strike]}>
+              <Text style={[styles.liText, { color: c.checked ? palette.textMuted : palette.text }]}>
                 {text}
               </Text>
             </Pressable>
@@ -69,5 +69,4 @@ const styles = StyleSheet.create({
   box: { width: 21, height: 21, borderRadius: 6, borderWidth: 2, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   check: { color: '#fff', fontSize: 13, fontWeight: '800' },
   liText: { fontSize: 16, lineHeight: 24, flex: 1 },
-  strike: { textDecorationLine: 'line-through' },
 });
