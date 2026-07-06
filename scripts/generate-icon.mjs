@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Paleta orbe violeta (tema oscuro de la app)
-const BG = '#0b0e1d';
+const BG = '#2b3163';
 const GLOW = '#7c6bff';
 const STOPS = ['#9be8ff', '#7c6bff', '#3d2f96'];
 
@@ -24,7 +24,7 @@ const svg = `
       <stop offset="70%" stop-color="${GLOW}" stop-opacity="0.15"/>
       <stop offset="100%" stop-color="${GLOW}" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="orb" gradientUnits="userSpaceOnUse" cx="512" cy="410" r="486">
+    <radialGradient id="orb" gradientUnits="userSpaceOnUse" cx="512" cy="425" r="415">
       <stop offset="0%" stop-color="${STOPS[0]}"/>
       <stop offset="55%" stop-color="${STOPS[1]}"/>
       <stop offset="100%" stop-color="${STOPS[2]}"/>
@@ -32,7 +32,7 @@ const svg = `
   </defs>
   <rect width="1024" height="1024" fill="${BG}"/>
   <circle cx="512" cy="512" r="512" fill="url(#halo)"/>
-  <circle cx="512" cy="512" r="369" fill="url(#orb)"/>
+  <circle cx="512" cy="512" r="315" fill="url(#orb)"/>
 </svg>`;
 
 const png = await sharp(Buffer.from(svg)).png().toBuffer();
