@@ -1,6 +1,14 @@
 import { isNoteTag, type NoteTag } from '@/notes/tags';
+import type { Recurrence } from '@/notes/types';
 
-export interface FormattedNote { title: string; body: string; tag: NoteTag | null }
+export interface DetectedReminder { at: string; recurrence: Recurrence }
+
+export interface FormattedNote {
+  title: string;
+  body: string;
+  tag: NoteTag | null;
+  reminder?: DetectedReminder | null;
+}
 
 export interface NoteFormatter {
   formatNote(transcript: string): Promise<FormattedNote>;
@@ -32,5 +40,18 @@ export function parseFormatterResponse(text: string): FormattedNote {
     throw new FormatterError('parse', 'faltan campos titulo/cuerpo');
   }
   const tag = isNoteTag(rec['tag']) ? rec['tag'] : null;
-  return { title: titulo.trim(), body: cuerpo, tag };
+  const reminder = parseReminder(rec['recordatorio']);
+  // incluimos la clave solo si hay recordatorio: mantiene compatible el shape sin recordatorio
+  return { title: titulo.trim(), body: cuerpo, tag, ...(reminder ? { reminder } : {}) };
+}
+
+function parseReminder(raw: unknown): DetectedReminder | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  const fecha = r['fecha'];
+  if (typeof fecha !== 'string' || Number.isNaN(new Date(fecha).getTime())) return null;
+  const rec = r['recurrencia'];
+  const recurrence: Recurrence =
+    rec === 'daily' || rec === 'weekly' || rec === 'monthly' ? rec : 'none';
+  return { at: fecha, recurrence };
 }

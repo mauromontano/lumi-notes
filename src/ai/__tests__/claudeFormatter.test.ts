@@ -1,4 +1,4 @@
-import { createClaudeFormatter } from '../claudeFormatter';
+import { createClaudeFormatter, offsetIso } from '../claudeFormatter';
 import { FormatterError } from '../formatter';
 
 function fakeFetchOnce(texts: string[]): typeof fetch {
@@ -49,5 +49,29 @@ describe('createClaudeFormatter', () => {
     const f = createClaudeFormatter(deps(fakeFetchOnce(['{"titulo":"Cena","cuerpo":"- Pan\\n- Agua"}'])));
     const res = await f.editNote({ title: 'Cena', body: '- Pan', tag: null }, 'agregá agua');
     expect(res.body).toContain('Agua');
+  });
+
+  it('formatNote incluye la fecha y hora actual para resolver recordatorios', async () => {
+    let sentBody = '';
+    const spyFetch = (async (_url: string, init: RequestInit) => {
+      sentBody = String(init.body);
+      return { ok: true, status: 200, json: async () => ({ content: [{ type: 'text', text: '{"titulo":"x","cuerpo":"y"}' }] }) } as Response;
+    }) as unknown as typeof fetch;
+    const now = () => new Date('2026-07-07T15:30:00-03:00');
+    const f = createClaudeFormatter({ getApiKey: async () => 'sk-test', fetchFn: spyFetch, now });
+    await f.formatNote('recordame mañana a las 3');
+    expect(sentBody).toContain('Fecha y hora actual:');
+    expect(sentBody).toContain(offsetIso(now()));
+  });
+});
+
+describe('offsetIso', () => {
+  it('emite ISO 8601 local con el offset del dispositivo', () => {
+    const d = new Date('2026-07-07T15:30:00-03:00');
+    const iso = offsetIso(d);
+    // formato: YYYY-MM-DDTHH:mm:ss±HH:mm
+    expect(iso).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/);
+    // re-parsear rinde el mismo instante
+    expect(new Date(iso).getTime()).toBe(d.getTime());
   });
 });

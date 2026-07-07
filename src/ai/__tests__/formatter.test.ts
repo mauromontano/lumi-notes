@@ -26,4 +26,28 @@ describe('parseFormatterResponse', () => {
     expect(parseFormatterResponse('{"titulo":"x","cuerpo":"y","tag":"inventado"}').tag).toBeNull();
     expect(parseFormatterResponse('{"titulo":"x","cuerpo":"y"}').tag).toBeNull();
   });
+  it('sin recordatorio ⇒ no incluye la clave reminder', () => {
+    const r = parseFormatterResponse('{"titulo":"x","cuerpo":"y"}');
+    expect('reminder' in r).toBe(false);
+  });
+  it('recordatorio con fecha válida ⇒ reminder con at y recurrencia', () => {
+    const r = parseFormatterResponse(
+      '{"titulo":"x","cuerpo":"y","recordatorio":{"fecha":"2026-07-08T15:00:00-03:00","recurrencia":"daily"}}',
+    );
+    expect(r.reminder).toEqual({ at: '2026-07-08T15:00:00-03:00', recurrence: 'daily' });
+  });
+  it('recurrencia inválida ⇒ none', () => {
+    const r = parseFormatterResponse(
+      '{"titulo":"x","cuerpo":"y","recordatorio":{"fecha":"2026-07-08T15:00:00-03:00","recurrencia":"anual"}}',
+    );
+    expect(r.reminder?.recurrence).toBe('none');
+  });
+  it('fecha inválida o null ⇒ no incluye reminder', () => {
+    expect('reminder' in parseFormatterResponse(
+      '{"titulo":"x","cuerpo":"y","recordatorio":{"fecha":"no-es-fecha"}}',
+    )).toBe(false);
+    expect('reminder' in parseFormatterResponse(
+      '{"titulo":"x","cuerpo":"y","recordatorio":{"fecha":null,"recurrencia":"none"}}',
+    )).toBe(false);
+  });
 });

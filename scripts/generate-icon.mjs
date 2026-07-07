@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Paleta orbe violeta (tema oscuro de la app)
-const BG = '#2b3163';
+const BG = '#10132a';
 const GLOW = '#7c6bff';
 const STOPS = ['#9be8ff', '#7c6bff', '#3d2f96'];
 

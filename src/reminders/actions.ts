@@ -48,6 +48,7 @@ export async function applyReminderAction(
   if (!note) return;
   try {
     if (plan.kind === 'snooze') {
+      await cancel(note.notificationId); // evita dejar huérfana la notificación previa al re-agendar
       const newId = await schedule({ id: note.id, title: note.title }, plan.snoozeUntil, 'none');
       if (note.reminderRecurrence === 'none') {
         await updateNote(db, note.id, { reminderAt: plan.snoozeUntil.toISOString(), notificationId: newId });

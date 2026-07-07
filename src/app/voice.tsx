@@ -21,6 +21,7 @@ import { FormatterError, FormattedNote } from '../ai/formatter';
 import { getDb, newId } from '../db/database';
 import { createNote, updateNote, getNote } from '../db/notesRepo';
 import { syncReminder } from '../reminders/scheduler';
+import { isValidReminder } from '../reminders/triggers';
 import { ReminderPicker } from '../components/ReminderPicker';
 import { TagChips } from '../components/TagChips';
 import { FormatToolbar } from '../components/FormatToolbar';
@@ -49,6 +50,7 @@ export default function VoiceScreen() {
   const [usedRawFallback, setUsedRawFallback] = useState<string | null>(null);
   const [reminderAt, setReminderAt] = useState<string | null>(null);
   const [recurrence, setRecurrence] = useState<Recurrence>('none');
+  const [reminderAuto, setReminderAuto] = useState(false);
   const [original, setOriginal] = useState<Note | null>(null);
   const [undone, setUndone] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
@@ -109,6 +111,15 @@ export default function VoiceScreen() {
           )
         : await formatter.formatNote(transcript);
       setDraft(formatted);
+      // create flow: si Lumi detectó un recordatorio en el dictado, pre-cargamos el picker
+      if (!isEdit && formatted.reminder) {
+        const at = new Date(formatted.reminder.at);
+        if (isValidReminder(at, formatted.reminder.recurrence)) {
+          setReminderAt(at.toISOString());
+          setRecurrence(formatted.reminder.recurrence);
+          setReminderAuto(true);
+        }
+      }
       setUsedRawFallback(null);
       setOrbState('success');
     } catch (e) {
@@ -186,6 +197,7 @@ export default function VoiceScreen() {
     setUsedRawFallback(null);
     setReminderAt(null);
     setRecurrence('none');
+    setReminderAuto(false);
     setHint(null);
     setPhase('listening');
     setOrbState('listening');
@@ -310,11 +322,18 @@ export default function VoiceScreen() {
       />
 
       {!isEdit && (
-        <ReminderPicker
-          reminderAt={reminderAt}
-          recurrence={recurrence}
-          onChange={(at, rec) => { setReminderAt(at); setRecurrence(rec); }}
-        />
+        <>
+          {reminderAuto && (
+            <Text style={[styles.reminderHint, { color: palette.textMuted }]}>
+              ⏰ Recordatorio detectado — revisá la hora
+            </Text>
+          )}
+          <ReminderPicker
+            reminderAt={reminderAt}
+            recurrence={recurrence}
+            onChange={(at, rec) => { setReminderAt(at); setRecurrence(rec); }}
+          />
+        </>
       )}
 
       <View style={styles.actions}>
@@ -348,6 +367,7 @@ const styles = StyleSheet.create({
   previewContent: { padding: 16, gap: 14, paddingBottom: 60 },
   previewHeader: { alignItems: 'center' },
   warn: { borderRadius: 10, padding: 10 },
+  reminderHint: { fontSize: 13, marginBottom: -6 },
   title: { fontSize: 22, fontWeight: '700' },
   body: { fontSize: 16, minHeight: 140, textAlignVertical: 'top' },
   actions: { flexDirection: 'row', gap: 10 },
