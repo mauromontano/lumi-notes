@@ -34,6 +34,26 @@ eas build --profile preview --platform ios       # preview final (.ipa interno) 
 eas build --profile production --platform ios     # build de producción (autoIncrement)
 ```
 
+### Build recomendado (evita el fallo de 2FA de Apple)
+
+A veces el build falla al pedir el código 2FA por SMS de Apple
+("Verification codes can't be sent to this phone number at this time").
+Para evitarlo, exportá la App Store Connect API Key antes de buildear así EAS
+no necesita loguearse en Apple ni pedir 2FA:
+
+```bash
+export EXPO_ASC_API_KEY_PATH="$HOME/.private-keys/AuthKey_P8ZTM74C8T.p8"
+export EXPO_ASC_KEY_ID="P8ZTM74C8T"
+export EXPO_ASC_ISSUER_ID="ec076c66-dfad-4d3d-bff2-d72c9e932101"
+
+eas build --platform ios --profile preview
+```
+
+- Si te piden **Apple Team ID**: `7D98L595LZ`
+- El `.p8` es la API key descargada de App Store Connect (Users and Access →
+  Integrations → App Store Connect API). Guardá el archivo en un lugar seguro;
+  Apple solo lo deja descargar una vez.
+
 Submit a la App Store:
 
 ```bash
