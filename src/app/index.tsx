@@ -5,7 +5,7 @@ import { useTheme } from '../theme/ThemeContext';
 import { getDb } from '../db/database';
 import { listNotes } from '../db/notesRepo';
 import type { Note } from '../notes/types';
-import { NoteCard } from '../components/NoteCard';
+import { SwipeableNoteCard } from '../components/SwipeableNoteCard';
 import { SearchBar } from '../components/SearchBar';
 import { TagChips } from '../components/TagChips';
 import { LumiOrb } from '../orb/LumiOrb';
@@ -53,7 +53,11 @@ export default function NotesListScreen() {
         data={notes}
         keyExtractor={(n) => n.id}
         renderItem={({ item }) => (
-          <NoteCard note={item} onPress={() => router.push(`/note/${item.id}`)} />
+          <SwipeableNoteCard
+            note={item}
+            onPress={() => router.push(`/note/${item.id}`)}
+            onDeleted={() => refresh(search, tagFilter)}
+          />
         )}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: palette.textMuted }]}>

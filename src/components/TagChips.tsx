@@ -50,9 +50,10 @@ export function TagChips({ selected, onSelect, includeNone }: Props) {
 
 const styles = StyleSheet.create({
   // flexGrow: 0 evita que el ScrollView horizontal se estire verticalmente
-  // (era la causa de los "óvalos gigantes"); alignItems center centra los chips.
-  scroll: { flexGrow: 0 },
-  row: { gap: 16, paddingHorizontal: 16, paddingVertical: 8, alignItems: 'center' },
+  // (era la causa de los "óvalos gigantes"); height fijo evita que la lista de
+  // abajo lo comprima y recorte los chips. alignItems center centra los chips.
+  scroll: { flexGrow: 0, height: 44 },
+  row: { gap: 16, paddingHorizontal: 16, alignItems: 'center' },
   chip: {
     flexDirection: 'row',
     alignItems: 'center',

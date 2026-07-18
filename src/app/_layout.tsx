@@ -1,11 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, Text } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { router, Stack } from 'expo-router';
 import * as Notifications from 'expo-notifications';
+import * as SplashScreen from 'expo-splash-screen';
 import { useShareIntent } from 'expo-share-intent';
 import { ThemeProvider, useTheme } from '../theme/ThemeContext';
 import { useReminderResponses } from '../reminders/useReminderResponses';
 import { prepareSharedText } from '../notes/sharedText';
+import { AnimatedSplash } from '../components/AnimatedSplash';
+
+// Evita que el splash nativo se oculte solo: lo cerramos al montar y dejamos
+// que el splash animado (LumiOrb) tome el relevo.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -18,8 +25,14 @@ Notifications.setNotificationHandler({
 
 function Screens() {
   const { palette } = useTheme();
+  const [splashDone, setSplashDone] = useState(false);
 
   useReminderResponses();
+
+  // Oculta el frame nativo en cuanto React monta; el AnimatedSplash sigue encima.
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
   useEffect(() => {
@@ -31,6 +44,7 @@ function Screens() {
   }, [hasShareIntent]);
 
   return (
+    <>
     <Stack
       screenOptions={{
         headerStyle: { backgroundColor: palette.bg },
@@ -63,13 +77,17 @@ function Screens() {
         }}
       />
     </Stack>
+    {!splashDone ? <AnimatedSplash onFinish={() => setSplashDone(true)} /> : null}
+    </>
   );
 }
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <Screens />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <Screens />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

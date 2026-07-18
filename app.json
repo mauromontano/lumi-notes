@@ -55,9 +55,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "backgroundColor": "#0b0e1d",
+          "image": "./assets/images/splash-orb.png",
+          "imageWidth": 200
         }
       ],
       "@react-native-community/datetimepicker",

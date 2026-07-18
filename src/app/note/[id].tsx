@@ -6,8 +6,8 @@ import { useTheme } from '../../theme/ThemeContext';
 import { getApiKey } from '../../settings/secrets';
 import { getAiEnabled } from '../../settings/prefs';
 import { getDb, newId } from '../../db/database';
-import { createNote, deleteNote, getNote, updateNote } from '../../db/notesRepo';
-import { cancelReminder, syncReminder } from '../../reminders/scheduler';
+import { createNote, getNote, updateNote } from '../../db/notesRepo';
+import { syncReminder } from '../../reminders/scheduler';
 import { ReminderPicker } from '../../components/ReminderPicker';
 import { TagChips } from '../../components/TagChips';
 import { NoteBodyView } from '../../components/NoteBodyView';
@@ -15,6 +15,7 @@ import { FormatToolbar } from '../../components/FormatToolbar';
 import { BottomSheet } from '../../components/BottomSheet';
 import { toggleLine, toggleTaskByIndex, type FormatAction } from '../../notes/markdown';
 import { readSecureBody, deleteSecureBody, saveSecureBody, SecureBodyError } from '../../notes/secureBody';
+import { deleteNoteFully } from '../../notes/deleteNote';
 import { log } from '../../lib/log';
 import type { Note, Recurrence } from '../../notes/types';
 import { isNoteTag, tagColors, type NoteTag } from '../../notes/tags';
@@ -170,9 +171,7 @@ export default function NoteScreen() {
         text: 'Borrar',
         style: 'destructive',
         onPress: async () => {
-          await cancelReminder(note?.notificationId ?? null);
-          if (note!.secure) await deleteSecureBody(note!.id);
-          await deleteNote(getDb(), note!.id);
+          await deleteNoteFully(note!);
           router.back();
         },
       },
