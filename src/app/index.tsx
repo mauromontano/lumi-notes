@@ -19,7 +19,7 @@ export default function Home() {
     {!chat.online && <Text accessibilityRole="alert" style={{ color: palette.danger }}>Sin conexión. Los envíos están pausados; no se enviarán automáticamente.</Text>}
     {!chat.ready ? <ActivityIndicator /> : !chat.linked ? <View style={{ gap: 12 }}>
       <Text accessibilityRole="header" style={{ color: palette.text, fontSize: 23, fontWeight: '600' }}>Vinculá tu iPhone una vez</Text>
-      <Text style={[styles.body, { color: palette.textMuted }]}>Después, entrás directamente a tus chats. En esta demo usá el código LUMI-DEMO.</Text>
+      <Text style={[styles.body, { color: palette.textMuted }]}>{chat.gateway.simulated ? 'Después, entrás directamente a tus chats. En esta demo usá el código LUMI-DEMO.' : 'Ingresá el código de vinculación de tu servidor. Después, entrás directamente a tus chats.'}</Text>
       <Input accessibilityLabel="Código de vinculación" value={code} onChangeText={setCode} autoCapitalize="characters" autoCorrect={false} placeholder="Código de vinculación" />
       <Action title={busy ? 'Vinculando…' : 'Vincular iPhone'} disabled={busy || !code.trim() || !chat.online} onPress={() => { setBusy(true); chat.enroll(code.trim()).catch(e => Alert.alert('No se pudo vincular', e.message)).finally(() => setBusy(false)); }} />
     </View> : <View style={{ gap: 8 }}>
@@ -29,14 +29,13 @@ export default function Home() {
         return <Pressable key={topic.id} accessibilityRole="button" accessibilityLabel={topic.title} onPress={() => router.push({ pathname: '/chat/[id]', params: { id: topic.id } })} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 14, opacity: pressed ? 0.6 : 1 })}>
           <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: palette.badgeBg, alignItems: 'center', justifyContent: 'center' }}><SymbolView name={topic.enabled ? 'wallet.bifold' : 'bag'} size={24} tintColor={palette.accent} /></View>
           <View style={{ flex: 1, gap: 7 }}><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={{ color: palette.text, fontSize: 17, fontWeight: '600', flex: 1 }}>{topic.title}</Text>{last && <Text style={{ color: palette.textMuted, fontSize: 12 }}>{new Date(last.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}</Text>}</View>
-          <Text numberOfLines={1} style={{ color: palette.textMuted, fontSize: 15 }}>{!topic.enabled ? 'Próximamente · ejemplo' : last?.text || last?.attachment?.transcript || 'Empezá una conversación'}</Text></View>
+          <Text numberOfLines={1} style={{ color: palette.textMuted, fontSize: 15 }}>{!topic.enabled ? 'Próximamente' : last?.text || last?.attachment?.transcript || 'Empezá una conversación'}</Text></View>
         </Pressable>;
       })}
       {!chat.topics.some(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())) && <Text style={{ color: palette.textMuted, paddingVertical: 20 }}>No hay temas con ese nombre.</Text>}
 
     </View>}
-    <View style={{ flex: 1 }} /><Text style={{ color: palette.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>Demo simulada · historial de esta sesión.
-No uses datos personales.</Text>
+    <View style={{ flex: 1 }} /><Text style={{ color: palette.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>{chat.gateway.simulated ? 'Demo simulada · historial de esta sesión.' : 'Historial guardado en tu servidor.'}</Text>
     {chat.error && <Text accessibilityRole="alert" style={{ color: palette.danger }}>{chat.error}</Text>}
   </ScrollView></SafeAreaView>;
 }

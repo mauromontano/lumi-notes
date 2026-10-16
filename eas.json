@@ -24,6 +24,13 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "preview-connected": {
+      "extends": "preview",
+      "env": {
+        "EXPO_PUBLIC_CHAT_MODE": "http"
+      },
+      "channel": "preview-connected"
     }
   },
   "submit": {

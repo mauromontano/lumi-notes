@@ -2,14 +2,13 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { AppState } from 'react-native';
 import * as Network from 'expo-network';
 import { File } from 'expo-file-system';
-import { MockChatGateway } from './MockChatGateway';
+import { gateway } from './gateway';
 import { ChatGateway, GatewayError, mergeMessages, Message, Topic, validateFile } from './types';
 import { session } from './session';
+import { syncNotifications } from './notifications';
 
 import { sendOnline, type Outgoing } from './sendOnline';
 export type { Outgoing } from './sendOnline';
-if (process.env.EXPO_PUBLIC_CHAT_MODE && process.env.EXPO_PUBLIC_CHAT_MODE !== 'mock') throw new Error('Solo está implementado el adaptador mock. Integrar HTTP en T03 antes de cambiar el modo.');
-const gateway = new MockChatGateway(undefined, uri => new File(uri).size);
 type State = {
   gateway: ChatGateway; linked: boolean; ready: boolean; online: boolean; topics: Topic[]; messages: Message[]; error: string | null;
   enroll(code: string): Promise<void>; refresh(): Promise<void>; load(topic: string, before?: string): Promise<string | undefined>;
@@ -59,7 +58,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       }
       setError(null);
     } catch (e) {
-      if (e instanceof GatewayError && e.code === 'cursor_expired') cursor.current = null;
+      if (e instanceof GatewayError && ['cursor_expired', 'invalid_cursor'].includes(e.code)) cursor.current = null;
       await handleError(e); throw e;
     } finally { running.current = false; }
   }, [requireOnline, handleError]);
@@ -81,6 +80,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     const sub = AppState.addEventListener('change', state => { clearTimeout(timer); if (state === 'active') void poll(); });
     return () => { disposed = true; clearTimeout(timer); sub.remove(); };
   }, [linked, refresh, pending]);
+  useEffect(() => {
+    if (!linked || gateway.simulated) return;
+    const sync = () => { void syncNotifications().catch(() => {}); };
+    sync();
+    const sub = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
+    return () => sub.remove();
+  }, [linked]);
   const send = async (outgoing: Outgoing) => {
     await requireOnline();
     if (!linked) throw new GatewayError('unauthorized', 'Vinculá este iPhone para enviar.');
@@ -100,7 +106,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     enroll: async code => { await requireOnline(); const result = await gateway.enrollDevice(code); await session.save(result.token); setLinked(true); },
     load: async (topic, before) => { await requireOnline(); const p = await gateway.listMessages(topic, before); setMessages(old => mergeMessages(old, p.items)); return p.nextBefore; },
     send,
-    retry: async m => { await requireOnline(); if (!m.clientMessageId) return; const updated = await gateway.retryMessage({ topicId: m.topicId, clientMessageId: m.clientMessageId }); setMessages(old => mergeMessages(old, [updated])); await refresh(); },
+    retry: async m => { await requireOnline(); if (!m.clientMessageId) return; const updated = await gateway.retryMessage({ topicId: m.topicId, clientMessageId: m.clientMessageId, messageId: m.id }); setMessages(old => mergeMessages(old, [updated])); await refresh(); },
     read: async (topic, id) => { await gateway.markRead(topic, id); setTopics(await gateway.listTopics()); },
   }}>{children}</Context.Provider>;
 }

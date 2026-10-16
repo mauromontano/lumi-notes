@@ -20,7 +20,7 @@ function Bubble({ message: m }: { message: Message }) {
   const a = m.attachment;
   const urls = messageLinks(m.text);
   return <View style={{ alignSelf: m.origin === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', paddingHorizontal: 12, paddingVertical: 9, gap: 8, borderRadius: 16, borderBottomRightRadius: m.origin === 'user' ? 4 : 16, borderBottomLeftRadius: m.origin === 'user' ? 16 : 4, backgroundColor: m.origin === 'user' ? palette.outgoing : palette.incoming }}>
-    {m.origin === 'job' && <Text style={{ color: palette.textMuted, fontSize: 12 }}>Actualización automática · simulada</Text>}
+    {m.origin === 'job' && <Text style={{ color: palette.textMuted, fontSize: 12 }}>{chat.gateway.simulated ? 'Actualización automática · simulada' : 'Actualización automática'}</Text>}
     {!!m.text && <Text selectable style={[styles.body, { color: palette.text }]}>{m.text}</Text>}
     {a && <View style={{ gap: 8 }}>
       {m.kind !== 'audio' && <Text style={{ color: palette.text, fontWeight: '600' }}>{a.fileName}</Text>}
@@ -31,7 +31,7 @@ function Bubble({ message: m }: { message: Message }) {
       {!!a.transcript && <>{a.availability !== 'expired' && <Action subtle title={transcript ? 'Ocultar transcripción' : 'Ver transcripción'} onPress={() => setTranscript(!transcript)} />}{(transcript || a.availability === 'expired') && <Text selectable style={[styles.body, { color: palette.text }]}>{a.transcript}</Text>}</>}
     </View>}
     {urls.map(({ url, host }) => <Action subtle key={url} title={`Abrir ${host}`} onPress={() => { void run(() => Linking.openURL(url)); }} />)}
-    {m.reportRefs?.map(id => <Action subtle key={id} title="Ver reporte de ejemplo" disabled={busy} onPress={() => { void run(async () => { const link = await chat.gateway.getReportLink(id); await Linking.openURL(link.url); }); }} />)}
+    {m.reportRefs?.map(id => <Action subtle key={id} title={chat.gateway.simulated ? 'Ver reporte de ejemplo' : 'Ver reporte'} disabled={busy} onPress={() => { void run(async () => { const link = await chat.gateway.getReportLink(id); await Linking.openURL(link.url); }); }} />)}
     {m.status !== 'completed' && <Text accessibilityLiveRegion="polite" style={{ color: m.status === 'failed' ? palette.danger : palette.textMuted, fontSize: 13 }}>{labels[m.status]}</Text>}
     {!!m.error && <Text style={{ color: palette.danger }}>{m.error.message}</Text>}
     {m.clientMessageId && (m.status === 'waiting_quota' || (m.status === 'failed' && m.error?.retryable)) && <Action subtle title={busy ? 'Reintentando…' : 'Reintentar procesamiento'} disabled={busy || !chat.online} onPress={() => { void run(() => chat.retry(m)); }} />}
@@ -53,12 +53,12 @@ export default function ChatScreen() {
       if (!reports.length) { Alert.alert('Reportes', 'Todavía no hay reportes en esta conversación.'); return; }
       ActionSheetIOS.showActionSheetWithOptions({ options: ['Cancelar', ...reports.map(r => `Reporte · ${new Date(r.date).toLocaleDateString('es-AR')}`)], cancelButtonIndex: 0 }, index => { if (index > 0) void chat.gateway.getReportLink(reports[index - 1].reportId).then(link => Linking.openURL(link.url)).catch(e => Alert.alert('Reporte', e.message)); });
     }} /> }} /><KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={headerHeight} style={{ flex: 1 }}>
-    <Text style={{ color: palette.textMuted, paddingHorizontal: 16, paddingVertical: 8, fontSize: 12, textAlign: 'center' }}>Demo simulada · sin registros financieros reales</Text>
+    <Text style={{ color: palette.textMuted, paddingHorizontal: 16, paddingVertical: 8, fontSize: 12, textAlign: 'center' }}>{chat.gateway.simulated ? 'Demo simulada · sin registros financieros reales' : 'Conversación conectada a tu servidor'}</Text>
     {!chat.online && <Text accessibilityRole="alert" style={{ color: palette.danger, padding: 16 }}>Sin conexión. Reintentá manualmente al volver.</Text>}
     {chat.error && <Text accessibilityRole="alert" style={{ color: palette.danger, paddingHorizontal: 16 }}>{chat.error}</Text>}
     {!chat.linked ? <Text style={{ color: palette.text, padding: 24 }}>Volvé a Temas y vinculá este iPhone.</Text> : <>
       <FlatList data={[...messages].reverse()} inverted keyExtractor={m => m.id} contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 14, gap: 8, flexGrow: 1 }} renderItem={({ item, index }) => { const older = messages[messages.length - index - 2]; const date = new Date(item.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }); return <View style={{ gap: 8 }}>{(!older || new Date(older.createdAt).toDateString() !== new Date(item.createdAt).toDateString()) && <Text style={{ textAlign: 'center', color: palette.textMuted, fontSize: 12, paddingVertical: 12 }}>{date}</Text>}<Bubble message={item} /></View>; }} keyboardShouldPersistTaps="handled"
-        ListEmptyComponent={<View style={{ transform: [{ scaleY: -1 }], paddingVertical: 30, gap: 12 }}><Text style={{ color: palette.text, fontSize: 24, fontWeight: '600' }}>Todo empieza con un mensaje</Text><Text style={[styles.body, { color: palette.textMuted }]}>Enviá un texto, un audio o un comprobante. Los ejemplos no usan tus datos.</Text></View>}
+        ListEmptyComponent={<View style={{ transform: [{ scaleY: -1 }], paddingVertical: 30, gap: 12 }}><Text style={{ color: palette.text, fontSize: 24, fontWeight: '600' }}>Todo empieza con un mensaje</Text><Text style={[styles.body, { color: palette.textMuted }]}>Enviá un texto, un audio o un comprobante.</Text></View>}
         ListFooterComponent={before ? <Action subtle title={loading ? 'Cargando…' : 'Ver mensajes anteriores'} disabled={loading} onPress={() => { setLoading(true); chat.load(id, before).then(setBefore).catch(e => Alert.alert('Historial', e.message)).finally(() => setLoading(false)); }} /> : null} />
       <Composer key={id} topicId={id} enabled={!!topic?.enabled} />
     </>}

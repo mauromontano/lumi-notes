@@ -75,7 +75,7 @@ export function Composer({ topicId, enabled }: { topicId: string; enabled: boole
     catch (e) { setError((e as Error).message); setFailed(outgoing); }
     finally { locked.current = false; setBusy(false); }
   };
-  if (!enabled) return <Text style={{ color: palette.textMuted, padding: 20 }}>Ejemplo simulado. Este tema todavía no admite envíos.</Text>;
+  if (!enabled) return <Text style={{ color: palette.textMuted, padding: 20 }}>Este tema todavía no admite envíos.</Text>;
   return <View style={{ paddingHorizontal: 10, paddingVertical: 8, backgroundColor: palette.surface, gap: 10, borderTopWidth: 1, borderColor: palette.cardBorder }}>
     {error && <Text accessibilityRole="alert" style={{ color: palette.danger }}>{error}</Text>}
     {recording.isRecording ? <>

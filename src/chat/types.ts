@@ -17,7 +17,7 @@ export interface ChatGateway {
   sendText(input: SendText): Promise<Message>;
   sendAudio(input: SendAudio): Promise<Message>;
   sendAttachment(input: SendAttachment): Promise<Message>;
-  retryMessage(input: { topicId: string; clientMessageId: string }): Promise<Message>;
+  retryMessage(input: { topicId: string; clientMessageId: string; messageId?: string }): Promise<Message>;
   getChanges(cursor: string): Promise<{ items: Change[]; nextCursor: string; hasMore: boolean }>;
   markRead(topicId: string, messageId: string): Promise<void>;
   registerPushToken(token: string | null): Promise<void>;

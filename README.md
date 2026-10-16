@@ -162,3 +162,39 @@ en borrador y mensaje de audio enviado antes de Play, y miniatura HEIC visible d
 del chat. La prueba inicial de micrófono dio error antes del reinicio; no se verificó
 calidad audible en simulador. Mauro indicó que después del reinicio ahora parece
 funcionar. Esto acredita UI local con gateway simulado, no persistencia/backend real.
+
+
+### Integración HTTP real — 2026-10-16
+
+Este corte reemplaza la limitación anterior de solo demo. El modo predeterminado sigue
+siendo mock. Para conectar usar EXPO_PUBLIC_CHAT_MODE=http y EXPO_PUBLIC_LUMI_API_URL
+con el origen HTTPS de Lumi. No poner tokens ni credenciales en EXPO_PUBLIC. Pairing de
+un uso guarda el token revocable en SecureStore separado por servidor y del modo demo.
+El perfil preview-connected hereda el preview iOS; requiere definir URL antes del build.
+No se ejecutó un build remoto ni se configuró firma/UDID en este corte.
+
+HttpChatGateway adapta sobres/items, 202/204, cursores opacos, nextBefore null, retry con
+ID del servidor, errores 401/429/410 y uploads multipart con ID estable. No reenvía al
+reconectar ni habilita cola offline. expo/fetch recibe File directamente: File.slice
+construía un Blob de ArrayBuffer incompatible con Hermes/Expo Go; la prueba nativa lo
+detectó y se corrigió. El servidor verifica contenido y tamaño además del cliente.
+
+Preferencias permite activar notificaciones. El token se sincroniza al vincular/volver
+al foreground sin pedir permiso automáticamente. Denegarlo no impide recuperar mensajes.
+La recepción APNs con app cerrada requiere prueba en build firmado/iPhone físico; no
+está acreditada con Expo Go ni tests. El servidor mantiene push desactivado por defecto.
+
+Validación: 19 suites / 121 tests; TypeScript, lint y export iOS/Hermes. El script de
+lumi-server scripts/smoke-app-gateway.ts ejecutó este gateway contra HTTP y PostgreSQL
+reales locales (medios/agente dobles). Evidencia nativa: iPhone 17 Pro/iOS26.5 simulado,
+Expo Go, pairing real, texto a Claude Pro, reporte privado abierto en Safari y PNG
+sintético subido/procesado por OCR y Claude. ARS 1234,50 y ARS 203 en schema aislado.
+Capturas en docs/evidence/http-pilot-2026-10-16. No contienen datos personales ni tokens.
+No acredita audio/PDF nativo integrado, push, iPhone físico, Railway ni piloto completo.
+
+Para QA local del simulador: EXPO_PUBLIC_ALLOW_LOCAL_HTTP=true, URL127.0.0.1:3092,
+EXPO_PUBLIC_CHAT_MODE=http, REACT_NATIVE_PACKAGER_HOSTNAME=127.0.0.1 y expo start --lan.
+Usar el script pilot-local del backend con los runtimes personales configurados.
+La excepción HTTP solo funciona en desarrollo y direcciones privadas/localhost.
+Al terminar el ensayo se eliminan schema y originales sintéticos; el token de ese
+servidor deja de servir. Un nuevo ensayo requiere vincularse nuevamente.
