@@ -1,56 +1,128 @@
-# Welcome to your Expo app 👋
+# Lumi · iPhone
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Frente App de chats por tema. **Esta entrega usa exclusivamente un adaptador simulado**:
+no hay conexión a Claude, transcripción de servidor, almacenamiento remoto ni movimientos
+financieros reales. Finanzas está habilitado; Compras y ofertas es un ejemplo vacío,
+sin integraciones ni envíos. No hay notas que migrar.
 
-## Get started
+La planificación y el contrato únicos siguen en el ODD de `mauro-docs`:
+`salp/odd/lumi/001-agentes-personales/odd.md` (checkout coordinador:
+`/Users/mauromontano/orca/workspaces/mauro-docs`). Este README documenta ejecución y
+resultados de la implementación; no reemplaza ese ODD ni cambia HTTP v1.
 
-1. Install dependencies
+## Ejecutar la demo
 
-   ```bash
-   npm install
-   ```
+Node 22.13+ (validado con 24.13.0), npm y Expo SDK 57.
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```sh
+npm ci
+npx expo start --go --ios
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Vincular con `LUMI-DEMO`. El token de **demo** se conserva en SecureStore, con namespace
+separado de una futura credencial real. El historial simulado vive en memoria y se
+reinicia al terminar el proceso. No cargar información personal. Los archivos elegidos
+permanecen locales: el mock no sube bytes a un servicio.
 
-### Other setup steps
+- Texto normal: aceptación → procesamiento → respuesta identificada como simulada.
+- `/error`: fallo de procesamiento; Reintentar conserva id y texto original.
+- `/cuota`: cuota agotada; Reintentar manual, sin fallback facturable.
+- `/aclarar`: pregunta de aclaración, respondible en la misma conversación.
+- Home → Compras y ofertas: historial vacío y envío deshabilitado.
+- Fixtures de Finanzas: resultado de tarea y audio expirado con transcripción.
+- El botón de reporte explica que el ejemplo no tiene un reporte privado real.
+- Grabar → terminar → escuchar → enviar; cancelar descarta la grabación. Imágenes y
+  PDF se eligen con los selectores del sistema. 25 MiB/archivo, 5 minutos/audio; 30 páginas
+  por PDF se informa en UI y debe verificarse en servidor, junto al formato real.
+- Sin conexión no se envía. Reconectar solo consulta estado: nunca reenvía borradores.
+  Un intento fallido conserva payload/id para el reintento manual mientras la pantalla
+  siga abierta; puede descartarse explícitamente. Borradores no persisten entre procesos.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Código e integración
 
-## Learn more
+- `src/chat/types.ts`: tipos locales de HTTP v1 y `ChatGateway`.
+- `MockChatGateway.ts` y `fixtures.ts`: doble explícito, revisiones, páginas, estados y
+  respuestas sintéticas; `localUri` queda fuera de los mensajes del contrato.
+- `ChatProvider.tsx`: vinculación, sincronización en primer plano (3 s pendiente / 30 s
+  inactivo, backoff de hasta 60 s), bootstrap, reconciliación y rechazo offline.
+- `Composer.tsx` / `AudioMessage.tsx`: selección, grabación y reproducción nativas.
+- `src/app`: home, conversación por tema y apariencia; tema claro/oscuro y orb reutilizados.
 
-To learn more about developing your project with Expo, look at the following resources:
+Para T03, implementar el transporte HTTP detrás del gateway y cambiar su construcción
+en el provider. No basta cambiar una variable: cualquier `EXPO_PUBLIC_CHAT_MODE` distinto
+de `mock` falla explícitamente. El adaptador real debe recibir la credencial segura,
+subir bytes multipart con `clientUploadId` estable y enviar después `attachmentId`;
+resolver `clientMessageId` al `messageId` del endpoint de retry y conservar el payload
+ante timeouts de aceptación. El mock no acredita deduplicación del servidor.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Confirmar OpenAPI/fixtures de Infra antes de integrar. No se propusieron cambios de
+endpoints. `bootstrap` y `getAttachmentAccess` son auxiliares del gateway para rutas ya
+existentes en HTTP v1. Acordar con Infra nombres concretos de campos de `limits`, códigos
+de autenticación/cursor y representación final de `reportRefs` (el ODD indica IDs).
 
-## Join the community
+Pendiente de integración: HTTPS y enrolamiento real de un uso, token revocable/401,
+429/Retry-After, subidas y acceso privado/410, transcripción, extracción de documentos,
+catálogo/enlaces temporales de reportes y persistencia real. El listener de notificaciones
+abre el tema por `topicId`; falta conectar registro de token Expo/APNs y comprobar push
+con permisos concedidos/denegados y app cerrada. El historial no depende del push.
 
-Join our community of developers creating universal apps.
+Se retiraron rutas de notas/dictado, llamada a Anthropic, configuración de claves,
+extensión de compartir a notas y App Intent de dictado. Utilidades antiguas de notas,
+backups y sus tests quedan sin ruta de producto; documentos anteriores bajo `docs/`
+son históricos. No se borraron backups externos ni datos de otros repos.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Preview interno iPhone
+
+`eas.json`: perfil `preview`, distribución `internal`, `ios.simulator=false`, modo
+`mock`. Conserva bundle ID `com.mauro.luminotes` y proyecto EAS existente. El target
+nativo se llama `Lumi`; el directorio iOS está versionado y fue regenerado con SDK 57.
+Usa el icono PNG existente de Lumi; las fuentes Icon Composer siguen en `assets/expo.icon`.
+
+```sh
+npm ci
+npx tsc --noEmit
+npm run lint
+npm test -- --runInBand
+npx expo export --platform ios
+# Si se cambia app.json, sincronizar y revisar el diff nativo antes del build:
+npx expo prebuild --platform ios --no-install
+```
+
+Después de coordinar firma, UDID y costo en T09:
+
+```sh
+npx eas-cli device:create
+npx eas-cli build --platform ios --profile preview
+```
+
+**No se ejecutó build remoto ni se verificaron cuenta, firma o dispositivo registrado.**
+No hay publicación en tiendas. Para compilación local instalar CocoaPods 1.15.2+ y
+usar `npx expo run:ios`; este entorno no tiene CocoaPods. EAS no sincroniza app.json
+cuando se versiona `ios/`, por lo que el prebuild y su revisión son obligatorios.
+
+## Validación del 2026-10-16
+
+Base inspeccionada: `dc2574c`, árbol limpio antes de implementar, coincidente con el ODD.
+Documentación de Expo v57 leída antes de editar. Dependencias actualizadas dentro de
+SDK 57 a Expo 57.0.30 / React Native 0.86.3, incluyendo audio, image picker y network.
+
+- Automatizadas: TypeScript, ESLint, 17 suites / 107 tests, exportación iOS **con bytecode
+  Hermes**, prebuild iOS y `git diff --check`. Los tests del gateway cubren aceptación,
+  replay/conflicto, mismo id/payload en retry, cuota, aclaración, audio expirado,
+  paginación/revisiones, límites, enlaces malformados y rechazo offline sin cola.
+- Expo Doctor: 19/21. Restan CocoaPods ausente y advertencia esperada por configuración
+  nativa versionada. Configuración de assets y compatibilidad de paquetes pasan.
+- Simulador: iPhone 17 Pro, iOS 26.5, Expo Go SDK 57. Vinculación, home, Finanzas,
+  envío de texto, procesamiento, fallo simulado/reintento completado, permiso de micrófono
+  denegado, entrada por enlace al chat y capturas claras/oscuras inspeccionadas.
+  No equivale a ejecutar el binario preview. El grabador no pudo preparar audio en este
+  entorno; se comprobó el error recuperable, no una grabación/reproducción completa.
+- iPhone físico: **sin pruebas**. Pendientes audio real/cancelación/interrupciones,
+  reproducción/pausa, selectores y envío de imagen/PDF, teclado en pantalla pequeña,
+  Dynamic Type/VoiceOver, modo avión, reanudación, instalación firmada y push.
+- Revisión estática adicional corrigió enlaces inválidos, descarte de borrador fallido,
+  recuperación de bootstrap, ciclo de vida del grabador y contraste claro. Se corrigió
+  un crash de Hermes causado por captura de `this` en un parámetro por defecto.
+
+T01 requiere aún verificar la instalación del iPhone. T07 tiene implementación simulada
+con los pendientes nativos anteriores. **T03/T04/T05/T06 no están acreditadas con mocks.**
