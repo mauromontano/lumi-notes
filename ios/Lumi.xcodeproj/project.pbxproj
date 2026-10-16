@@ -11,35 +11,17 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		8DBBCC03872D4087B42E991F /* expo.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8AEF1EDC14BD403FA628D3AA /* expo.icon */; };
-		623F12C079B24D8DAD9BA78B /* DictarNotaIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F58AB2703C04B1E8447A507 /* DictarNotaIntent.swift */; };
-		F1D3BBB71BEF43B6AA1B57BE /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E450BA918E43D0B374AB99 /* ShareViewController.swift */; };
-		6604DE083D4445A59B7874A1 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72969EDFDD9246C4A8A54DEF /* MainInterface.storyboard */; };
-		14F9F1CF016E4490A181C6E4 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = B6AEDAA857A24289878D99F0 /* ShareExtensionPreprocessor.js */; };
-		D3C5B5D2A807493B946C26EB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 058835F530C54B778292DAFD /* PrivacyInfo.xcprivacy */; };
-		4290F42083AA452E9A32516F /* ShareExtension-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EBF267E319EC4B3CB36EE757 /* ShareExtension-Info.plist */; };
-		FA210A8781054FC097AAC33D /* ShareExtension.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 7D7107BD765640AA8F588F5B /* ShareExtension.entitlements */; };
-		D2020944C4E4416DB10652D1 /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 9C7AF75EF3894ABC840CB464 /* ShareExtension.appex */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* LumiNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LumiNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LumiNotes/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LumiNotes/Info.plist; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = LumiNotes/SplashScreen.storyboard; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Lumi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Lumi/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Lumi/Info.plist; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Lumi/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = LumiNotes/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* LumiNotes-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LumiNotes-Bridging-Header.h"; path = "LumiNotes/LumiNotes-Bridging-Header.h"; sourceTree = "<group>"; };
-		8AEF1EDC14BD403FA628D3AA /* expo.icon */ = {isa = PBXFileReference; name = "expo.icon"; path = "LumiNotes/expo.icon"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		2F58AB2703C04B1E8447A507 /* DictarNotaIntent.swift */ = {isa = PBXFileReference; name = "DictarNotaIntent.swift"; path = "LumiNotes/DictarNotaIntent.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		C4E450BA918E43D0B374AB99 /* ShareViewController.swift */ = {isa = PBXFileReference; name = "ShareViewController.swift"; path = "ShareViewController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		72969EDFDD9246C4A8A54DEF /* MainInterface.storyboard */ = {isa = PBXFileReference; name = "MainInterface.storyboard"; path = "MainInterface.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		B6AEDAA857A24289878D99F0 /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; name = "ShareExtensionPreprocessor.js"; path = "ShareExtensionPreprocessor.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		058835F530C54B778292DAFD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; name = "PrivacyInfo.xcprivacy"; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		EBF267E319EC4B3CB36EE757 /* ShareExtension-Info.plist */ = {isa = PBXFileReference; name = "ShareExtension-Info.plist"; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
-		7D7107BD765640AA8F588F5B /* ShareExtension.entitlements */ = {isa = PBXFileReference; name = "ShareExtension.entitlements"; path = "ShareExtension.entitlements"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9C7AF75EF3894ABC840CB464 /* ShareExtension.appex */ = {isa = PBXFileReference; name = "ShareExtension.appex"; path = "ShareExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; fileEncoding = undefined; lastKnownFileType = undefined; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Lumi/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* Lumi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Lumi-Bridging-Header.h"; path = "Lumi/Lumi-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,29 +32,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7632F4868FFC4029A3225918 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* LumiNotes */ = {
+		13B07FAE1A68108700A75B9A /* Lumi */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* LumiNotes-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* Lumi-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				8AEF1EDC14BD403FA628D3AA /* expo.icon */,
-				2F58AB2703C04B1E8447A507 /* DictarNotaIntent.swift */,
 			);
-			name = LumiNotes;
+			name = Lumi;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -93,11 +66,10 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* LumiNotes */,
+				13B07FAE1A68108700A75B9A /* Lumi */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				B94786C8BD2748CF959BE646 /* ShareExtension */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -107,8 +79,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* LumiNotes.app */,
-				9C7AF75EF3894ABC840CB464 /* ShareExtension.appex */,
+				13B07F961A680F5B00A75B9A /* Lumi.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,29 +90,15 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = LumiNotes/Supporting;
-			sourceTree = "<group>";
-		};
-		B94786C8BD2748CF959BE646 /* ShareExtension */ = {
-			isa = PBXGroup;
-			children = (
-				C4E450BA918E43D0B374AB99 /* ShareViewController.swift */,
-				72969EDFDD9246C4A8A54DEF /* MainInterface.storyboard */,
-				B6AEDAA857A24289878D99F0 /* ShareExtensionPreprocessor.js */,
-				058835F530C54B778292DAFD /* PrivacyInfo.xcprivacy */,
-				EBF267E319EC4B3CB36EE757 /* ShareExtension-Info.plist */,
-				7D7107BD765640AA8F588F5B /* ShareExtension.entitlements */,
-			);
-			name = ShareExtension;
-			path = ShareExtension;
+			path = Lumi/Supporting;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* LumiNotes */ = {
+		13B07F861A680F5B00A75B9A /* Lumi */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "LumiNotes" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Lumi" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -149,35 +106,16 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				3089EE231EFB4C7485D42285 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
-				C5F86D1402C14E5BBD13F08A /* Copy Files */,
+				89A1166BB2954CFA9CCF7777 /* [Expo Dev Launcher] Strip Local Network Keys for Release */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				0A1E1F9999E04CA08BF638F2 /* PBXTargetDependency */,
 			);
-			name = LumiNotes;
-			productName = LumiNotes;
-			productReference = 13B07F961A680F5B00A75B9A /* LumiNotes.app */;
+			name = Lumi;
+			productName = Lumi;
+			productReference = 13B07F961A680F5B00A75B9A /* Lumi.app */;
 			productType = "com.apple.product-type.application";
-		};
-		7FE9CAA45A194C1B8F5C68BB /* "ShareExtension" */ = {
-			isa = PBXNativeTarget;
-			name = "ShareExtension";
-			productName = "ShareExtension";
-			productReference = 9C7AF75EF3894ABC840CB464;
-			productType = "com.apple.product-type.app-extension";
-			buildConfigurationList = 95397294462D42F1908D1AF2;
-			buildPhases = (
-				D2DC58C3FDF146C99D88B63F /* Sources */,
-				F206D21F6B744F4287BF812C /* Resources */,
-				7632F4868FFC4029A3225918 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
 		};
 /* End PBXNativeTarget section */
 
@@ -192,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "LumiNotes" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Lumi" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -205,8 +143,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* LumiNotes */,
-				7FE9CAA45A194C1B8F5C68BB /* "ShareExtension" */,
+				13B07F861A680F5B00A75B9A /* Lumi */,
 			);
 		};
 /* End PBXProject section */
@@ -219,17 +156,6 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				8DBBCC03872D4087B42E991F /* expo.icon in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F206D21F6B744F4287BF812C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6604DE083D4445A59B7874A1 /* "MainInterface.storyboard" in Resources */,
-				14F9F1CF016E4490A181C6E4 /* "ShareExtensionPreprocessor.js" in Resources */,
-				D3C5B5D2A807493B946C26EB /* "PrivacyInfo.xcprivacy" in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +194,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-LumiNotes-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Lumi-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -281,7 +207,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-LumiNotes/Pods-LumiNotes-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Lumi/Pods-Lumi-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXUpdates/EXUpdates.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/RCTI18nStrings.bundle",
@@ -294,10 +220,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LumiNotes/Pods-LumiNotes-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Lumi/Pods-Lumi-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3089EE231EFB4C7485D42285 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
+		89A1166BB2954CFA9CCF7777 /* [Expo Dev Launcher] Strip Local Network Keys for Release */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -353,15 +279,6 @@ fi
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				623F12C079B24D8DAD9BA78B /* DictarNotaIntent.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D2DC58C3FDF146C99D88B63F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F1D3BBB71BEF43B6AA1B57BE /* "ShareViewController.swift" in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,7 +288,7 @@ fi
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = expo;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
@@ -379,7 +296,7 @@ fi
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = LumiNotes/Info.plist;
+				INFOPLIST_FILE = Lumi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -393,23 +310,23 @@ fi
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes";
-				PRODUCT_NAME = "LumiNotes";
-				SWIFT_OBJC_BRIDGING_HEADER = "LumiNotes/LumiNotes-Bridging-Header.h";
+				PRODUCT_NAME = "Lumi";
+				SWIFT_OBJC_BRIDGING_HEADER = "Lumi/Lumi-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				TARGETED_DEVICE_FAMILY = "1";
-				CODE_SIGN_ENTITLEMENTS = LumiNotes/LumiNotes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Lumi/Lumi.entitlements;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = expo;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = LumiNotes/Info.plist;
+				INFOPLIST_FILE = Lumi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -423,12 +340,12 @@ fi
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes";
-				PRODUCT_NAME = "LumiNotes";
-				SWIFT_OBJC_BRIDGING_HEADER = "LumiNotes/LumiNotes-Bridging-Header.h";
+				PRODUCT_NAME = "Lumi";
+				SWIFT_OBJC_BRIDGING_HEADER = "Lumi/Lumi-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				TARGETED_DEVICE_FAMILY = "1";
-				CODE_SIGN_ENTITLEMENTS = LumiNotes/LumiNotes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Lumi/Lumi.entitlements;
 			};
 			name = Release;
 		};
@@ -543,54 +460,10 @@ fi
 			};
 			name = Release;
 		};
-		16063FDD1077431E82DBBDEB /* Debug */ = {
-			name = Debug;
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_NAME = "ShareExtension";
-				SKIP_INSTALL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "ShareExtension/ShareExtension.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "1";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = "1.0.0";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes.share-extension";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-		};
-		163A551B78E04DE580D780AC /* Release */ = {
-			name = Release;
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_NAME = "ShareExtension";
-				SKIP_INSTALL = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "ShareExtension/ShareExtension.entitlements";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "1";
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = "1.0.0";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mauro.luminotes.share-extension";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "LumiNotes" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Lumi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -599,7 +472,7 @@ fi
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "LumiNotes" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Lumi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
@@ -608,48 +481,7 @@ fi
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95397294462D42F1908D1AF2 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				16063FDD1077431E82DBBDEB /* Debug */,
-				163A551B78E04DE580D780AC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
-
-/* Begin PBXTargetDependency section */
-		0A1E1F9999E04CA08BF638F2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7FE9CAA45A194C1B8F5C68BB /* "ShareExtension" */;
-			targetProxy = FC74081E2F714B3D82BD0565 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXContainerItemProxy section */
-		FC74081E2F714B3D82BD0565 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7FE9CAA45A194C1B8F5C68BB;
-			remoteInfo = "ShareExtension";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		C5F86D1402C14E5BBD13F08A /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D2020944C4E4416DB10652D1 /* ShareExtension.appex in Copy Files */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			name = "Copy Files";
-			dstPath = "";
-			dstSubfolderSpec = 13;
-		};
-/* End PBXCopyFilesBuildPhase section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

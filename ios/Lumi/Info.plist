@@ -2,14 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>AppGroupIdentifier</key>
-    <string>group.com.mauro.luminotes</string>
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Lumi Notes</string>
+    <string>Lumi</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -58,17 +56,19 @@
       <string>_expo._tcp</string>
     </array>
     <key>NSFaceIDUsageDescription</key>
-    <string>Lumi usa Face ID para desbloquear tus notas cifradas.</string>
+    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Lumi usa el micrófono para dictar notas.</string>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Lumi usa el reconocimiento de voz para transcribir tus notas.</string>
+    <string>Lumi usa el micrófono para grabar mensajes de audio.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Lumi permite elegir comprobantes para enviarlos al chat.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
+    <key>RCTMetroPort</key>
+    <string>$(RCT_METRO_PORT)</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

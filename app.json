@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Lumi Notes",
+    "name": "Lumi",
     "slug": "lumi-notes",
     "scheme": "luminotes",
     "version": "1.0.0",
@@ -10,10 +10,8 @@
     "ios": {
       "bundleIdentifier": "com.mauro.luminotes",
       "supportsTablet": false,
-      "icon": "./assets/expo.icon",
       "infoPlist": {
-        "NSSpeechRecognitionUsageDescription": "Lumi usa el reconocimiento de voz para transcribir tus notas.",
-        "NSMicrophoneUsageDescription": "Lumi usa el micrófono para dictar notas."
+        "NSMicrophoneUsageDescription": "Lumi usa el micrófono para grabar mensajes de audio."
       }
     },
     "android": {
@@ -36,19 +34,6 @@
       "expo-router",
       "expo-sqlite",
       [
-        "expo-secure-store",
-        {
-          "faceIDPermission": "Lumi usa Face ID para desbloquear tus notas cifradas."
-        }
-      ],
-      [
-        "expo-speech-recognition",
-        {
-          "microphonePermission": "Lumi usa el micrófono para dictar notas.",
-          "speechRecognitionPermission": "Lumi usa el reconocimiento de voz para transcribir tus notas."
-        }
-      ],
-      [
         "expo-notifications",
         {}
       ],
@@ -61,9 +46,25 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "expo-share-intent",
-      "./plugins/withAppIntents.js",
-      "expo-sharing"
+      "expo-sharing",
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Lumi usa el micrófono para grabar mensajes de audio.",
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Lumi permite elegir comprobantes para enviarlos al chat.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -75,6 +76,9 @@
         "projectId": "ffc6e8b0-3c9e-4f69-b836-ec8a24bcf437"
       }
     },
-    "owner": "mauro-montano"
+    "owner": "mauro-montano",
+    "platforms": [
+      "ios"
+    ]
   }
 }

@@ -16,7 +16,11 @@
       "distribution": "internal",
       "ios": {
         "simulator": false
-      }
+      },
+      "env": {
+        "EXPO_PUBLIC_CHAT_MODE": "mock"
+      },
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true

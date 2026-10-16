@@ -1,4 +1,4 @@
-import { transition, OrbState } from '../orbState';
+import { transition } from '../orbState';
 
 describe('transition', () => {
   it('idle -> listening al empezar a escuchar', () => {

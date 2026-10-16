@@ -21,7 +21,7 @@ export const palettes: Record<ThemeName, Palette> = {
   light: {
     bg: '#fbf8f3', bgEnd: '#f6efe6',
     card: '#ffffff', cardBorder: 'rgba(160,140,110,0.18)',
-    text: '#3a3733', textMuted: 'rgba(58,55,51,0.55)',
+    text: '#3a3733', textMuted: '#716a62',
     accent: '#e78bb5', badgeBg: '#ffe8d6', badgeText: '#c97b3d',
     danger: '#c0392b',
     orb: { colors: ['#fff3e0', '#ffb88a', '#e78bb5'], glow: '#e78bb5' },

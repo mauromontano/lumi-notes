@@ -1,7 +1,7 @@
 // Genera el ícono orb (1024×1024) y lo escribe en los 3 destinos:
 // - assets/images/icon.png (app.json / Android-web futuro)
 // - assets/expo.icon/Assets/orb.png (fuente Icon Composer versionada)
-// - ios/LumiNotes/expo.icon/Assets/orb.png (bundle que compila Xcode)
+// - ios/Lumi/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png (bundle que compila Xcode)
 // Uso: npm run generate:icon
 
 import sharp from 'sharp';
@@ -40,7 +40,7 @@ const png = await sharp(Buffer.from(svg)).png().toBuffer();
 const targets = [
   join(root, 'assets/images/icon.png'),
   join(root, 'assets/expo.icon/Assets/orb.png'),
-  join(root, 'ios/LumiNotes/expo.icon/Assets/orb.png'),
+  join(root, 'ios/Lumi/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png'),
 ];
 
 for (const t of targets) {
