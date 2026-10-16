@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View, Pressable } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, View, Pressable, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useSharedValue } from 'react-native-reanimated';
 import { LumiOrb } from '@/orb/LumiOrb';
 import { useTheme } from '@/theme/ThemeContext';
 import { useChat } from '@/chat/ChatProvider';
-import { Action, Input, styles } from '@/chat/ui';
+import { SymbolView } from 'expo-symbols';
+import { Action, IconButton, Input, styles } from '@/chat/ui';
 export default function Home() {
   const { palette } = useTheme(), chat = useChat(), volume = useSharedValue(0);
+  const [query, setQuery] = useState(''), [refreshing, setRefreshing] = useState(false);
   const [code, setCode] = useState(''), [busy, setBusy] = useState(false);
-  return <SafeAreaView style={{ flex: 1, backgroundColor: palette.bg }}><ScrollView contentContainerStyle={{ padding: 24, gap: 24 }} keyboardShouldPersistTaps="handled">
-    <View style={[styles.row, { justifyContent: 'space-between' }]}><View style={styles.row}><LumiOrb state="idle" volume={volume} size={52} /><Text accessibilityRole="header" style={{ color: palette.text, fontSize: 34, fontWeight: '700' }}>Lumi</Text></View><Action title="Preferencias" onPress={() => router.push('/settings')} /></View>
-    <Text style={[styles.body, { color: palette.textMuted }]}>Tus temas, en conversación.</Text>
-    <Text style={{ color: palette.text, fontSize: 15 }}>Demo simulada · Los mensajes duran esta sesión. No uses datos personales.</Text>
+  return <SafeAreaView style={{ flex: 1, backgroundColor: palette.bg }}><ScrollView refreshControl={<RefreshControl refreshing={refreshing} tintColor={palette.accent} onRefresh={() => { setRefreshing(true); void chat.refresh().catch(() => {}).finally(() => setRefreshing(false)); }} />} contentContainerStyle={{ padding: 22, gap: 18, flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+    <View style={[styles.row, { justifyContent: 'space-between' }]}><View style={styles.row}><LumiOrb state="idle" volume={volume} size={28} /><Text accessibilityRole="header" style={{ color: palette.text, fontSize: 30, fontWeight: '700' }}>Lumi</Text></View><IconButton name="gearshape" label="Preferencias" onPress={() => router.push('/settings')} /></View>
+    <Text style={[styles.body, { color: palette.textMuted }]}>Un chat para cada parte de tu vida.</Text>
+
     {!chat.online && <Text accessibilityRole="alert" style={{ color: palette.danger }}>Sin conexión. Los envíos están pausados; no se enviarán automáticamente.</Text>}
     {!chat.ready ? <ActivityIndicator /> : !chat.linked ? <View style={{ gap: 12 }}>
       <Text accessibilityRole="header" style={{ color: palette.text, fontSize: 23, fontWeight: '600' }}>Vinculá tu iPhone una vez</Text>
@@ -21,16 +23,20 @@ export default function Home() {
       <Input accessibilityLabel="Código de vinculación" value={code} onChangeText={setCode} autoCapitalize="characters" autoCorrect={false} placeholder="Código de vinculación" />
       <Action title={busy ? 'Vinculando…' : 'Vincular iPhone'} disabled={busy || !code.trim() || !chat.online} onPress={() => { setBusy(true); chat.enroll(code.trim()).catch(e => Alert.alert('No se pudo vincular', e.message)).finally(() => setBusy(false)); }} />
     </View> : <View style={{ gap: 8 }}>
-      <Text accessibilityRole="header" style={{ color: palette.text, fontSize: 24, fontWeight: '600', marginBottom: 8 }}>Conversaciones</Text>
-      {chat.topics.map(topic => {
+      <View style={[styles.row, { backgroundColor: palette.card, borderRadius: 12, paddingHorizontal: 12, marginBottom: 12 }]}><SymbolView name="magnifyingglass" size={18} tintColor={palette.textMuted} /><Input accessibilityLabel="Buscar un tema" placeholder="Buscar un tema" value={query} onChangeText={setQuery} style={{ flex: 1, borderWidth: 0, backgroundColor: 'transparent', paddingHorizontal: 0 }} /></View>
+      {chat.topics.filter(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())).map(topic => {
         const last = chat.messages.filter(m => m.topicId === topic.id).at(-1);
-        return <Pressable key={topic.id} accessibilityRole="button" accessibilityLabel={`${topic.title}, ${topic.unreadCount} sin leer`} onPress={() => router.push({ pathname: '/chat/[id]', params: { id: topic.id } })} style={{ paddingVertical: 22, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 8 }}>
-          <View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={{ color: palette.text, fontSize: 21, fontWeight: '600' }}>{topic.title}</Text>{topic.unreadCount > 0 && <Text style={{ color: palette.text }}>{topic.unreadCount} nuevo</Text>}</View>
-          <Text numberOfLines={2} style={{ color: palette.textMuted, fontSize: 16, lineHeight: 23 }}>{!topic.enabled ? 'Ejemplo simulado · todavía no habilitado' : last?.text || last?.attachment?.transcript || 'Empezá una conversación'}</Text>
+        return <Pressable key={topic.id} accessibilityRole="button" accessibilityLabel={topic.title} onPress={() => router.push({ pathname: '/chat/[id]', params: { id: topic.id } })} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 14, opacity: pressed ? 0.6 : 1 })}>
+          <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: palette.badgeBg, alignItems: 'center', justifyContent: 'center' }}><SymbolView name={topic.enabled ? 'wallet.bifold' : 'bag'} size={24} tintColor={palette.accent} /></View>
+          <View style={{ flex: 1, gap: 7 }}><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={{ color: palette.text, fontSize: 17, fontWeight: '600', flex: 1 }}>{topic.title}</Text>{last && <Text style={{ color: palette.textMuted, fontSize: 12 }}>{new Date(last.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}</Text>}</View>
+          <Text numberOfLines={1} style={{ color: palette.textMuted, fontSize: 15 }}>{!topic.enabled ? 'Próximamente · ejemplo' : last?.text || last?.attachment?.transcript || 'Empezá una conversación'}</Text></View>
         </Pressable>;
       })}
-      <Action title="Actualizar conversaciones" onPress={() => { void chat.refresh().catch(() => {}); }} />
+      {!chat.topics.some(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())) && <Text style={{ color: palette.textMuted, paddingVertical: 20 }}>No hay temas con ese nombre.</Text>}
+
     </View>}
+    <View style={{ flex: 1 }} /><Text style={{ color: palette.textMuted, fontSize: 13, textAlign: 'center', lineHeight: 20 }}>Demo simulada · historial de esta sesión.
+No uses datos personales.</Text>
     {chat.error && <Text accessibilityRole="alert" style={{ color: palette.danger }}>{chat.error}</Text>}
   </ScrollView></SafeAreaView>;
 }

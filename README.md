@@ -126,3 +126,22 @@ SDK 57 a Expo 57.0.30 / React Native 0.86.3, incluyendo audio, image picker y ne
 
 T01 requiere aún verificar la instalación del iPhone. T07 tiene implementación simulada
 con los pendientes nativos anteriores. **T03/T04/T05/T06 no están acreditadas con mocks.**
+
+### Rediseño aprobado — 2026-10-16
+
+La app adopta **Lumi Noche** para oscuro y **Lumi Esencial** para claro, seleccionados
+por Mauro desde `docs/prototypes/lumi-chats.html`. Sin filtros ni contadores de no leídos
+en Home; `markRead` se conserva para compatibilidad con HTTP v1. Apariencia automática
+según iPhone o manual en Preferencias. Búsqueda de temas, actualización al deslizar,
+burbujas con fechas, adjuntos desde `+`, reproductor compacto y reportes desde el chat.
+El gateway sigue simulado; no se modificó el contrato ni se integró infraestructura.
+
+Validación de este cambio: TypeScript y ESLint correctos; 17 suites / 107 tests correctos;
+exportación iOS/Hermes correcta. En simulador iPhone 17 Pro/iOS 26.5: capturas nativas
+oscuro y claro, texto XXXL, teclado, envío de texto y respuesta simulada. Se corrigió
+recorte del encabezado con texto grande; revisión visual independiente confirmó la
+corrección. El overlay azul pertenece a Expo Go, no al diseño de Lumi.
+
+Mauro informó haber probado texto y audio en iPhone antes del rediseño. Esta versión
+visual todavía requiere repetir allí grabación, reproducción, imagen/PDF y teclado;
+las pruebas de simulador no acreditan audio ni integración real en el dispositivo.

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Image, Text, View } from 'react-native';
+import { ActionSheetIOS, Alert, AppState, Image, Text, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { AudioModule, RecordingPresets, setAudioModeAsync, useAudioRecorder, useAudioRecorderState } from 'expo-audio';
@@ -7,7 +7,7 @@ import { randomUUID } from 'expo-crypto';
 import { File } from 'expo-file-system';
 import { useTheme } from '@/theme/ThemeContext';
 import { useChat, Outgoing } from './ChatProvider';
-import { Action, Input, styles } from './ui';
+import { Action, IconButton, Input, styles } from './ui';
 import { AudioPlayer } from './AudioMessage';
 import { validateFile } from './types';
 type DraftFile = { uri: string; mimeType: string; name: string; durationMs?: number };
@@ -76,22 +76,20 @@ export function Composer({ topicId, enabled }: { topicId: string; enabled: boole
     finally { locked.current = false; setBusy(false); }
   };
   if (!enabled) return <Text style={{ color: palette.textMuted, padding: 20 }}>Ejemplo simulado. Este tema todavía no admite envíos.</Text>;
-  return <View style={{ padding: 16, gap: 10, borderTopWidth: 1, borderColor: palette.cardBorder }}>
+  return <View style={{ paddingHorizontal: 10, paddingVertical: 8, backgroundColor: palette.surface, gap: 10, borderTopWidth: 1, borderColor: palette.cardBorder }}>
     {error && <Text accessibilityRole="alert" style={{ color: palette.danger }}>{error}</Text>}
     {recording.isRecording ? <>
       <Text accessibilityLiveRegion="polite" style={{ color: palette.text }}>Grabando · {Math.floor(recording.durationMillis / 1000)} s de 300 s</Text>
       <View style={styles.row}><Action title="Cancelar grabación" disabled={busy} onPress={() => { void stop(true); }} /><Action title="Terminar audio" disabled={busy} onPress={() => { void stop(); }} /></View>
     </> : <>
       {file && <View style={{ gap: 8 }}><Text numberOfLines={2} style={{ color: palette.text }}>{file.name}</Text>{file.mimeType.startsWith('image/') && <Image source={{ uri: file.uri }} accessibilityLabel="Imagen seleccionada" style={{ width: 80, height: 80, borderRadius: 8 }} />}{file.durationMs !== undefined && <AudioPlayer resolve={async () => file.uri} />}<Action title="Quitar adjunto" disabled={busy || !!failed} onPress={() => setFile(null)} /></View>}
-      <Input accessibilityLabel="Mensaje" placeholder={file?.durationMs !== undefined ? 'Audio listo para enviar' : 'Escribí a Lumi…'} multiline maxLength={12000} value={text} editable={!busy && !failed && file?.durationMs === undefined} onChangeText={setText} style={{ maxHeight: 120 }} />
-      <View style={styles.row}>
-        <Action title="Imagen" disabled={busy || !!failed || !!file} onPress={() => { void select(true); }} />
-        <Action title="PDF" disabled={busy || !!failed || !!file} onPress={() => { void select(false); }} />
-        <Action title="Grabar" disabled={busy || !!failed || !!file || !!text} onPress={() => { void start(); }} />
-        <Action title={busy ? 'Enviando…' : failed ? 'Reintentar envío' : 'Enviar'} disabled={busy || !chat.online || (!text.trim() && !file)} onPress={() => { void send(); }} />
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6 }}>
+        <IconButton name="plus" label="Agregar imagen o PDF" disabled={busy || !!failed || !!file} onPress={() => ActionSheetIOS.showActionSheetWithOptions({ options: ['Cancelar', 'Foto o imagen', 'Documento PDF'], cancelButtonIndex: 0, message: 'Hasta 25 MiB · PDF: 30 páginas' }, index => { if (index === 1 || index === 2) void select(index === 1); })} />
+        <Input accessibilityLabel="Mensaje" placeholder={file?.durationMs !== undefined ? 'Audio listo' : 'Mensaje'} multiline maxLength={12000} value={text} editable={!busy && !failed && file?.durationMs === undefined} onChangeText={setText} style={{ flex: 1, minHeight: 44, maxHeight: 120, paddingHorizontal: 14, paddingTop: 11, paddingBottom: 11, borderRadius: 22, backgroundColor: palette.bg }} />
+        <IconButton filled name={busy ? 'hourglass' : failed ? 'arrow.clockwise' : text.trim() || file ? 'arrow.up' : 'mic.fill'} label={busy ? 'Enviando' : failed ? 'Reintentar envío' : text.trim() || file ? 'Enviar mensaje' : 'Grabar audio'} disabled={busy || !chat.online} onPress={() => { if (text.trim() || file || failed) void send(); else void start(); }} />
       </View>
       {failed && <><Text style={{ color: palette.textMuted }}>El envío conserva su identificador. Reintentar no crea otro pedido.</Text><Action title="Descartar este borrador" disabled={busy} onPress={() => Alert.alert('¿Descartar borrador?', 'Si el servidor llegó a aceptar el pedido, puede seguir procesándolo. Consultá el historial antes de volver a enviarlo.', [{ text: 'Conservar', style: 'cancel' }, { text: 'Descartar', style: 'destructive', onPress: () => { setFailed(null); setText(''); setFile(null); setError(null); } }])} /></>}
-      <Text style={{ color: palette.textMuted, fontSize: 12 }}>Hasta 25 MiB · PDF: 30 páginas · audio: 5 min. Validación final en servidor.</Text>
+
     </>}
   </View>;
 }

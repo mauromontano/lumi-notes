@@ -1,3 +1,4 @@
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,7 +8,7 @@ import { ThemeProvider, useTheme } from '@/theme/ThemeContext';
 import { ChatProvider } from '@/chat/ChatProvider';
 export const unstable_settings = { initialRouteName: 'index' };
 function Navigation() {
-  const { palette } = useTheme();
+  const { palette, theme } = useTheme();
   useEffect(() => {
     void SplashScreen.hideAsync();
     const open = (response: Notifications.NotificationResponse | null) => {
@@ -18,10 +19,10 @@ function Navigation() {
     const sub = Notifications.addNotificationResponseReceivedListener(open);
     return () => sub.remove();
   }, []);
-  return <Stack screenOptions={{ headerStyle: { backgroundColor: palette.bg }, headerTintColor: palette.text, contentStyle: { backgroundColor: palette.bg }, headerShadowVisible: false }}>
+  return <><StatusBar style={theme === 'dark' ? 'light' : 'dark'} /><Stack screenOptions={{ headerStyle: { backgroundColor: palette.surface }, headerTintColor: palette.accent, contentStyle: { backgroundColor: palette.bg }, headerShadowVisible: false }}>
     <Stack.Screen name="index" options={{ headerShown: false }} />
     <Stack.Screen name="chat/[id]" options={{ title: 'Conversación', headerBackTitle: 'Temas' }} />
     <Stack.Screen name="settings" options={{ title: 'Preferencias' }} />
-  </Stack>;
+  </Stack></>;
 }
 export default function Layout() { return <GestureHandlerRootView style={{ flex: 1 }}><ThemeProvider><ChatProvider><Navigation /></ChatProvider></ThemeProvider></GestureHandlerRootView>; }
