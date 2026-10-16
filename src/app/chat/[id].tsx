@@ -10,6 +10,7 @@ import { useHeaderHeight } from 'expo-router/build/react-navigation/elements';
 import { Action, IconButton, styles } from '@/chat/ui';
 import { messageLinks } from '@/chat/links';
 import { Composer } from '@/chat/Composer';
+import { ImagePreview } from '@/chat/ImageMessage';
 import { AudioPlayer } from '@/chat/AudioMessage';
 const labels: Record<Status, string> = { queued: 'En espera', processing: 'Procesando', completed: 'Completado', needs_input: 'Necesita aclaración', waiting_quota: 'Cuota agotada · pedido pendiente', failed: 'No se pudo procesar' };
 function Bubble({ message: m }: { message: Message }) {
@@ -23,7 +24,8 @@ function Bubble({ message: m }: { message: Message }) {
     {!!m.text && <Text selectable style={[styles.body, { color: palette.text }]}>{m.text}</Text>}
     {a && <View style={{ gap: 8 }}>
       {m.kind !== 'audio' && <Text style={{ color: palette.text, fontWeight: '600' }}>{a.fileName}</Text>}
-      {a.availability === 'expired' ? <Text style={{ color: palette.textMuted }}>Audio expirado{a.expiresAt ? ` · ${new Date(a.expiresAt).toLocaleDateString('es-AR')}` : ''}. Conservamos la transcripción.</Text> : a.availability === 'failed' ? <Text style={{ color: palette.danger }}>Archivo no disponible.</Text> : m.kind === 'audio' ? <AudioPlayer resolve={async () => (await chat.gateway.getAttachmentAccess(a.id)).url} /> : <Action subtle title={m.kind === 'image' ? 'Abrir imagen' : 'Abrir PDF'} disabled={busy} onPress={() => { void run(async () => { const access = await chat.gateway.getAttachmentAccess(a.id); if (chat.gateway.simulated) { const Sharing = await import('expo-sharing'); await Sharing.shareAsync(access.url); } else await Linking.openURL(access.url); }); }} />}
+      {a.availability === 'expired' ? <Text style={{ color: palette.textMuted }}>Audio expirado{a.expiresAt ? ` · ${new Date(a.expiresAt).toLocaleDateString('es-AR')}` : ''}. Conservamos la transcripción.</Text> : a.availability === 'failed' ? <Text style={{ color: palette.danger }}>Archivo no disponible.</Text> : m.kind === 'audio' ? <AudioPlayer key={a.id} durationMs={a.durationMs} resolve={async () => (await chat.gateway.getAttachmentAccess(a.id)).url} /> : <Action subtle title={m.kind === 'image' ? 'Abrir imagen' : 'Abrir PDF'} disabled={busy} onPress={() => { void run(async () => { const access = await chat.gateway.getAttachmentAccess(a.id); if (chat.gateway.simulated) { const Sharing = await import('expo-sharing'); await Sharing.shareAsync(access.url); } else await Linking.openURL(access.url); }); }} />}
+      {m.kind === 'image' && a.availability === 'available' && <ImagePreview key={a.id} attachmentId={a.id} fileName={a.fileName} />}
       {a.transcriptionStatus === 'pending' && <Text style={{ color: palette.textMuted }}>Transcripción pendiente</Text>}
       {a.transcriptionStatus === 'failed' && <Text style={{ color: palette.danger }}>No se pudo transcribir. El audio se conserva.</Text>}
       {!!a.transcript && <>{a.availability !== 'expired' && <Action subtle title={transcript ? 'Ocultar transcripción' : 'Ver transcripción'} onPress={() => setTranscript(!transcript)} />}{(transcript || a.availability === 'expired') && <Text selectable style={[styles.body, { color: palette.text }]}>{a.transcript}</Text>}</>}

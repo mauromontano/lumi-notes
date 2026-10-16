@@ -145,3 +145,13 @@ corrección. El overlay azul pertenece a Expo Go, no al diseño de Lumi.
 Mauro informó haber probado texto y audio en iPhone antes del rediseño. Esta versión
 visual todavía requiere repetir allí grabación, reproducción, imagen/PDF y teclado;
 las pruebas de simulador no acreditan audio ni integración real en el dispositivo.
+
+### Ajustes de medios — 2026-10-16
+
+Tras prueba de Mauro en iPhone (audio audible con duración inicial 0:00; selección de
+imágenes aparentemente correcta): el reproductor usa `durationMs` del adjunto/borrador
+hasta cargar la duración del archivo. Las imágenes disponibles muestran una miniatura
+contenida en la burbuja; acceso mediante ChatGateway, indicador de carga y reintento.
+No cambia persistencia ni transporte. TypeScript, lint, 107 tests existentes y exportación
+iOS/Hermes correctos. Estos ajustes aún no fueron verificados visualmente en simulador
+ni en iPhone físico; repetir duración antes de Play y preview de imagen enviada allí.
