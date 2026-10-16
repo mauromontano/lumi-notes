@@ -22,7 +22,7 @@ export class MockChatGateway implements ChatGateway {
   async bootstrap() { return { apiVersion: 1 as const, topics: await this.listTopics(), changesCursor: String(this.changes.length), limits }; }
   async listTopics() { return clone(this.topics); }
   async listMessages(topicId: string, cursor?: string) {
-    const all = this.messages.filter(m => m.topicId === topicId);
+    const all = this.messages.filter(m => m.topicId === topicId).sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
     const end = cursor ? Number(cursor) : all.length;
     return { items: clone(all.slice(Math.max(0, end - 50), end)), nextBefore: end > 50 ? String(end - 50) : undefined };
   }

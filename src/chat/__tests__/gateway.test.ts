@@ -64,6 +64,8 @@ describe('HTTP v1 simulated adapter', () => {
     for (let i = 0; i < 55; i++) await g.sendText({ ...request, clientMessageId: `id-${i}` });
     const newest = await g.listMessages(FINANCE), older = await g.listMessages(FINANCE, newest.nextBefore);
     expect(newest.items).toHaveLength(50); expect(older.items).toHaveLength(7);
+    const dates = older.items.map(m => m.createdAt);
+    expect(dates).toEqual([...dates].sort());
     expect(mergeMessages(newest.items, [...older.items, ...newest.items])).toHaveLength(57);
   });
 });
