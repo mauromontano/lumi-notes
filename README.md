@@ -155,3 +155,10 @@ contenida en la burbuja; acceso mediante ChatGateway, indicador de carga y reint
 No cambia persistencia ni transporte. TypeScript, lint, 107 tests existentes y exportación
 iOS/Hermes correctos. Estos ajustes aún no fueron verificados visualmente en simulador
 ni en iPhone físico; repetir duración antes de Play y preview de imagen enviada allí.
+
+Verificación posterior de medios: se reinició Metro en puerto 8084 con `--clear` y
+Expo Go del simulador. En iPhone 17 Pro/iOS 26.5 se observó duración `0:00 / 0:06`
+en borrador y mensaje de audio enviado antes de Play, y miniatura HEIC visible dentro
+del chat. La prueba inicial de micrófono dio error antes del reinicio; no se verificó
+calidad audible en simulador. Mauro indicó que después del reinicio ahora parece
+funcionar. Esto acredita UI local con gateway simulado, no persistencia/backend real.
