@@ -215,17 +215,31 @@ No se midió aún ahorro real en Railway/Neon ni entrega push en dispositivo fí
 https://lumi-api-production-fa73.up.railway.app. No incorpora secretos al bundle.
 En la misma Wi-Fi de la Mac, abrir el enlace Expo que imprime Metro y vincular con
 un código privado de un uso (10 minutos). El backend y sus datos viven en Railway/Neon;
-Expo Go todavía necesita Metro para descargar JavaScript. El perfil preview-connected
-ya apunta a ese servidor, pero todavía no existe un build EAS firmado independiente.
+Expo Go todavía necesita Metro para descargar JavaScript. El build EAS preview-connected ya está creado, firmado y con el iPhone registrado: [instalar Lumi conectado](https://expo.dev/accounts/mauro-montano/projects/lumi-notes/builds/0a3641e4-0364-47ab-a07a-aa41e253112f). La build anterior con perfil preview es demo. Después de instalar, requiere pairing nuevo de un uso.
 
 Evidencia: simulador iPhone 17 Pro/iOS26.5, pairing real, consulta técnica sin registrar
 movimientos, respuesta Claude Pro desde Railway y reporte privado abierto en Safari.
 Captura sin tokens en docs/evidence/railway-pilot-2026-10-16/report-empty.png.
 El chat mostró correctamente un fallo del respaldo; se corrigió TLS de pg_dump en el
 backend y se verificó recuperación real desde el bucket independiente. Export iOS/Hermes
-con esta URL correcto. No acredita todavía audio/PDF nativos contra Railway ni iPhone
-físico/push. El backend sí procesó audio, imagen y PDF sintéticos en pruebas aisladas.
+con esta URL correcto. No acredita audio/PDF nativos contra Railway ni la prueba física: no hay mensajes del iPhone en la base. Push sigue desactivado. El backend sí procesó audio, imagen y PDF sintéticos en pruebas aisladas.
 
 Piloto autorizado por 24 horas/hasta USD 5. El proceso se detiene el 17/10/2026 a las
 23:30 Argentina; conserva datos. Push sigue desactivado. El ODD central conserva el
 estado completo y las tareas pendientes; no importar historial financiero sin verificarlo.
+
+
+### Build iPhone conectado — 2026-10-17
+
+EAS build `0a3641e4-0364-47ab-a07a-aa41e253112f`, perfil `preview-connected`, iOS
+internal/ad hoc, app `com.mauro.luminotes` 1.0.0 (1), certificado y perfil vigentes; el
+UDID personal está incluido. Abrir el enlace de arriba en Safari, instalar, abrir Lumi y
+usar pairing de un solo uso. El código vence a los 10 minutos. Confirmar el rótulo
+“Conversación conectada a tu servidor”. Solo después enviar consultas; `preview` usa
+respuestas simuladas. El código no se versiona. El servidor del piloto se detiene a las
+23:30 Argentina el 17/10, conservando los datos.
+
+EAS rechazó el primer intento porque package-lock.json omitía dos paquetes opcionales
+de Expo. Se actualizó el lock con npm 10.9.8, y `npm ci --dry-run` aceptó el árbol. El
+segundo build quedó firmado y pasó dependencias, Pods, bundle y Xcode. Esta revisión no
+modificó la aplicación ni ejecutó tests.
