@@ -1,6 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import * as Network from 'expo-network';
+import * as Notifications from 'expo-notifications';
+import { nextPollDelay } from './polling';
 import { File } from 'expo-file-system';
 import { gateway } from './gateway';
 import { ChatGateway, GatewayError, mergeMessages, Message, Topic, validateFile } from './types';
@@ -70,15 +72,18 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!linked) return;
     let disposed = false, timer: ReturnType<typeof setTimeout> | undefined, failures = 0;
+    let started = Date.now();
     const poll = async () => {
       if (disposed || AppState.currentState !== 'active') return;
       try { await refresh(); failures = 0; } catch { failures++; }
       const pending = latest.current.some(m => m.status === 'queued' || m.status === 'processing');
-      if (!disposed) timer = setTimeout(poll, failures ? Math.min(60000, 3000 * 2 ** failures) : pending ? 3000 : 30000);
+      const delay = nextPollDelay(pending, failures, Date.now() - started);
+      if (!disposed && delay !== null) timer = setTimeout(poll, delay);
     };
     void poll();
-    const sub = AppState.addEventListener('change', state => { clearTimeout(timer); if (state === 'active') void poll(); });
-    return () => { disposed = true; clearTimeout(timer); sub.remove(); };
+    const sub = AppState.addEventListener('change', state => { clearTimeout(timer); if (state === 'active') { started = Date.now(); failures = 0; void poll(); } });
+    const notification = Notifications.addNotificationReceivedListener(() => { clearTimeout(timer); started = Date.now(); failures = 0; void poll(); });
+    return () => { disposed = true; clearTimeout(timer); sub.remove(); notification.remove(); };
   }, [linked, refresh, pending]);
   useEffect(() => {
     if (!linked || gateway.simulated) return;

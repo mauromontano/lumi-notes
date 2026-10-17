@@ -198,3 +198,13 @@ Usar el script pilot-local del backend con los runtimes personales configurados.
 La excepción HTTP solo funciona en desarrollo y direcciones privadas/localhost.
 Al terminar el ensayo se eliminan schema y originales sintéticos; el token de ese
 servidor deja de servir. Un nuevo ensayo requiere vincularse nuevamente.
+
+### Ahorro en reposo — 2026-10-16
+
+Se eliminó el polling cada30s de chats inactivos. Se actualiza al abrir/volver a la app,
+al refrescar manualmente y al recibir una notificación. Mientras hay queued/processing
+consulta cada3s, con backoff por fallos, hasta10min o tres fallos seguidos. Luego espera
+otra acción/push sin cancelar el trabajo del servidor. Cuota pendiente no hace polling.
+Sin permiso push, las novedades de jobs llegan al volver o actualizar; no se mantiene
+la base despierta para buscar novedades. 20 suites/122 tests, tsc/lint/export iOS correctos.
+No se midió aún ahorro real en Railway/Neon ni entrega push en dispositivo físico.
