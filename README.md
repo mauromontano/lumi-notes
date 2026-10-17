@@ -208,3 +208,24 @@ otra acción/push sin cancelar el trabajo del servidor. Cuota pendiente no hace 
 Sin permiso push, las novedades de jobs llegan al volver o actualizar; no se mantiene
 la base despierta para buscar novedades. 20 suites/122 tests, tsc/lint/export iOS correctos.
 No se midió aún ahorro real en Railway/Neon ni entrega push en dispositivo físico.
+
+### Piloto Railway — 16/10/2026
+
+`npm run start:pilot` inicia Expo Go/LAN en puerto 8086 con HttpChatGateway y
+https://lumi-api-production-fa73.up.railway.app. No incorpora secretos al bundle.
+En la misma Wi-Fi de la Mac, abrir el enlace Expo que imprime Metro y vincular con
+un código privado de un uso (10 minutos). El backend y sus datos viven en Railway/Neon;
+Expo Go todavía necesita Metro para descargar JavaScript. El perfil preview-connected
+ya apunta a ese servidor, pero todavía no existe un build EAS firmado independiente.
+
+Evidencia: simulador iPhone 17 Pro/iOS26.5, pairing real, consulta técnica sin registrar
+movimientos, respuesta Claude Pro desde Railway y reporte privado abierto en Safari.
+Captura sin tokens en docs/evidence/railway-pilot-2026-10-16/report-empty.png.
+El chat mostró correctamente un fallo del respaldo; se corrigió TLS de pg_dump en el
+backend y se verificó recuperación real desde el bucket independiente. Export iOS/Hermes
+con esta URL correcto. No acredita todavía audio/PDF nativos contra Railway ni iPhone
+físico/push. El backend sí procesó audio, imagen y PDF sintéticos en pruebas aisladas.
+
+Piloto autorizado por 24 horas/hasta USD 5. El proceso se detiene el 17/10/2026 a las
+23:30 Argentina; conserva datos. Push sigue desactivado. El ODD central conserva el
+estado completo y las tareas pendientes; no importar historial financiero sin verificarlo.

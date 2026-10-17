@@ -28,7 +28,8 @@
     "preview-connected": {
       "extends": "preview",
       "env": {
-        "EXPO_PUBLIC_CHAT_MODE": "http"
+        "EXPO_PUBLIC_CHAT_MODE": "http",
+        "EXPO_PUBLIC_LUMI_API_URL": "https://lumi-api-production-fa73.up.railway.app"
       },
       "channel": "preview-connected"
     }
