@@ -1,4 +1,4 @@
-// Genera el ícono orb (1024×1024) y lo escribe en los 3 destinos:
+// Genera el ícono: el orbe de Lumi con ojos (1024×1024) y lo escribe en los 3 destinos:
 // - assets/images/icon.png (app.json / Android-web futuro)
 // - assets/expo.icon/Assets/orb.png (fuente Icon Composer versionada)
 // - ios/Lumi/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png (bundle que compila Xcode)
@@ -15,6 +15,16 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BG = '#10132a';
 const GLOW = '#7c6bff';
 const STOPS = ['#9be8ff', '#7c6bff', '#3d2f96'];
+
+
+// Cara del personaje Lumi del diseño E16 (orbe r=40 en un viewBox de 120), escalada al orbe del ícono (r=315).
+// Pastillas blancas como ojos y un brillo arriba a la izquierda; sin boca, como el resto de los bots.
+function face() {
+  const k = 315 / 40, at = (dx, dy) => [512 + dx * k, 512 + dy * k];
+  const [hx, hy] = at(-15, -20);
+  const eye = dx => { const [x, y] = at(dx, 0), w = 10 * k, h = 22 * k; return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="${w / 2}" fill="#ffffff"/>`; };
+  return `<ellipse cx="${hx}" cy="${hy}" rx="${11 * k}" ry="${6 * k}" fill="#ffffff" opacity="0.3" transform="rotate(-32 ${hx} ${hy})"/>${eye(-9)}${eye(9)}`;
+}
 
 const svg = `
 <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
@@ -33,6 +43,7 @@ const svg = `
   <rect width="1024" height="1024" fill="${BG}"/>
   <circle cx="512" cy="512" r="512" fill="url(#halo)"/>
   <circle cx="512" cy="512" r="315" fill="url(#orb)"/>
+  ${face()}
 </svg>`;
 
 const png = await sharp(Buffer.from(svg)).png().toBuffer();

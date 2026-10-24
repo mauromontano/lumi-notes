@@ -6,7 +6,10 @@ import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider, useTheme } from '@/theme/ThemeContext';
 import { ChatProvider } from '@/chat/ChatProvider';
+import { activeTopic, foregroundBehavior } from '@/chat/foreground';
 export const unstable_settings = { initialRouteName: 'index' };
+// Without a handler iOS hides every push while Lumi is open.
+Notifications.setNotificationHandler({ handleNotification: async n => foregroundBehavior(n.request.content.data, activeTopic()) });
 function Navigation() {
   const { palette, theme } = useTheme();
   useEffect(() => {

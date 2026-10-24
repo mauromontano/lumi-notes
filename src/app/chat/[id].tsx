@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActionSheetIOS, Alert, FlatList, KeyboardAvoidingView, Linking, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { setActiveTopic } from '@/chat/foreground';
 import { useChat } from '@/chat/ChatProvider';
 import { useTheme } from '@/theme/ThemeContext';
 import { Message, Status } from '@/chat/types';
@@ -46,6 +47,7 @@ export default function ChatScreen() {
   const messages = chat.messages.filter(m => m.topicId === id);
   const [before, setBefore] = useState<string>(), [loading, setLoading] = useState(false);
   useEffect(() => { if (chat.linked) void chat.load(id).then(setBefore).catch(() => {}); /* on entering this topic */ }, [id, chat.linked]); // eslint-disable-line react-hooks/exhaustive-deps
+  useFocusEffect(useCallback(() => { setActiveTopic(id); return () => setActiveTopic(null); }, [id]));
   const lastId = messages.at(-1)?.id;
   useEffect(() => { if (lastId && chat.linked) void chat.read(id, lastId).catch(() => {}); }, [id, lastId, chat.linked]); // eslint-disable-line react-hooks/exhaustive-deps
   return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><Stack.Screen options={{ headerBackButtonDisplayMode: 'minimal', title: topic?.title || 'Conversación', headerTitle: fontScale > 1.15 ? (topic?.title || 'Conversación') : () => <View><Text style={{ color: palette.text, fontWeight: '600', fontSize: 17 }}>{topic?.title || 'Conversación'}</Text>{fontScale <= 1.15 && <Text style={{ color: palette.textMuted, fontSize: 12 }}>Tu asistente personal</Text>}</View>, headerRight: () => <IconButton name="doc.text" label="Reportes de la conversación" onPress={() => {

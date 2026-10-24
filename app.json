@@ -64,7 +64,13 @@
           "microphonePermission": false
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Lumi usa Face ID para confirmar acciones importantes, como mandar un mail o abrir un PR."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -79,6 +85,12 @@
     "owner": "mauro-montano",
     "platforms": [
       "ios"
-    ]
+    ],
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ffc6e8b0-3c9e-4f69-b836-ec8a24bcf437"
+    }
   }
 }
