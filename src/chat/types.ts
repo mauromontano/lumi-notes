@@ -2,7 +2,16 @@
 export type Topic = { id: string; title: string; enabled: boolean; unreadCount: number };
 export type Status = 'queued' | 'processing' | 'completed' | 'needs_input' | 'waiting_quota' | 'failed';
 export type Attachment = { id: string; fileName: string; mimeType: string; sizeBytes: number; durationMs?: number; availability: 'available' | 'expired' | 'failed'; expiresAt?: string; transcript?: string; transcriptionStatus?: 'pending' | 'completed' | 'failed' };
-export type Message = { id: string; topicId: string; clientMessageId?: string; createdAt: string; updatedAt: string; revision: number; origin: 'user' | 'assistant' | 'job'; kind: 'text' | 'audio' | 'image' | 'document' | 'event'; text?: string; status: Status; attachment?: Attachment; reportRefs?: string[]; replyToMessageId?: string; error?: { code: string; message: string; retryable: boolean } };
+export type Message = { id: string; topicId: string; clientMessageId?: string; createdAt: string; updatedAt: string; revision: number; origin: 'user' | 'assistant' | 'job'; kind: 'text' | 'audio' | 'image' | 'document' | 'event'; text?: string; status: Status; attachment?: Attachment; reportRefs?: string[]; replyToMessageId?: string; error?: { code: string; message: string; retryable: boolean } ; actions?: ActionButton[]; approvals?: Approval[] };
+/** E16 approvals: buttons stay while the card is pending; approvals carry each action's state. */
+export type ActionButton = { id: string; label: string; style: 'primary' | 'secondary' | 'link'; requiresAuth: boolean };
+export type Approval = { id: string; kind: string; summary: string; status: 'pending' | 'approved' | 'rejected' | 'expired' | 'failed' | 'done'; requiresAuth: boolean; expiresAt: string };
+export type InboxItem = Approval & { messageId: string; topicId: string; agent: string; actions: ActionButton[] };
+export type NotifyLevel = 'urgent' | 'normal' | 'silent' | 'digest';
+export type EventKind = 'reply' | 'approval' | 'watch' | 'reminder' | 'digest' | 'system';
+export type NotificationRule = { agent: string; name: string; eventKind: EventKind; level: NotifyLevel; showText: boolean };
+export type NotificationSettings = { quietHours: { start: string; end: string; timeZone: string }; rules: NotificationRule[] };
+export type NotificationPatch = { quietHours?: { start: string; end: string }; rules?: { agent: string; eventKind: EventKind; level?: NotifyLevel; showText?: boolean }[] };
 export type Change = { id: string; type: 'message.upsert'; entityId: string; revision: number; payload: Message } | { id: string; type: 'topic.upsert'; entityId: string; revision: number; payload: Topic };
 export type SendText = { topicId: string; clientMessageId: string; text: string };
 export type SendAttachment = { topicId: string; clientMessageId: string; localUri: string; mimeType: string; fileName: string; caption?: string };
@@ -23,6 +32,10 @@ export interface ChatGateway {
   registerPushToken(token: string | null): Promise<void>;
   getReportLink(reportId: string): Promise<{ url: string; expiresAt: string }>;
   getAttachmentAccess(id: string): Promise<{ url: string; expiresAt: string }>;
+  decideAction(messageId: string, body: { actionId: string; clientMessageId: string }): Promise<{ actionId: string; status: Approval['status'] }>;
+  inbox(): Promise<InboxItem[]>;
+  notificationSettings(): Promise<NotificationSettings>;
+  updateNotificationSettings(patch: NotificationPatch): Promise<NotificationSettings>;
 }
 export class GatewayError extends Error {
   constructor(public code: string, message: string, public retryable = false) { super(message); }

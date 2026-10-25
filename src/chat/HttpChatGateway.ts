@@ -1,4 +1,4 @@
-import { Attachment, Bootstrap, Change, ChatGateway, GatewayError, Message, SendAttachment, SendAudio, SendText, Topic } from './types';
+import { Approval, Attachment, Bootstrap, Change, ChatGateway, GatewayError, InboxItem, Message, NotificationPatch, NotificationSettings, SendAttachment, SendAudio, SendText, Topic } from './types';
 
 type Transport = (url: string, options: RequestInit) => Promise<Response>;
 type UploadBody = (input: SendAttachment | SendAudio, fileName: string) => FormData;
@@ -64,4 +64,8 @@ export class HttpChatGateway implements ChatGateway {
   registerPushToken(token: string | null) { return this.request<void>('/devices/current/push-token', 'PUT', token ? { expoPushToken: token } : null); }
   getReportLink(id: string) { return this.request<{ url: string; expiresAt: string }>(`/reports/${encodeURIComponent(id)}/link`, 'POST'); }
   getAttachmentAccess(id: string) { return this.request<{ url: string; expiresAt: string }>(`/attachments/${encodeURIComponent(id)}/access`); }
+  decideAction(messageId: string, body: { actionId: string; clientMessageId: string }) { return this.request<{ actionId: string; status: Approval['status'] }>(`/messages/${encodeURIComponent(messageId)}/actions`, 'POST', body); }
+  async inbox() { return (await this.request<{ items: InboxItem[] }>('/inbox')).items; }
+  notificationSettings() { return this.request<NotificationSettings>('/notification-settings'); }
+  updateNotificationSettings(patch: NotificationPatch) { return this.request<NotificationSettings>('/notification-settings', 'PATCH', patch); }
 }

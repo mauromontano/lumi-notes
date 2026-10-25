@@ -7,16 +7,24 @@ import * as SplashScreen from 'expo-splash-screen';
 import { ThemeProvider, useTheme } from '@/theme/ThemeContext';
 import { ChatProvider } from '@/chat/ChatProvider';
 import { activeTopic, foregroundBehavior } from '@/chat/foreground';
+import { APPROVAL_CATEGORY, approvalButtons, approveFromPush, faceId, responseIntent } from '@/chat/approvals';
+import { gateway } from '@/chat/gateway';
+import { randomUUID } from 'expo-crypto';
 export const unstable_settings = { initialRouteName: 'index' };
 // Without a handler iOS hides every push while Lumi is open.
 Notifications.setNotificationHandler({ handleNotification: async n => foregroundBehavior(n.request.content.data, activeTopic()) });
+// Aprobar / Ahora no on approval pushes. Aprobar opens Lumi: Face ID needs the app in front.
+void Notifications.setNotificationCategoryAsync(APPROVAL_CATEGORY, approvalButtons).catch(() => {});
 function Navigation() {
   const { palette, theme } = useTheme();
   useEffect(() => {
     void SplashScreen.hideAsync();
     const open = (response: Notifications.NotificationResponse | null) => {
-      const id = response?.notification.request.content.data?.topicId;
-      if (typeof id === 'string' && /^[0-9a-f-]{36}$/i.test(id)) router.push({ pathname: '/chat/[id]', params: { id } });
+      if (!response) return;
+      const intent = responseIntent(response.actionIdentifier, response.notification.request.content.data);
+      if (!intent) return;
+      router.push({ pathname: '/chat/[id]', params: { id: intent.topicId } });
+      if (intent.kind === 'approve' && intent.messageId && !gateway.simulated) void approveFromPush(gateway, intent.messageId, faceId, randomUUID).catch(() => {});
     };
     void Notifications.getLastNotificationResponseAsync().then(open);
     const sub = Notifications.addNotificationResponseReceivedListener(open);

@@ -1,5 +1,5 @@
 import { fixtures, topics } from './fixtures';
-import { Attachment, Change, ChatGateway, GatewayError, limits, Message, SendAttachment, SendAudio, SendText, validateFile } from './types';
+import { Attachment, Change, ChatGateway, GatewayError, limits, Message, NotificationPatch, NotificationSettings, SendAttachment, SendAudio, SendText, validateFile } from './types';
 function clone<T>(value: T): T { return JSON.parse(JSON.stringify(value)); }
 /** In-memory HTTP-v1 double. URI lookup is adapter-private, never part of Message. */
 export class MockChatGateway implements ChatGateway {
@@ -96,5 +96,14 @@ export class MockChatGateway implements ChatGateway {
     const url = this.localFiles.get(id);
     if (!url) throw new GatewayError('file_unavailable', 'El archivo de esta demo ya no está disponible.');
     return { url, expiresAt: new Date(Date.now() + 900000).toISOString() };
+  }
+  // The demo has no agents that propose actions, so its inbox is empty and its settings are local.
+  private settings: NotificationSettings = { quietHours: { start: '23:00', end: '08:00', timeZone: 'America/Argentina/Buenos_Aires' }, rules: [] };
+  async decideAction(): Promise<never> { throw new GatewayError('demo', 'En la demo no hay propuestas para aprobar.'); }
+  async inbox() { return []; }
+  async notificationSettings() { return clone(this.settings); }
+  async updateNotificationSettings(patch: NotificationPatch) {
+    if (patch.quietHours) this.settings.quietHours = { ...this.settings.quietHours, ...patch.quietHours };
+    return clone(this.settings);
   }
 }

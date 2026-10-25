@@ -56,3 +56,15 @@ test('HTTP is rejected except explicitly permitted private development hosts', (
   expect(() => serverUrl('https://lumi.example/path')).toThrow();
   expect(serverUrl('http://192.168.1.2:3091', true)).toBe('http://192.168.1.2:3091');
 });
+test('approvals, inbox and notification settings use the E16 routes', async () => {
+  const f = setup([{ status: 202, body: { actionId: 'a', status: 'approved' } }, { status: 200, body: { items: [{ id: 'a' }] } }, { status: 200, body: { quietHours: {}, rules: [] } }, { status: 200, body: { quietHours: {}, rules: [] } }]);
+  expect(await f.gateway.decideAction('m/1', { actionId: 'a:approve', clientMessageId: 'c' })).toEqual({ actionId: 'a', status: 'approved' });
+  expect(f.requests[0].url).toBe('https://lumi.example/v1/messages/m%2F1/actions');
+  expect(f.requests[0].options.method).toBe('POST');
+  expect(JSON.parse(f.requests[0].options.body as string)).toEqual({ actionId: 'a:approve', clientMessageId: 'c' });
+  expect(await f.gateway.inbox()).toEqual([{ id: 'a' }]);
+  await f.gateway.notificationSettings();
+  await f.gateway.updateNotificationSettings({ rules: [{ agent: 'gym', eventKind: 'reply', level: 'silent' }] });
+  expect(f.requests[3].options.method).toBe('PATCH');
+  expect(f.requests.map(r => r.url.replace('https://lumi.example/v1', ''))).toEqual(['/messages/m%2F1/actions', '/inbox', '/notification-settings', '/notification-settings']);
+});

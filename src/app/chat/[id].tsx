@@ -3,6 +3,7 @@ import { ActionSheetIOS, Alert, FlatList, KeyboardAvoidingView, Linking, Text, V
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { setActiveTopic } from '@/chat/foreground';
+import { ApprovalCard } from '@/chat/ApprovalCard';
 import { useChat } from '@/chat/ChatProvider';
 import { useTheme } from '@/theme/ThemeContext';
 import { Message, Status } from '@/chat/types';
@@ -33,6 +34,7 @@ function Bubble({ message: m }: { message: Message }) {
     </View>}
     {urls.map(({ url, host }) => <Action subtle key={url} title={`Abrir ${host}`} onPress={() => { void run(() => Linking.openURL(url)); }} />)}
     {m.reportRefs?.map(id => <Action subtle key={id} title={chat.gateway.simulated ? 'Ver reporte de ejemplo' : 'Ver reporte'} disabled={busy} onPress={() => { void run(async () => { const link = await chat.gateway.getReportLink(id); await Linking.openURL(link.url); }); }} />)}
+    {!!m.approvals?.length && <ApprovalCard message={m} />}
     {m.status !== 'completed' && <Text accessibilityLiveRegion="polite" style={{ color: m.status === 'failed' ? palette.danger : palette.textMuted, fontSize: 13 }}>{labels[m.status]}</Text>}
     {!!m.error && <Text style={{ color: palette.danger }}>{m.error.message}</Text>}
     {m.clientMessageId && (m.status === 'waiting_quota' || (m.status === 'failed' && m.error?.retryable)) && <Action subtle title={busy ? 'Reintentando…' : 'Reintentar procesamiento'} disabled={busy || !chat.online} onPress={() => { void run(() => chat.retry(m)); }} />}
