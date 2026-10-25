@@ -10,6 +10,7 @@ import { SymbolView } from 'expo-symbols';
 import { Action, IconButton, Input, styles } from '@/chat/ui';
 import type { InboxItem } from '@/chat/types';
 import { TopicAvatar } from '@/characters/TopicAvatar';
+import { orderTopics } from '@/chat/topicOrder';
 export default function Home() {
   const { palette } = useTheme(), chat = useChat(), volume = useSharedValue(0);
   const [query, setQuery] = useState(''), [refreshing, setRefreshing] = useState(false);
@@ -39,7 +40,7 @@ export default function Home() {
           <Text numberOfLines={2} style={{ color: palette.text, fontSize: 16 }}>{item.summary}</Text>
         </Pressable>)}
       </View>}
-      {chat.topics.filter(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())).map(topic => {
+      {orderTopics(chat.topics).filter(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())).map(topic => {
         const last = chat.messages.filter(m => m.topicId === topic.id).at(-1);
         return <Pressable key={topic.id} accessibilityRole="button" accessibilityLabel={topic.title} onPress={() => router.push({ pathname: '/chat/[id]', params: { id: topic.id } })} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 14, opacity: pressed ? 0.6 : 1 })}>
           <View style={{ opacity: topic.enabled ? 1 : 0.45 }}><TopicAvatar topic={topic} size={48} place="list" /></View>
