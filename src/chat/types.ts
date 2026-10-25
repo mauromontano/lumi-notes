@@ -1,5 +1,5 @@
 /** Local types of the central ODD's HTTP v1. No provider/domain logic belongs here. */
-export type Topic = { id: string; title: string; enabled: boolean; unreadCount: number };
+export type Topic = { id: string; title: string; enabled: boolean; unreadCount: number; agent?: string };
 export type Status = 'queued' | 'processing' | 'completed' | 'needs_input' | 'waiting_quota' | 'failed';
 export type Attachment = { id: string; fileName: string; mimeType: string; sizeBytes: number; durationMs?: number; availability: 'available' | 'expired' | 'failed'; expiresAt?: string; transcript?: string; transcriptionStatus?: 'pending' | 'completed' | 'failed' };
 export type Message = { id: string; topicId: string; clientMessageId?: string; createdAt: string; updatedAt: string; revision: number; origin: 'user' | 'assistant' | 'job'; kind: 'text' | 'audio' | 'image' | 'document' | 'event'; text?: string; status: Status; attachment?: Attachment; reportRefs?: string[]; replyToMessageId?: string; error?: { code: string; message: string; retryable: boolean } ; actions?: ActionButton[]; approvals?: Approval[] };

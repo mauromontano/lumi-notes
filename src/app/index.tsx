@@ -9,6 +9,7 @@ import { useChat } from '@/chat/ChatProvider';
 import { SymbolView } from 'expo-symbols';
 import { Action, IconButton, Input, styles } from '@/chat/ui';
 import type { InboxItem } from '@/chat/types';
+import { TopicAvatar } from '@/characters/TopicAvatar';
 export default function Home() {
   const { palette } = useTheme(), chat = useChat(), volume = useSharedValue(0);
   const [query, setQuery] = useState(''), [refreshing, setRefreshing] = useState(false);
@@ -41,7 +42,7 @@ export default function Home() {
       {chat.topics.filter(t => t.title.toLocaleLowerCase().includes(query.toLocaleLowerCase().trim())).map(topic => {
         const last = chat.messages.filter(m => m.topicId === topic.id).at(-1);
         return <Pressable key={topic.id} accessibilityRole="button" accessibilityLabel={topic.title} onPress={() => router.push({ pathname: '/chat/[id]', params: { id: topic.id } })} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 14, opacity: pressed ? 0.6 : 1 })}>
-          <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: palette.badgeBg, alignItems: 'center', justifyContent: 'center' }}><SymbolView name={topic.enabled ? 'wallet.bifold' : 'bag'} size={24} tintColor={palette.accent} /></View>
+          <View style={{ opacity: topic.enabled ? 1 : 0.45 }}><TopicAvatar topic={topic} size={48} place="list" /></View>
           <View style={{ flex: 1, gap: 7 }}><View style={[styles.row, { justifyContent: 'space-between' }]}><Text style={{ color: palette.text, fontSize: 17, fontWeight: '600', flex: 1 }}>{topic.title}</Text>{last && <Text style={{ color: palette.textMuted, fontSize: 12 }}>{new Date(last.createdAt).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}</Text>}</View>
           <Text numberOfLines={1} style={{ color: palette.textMuted, fontSize: 15 }}>{!topic.enabled ? 'Próximamente' : last?.text || last?.attachment?.transcript || 'Empezá una conversación'}</Text></View>
         </Pressable>;

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { setActiveTopic } from '@/chat/foreground';
 import { ApprovalCard } from '@/chat/ApprovalCard';
+import { TopicAvatar } from '@/characters/TopicAvatar';
 import { useChat } from '@/chat/ChatProvider';
 import { useTheme } from '@/theme/ThemeContext';
 import { Message, Status } from '@/chat/types';
@@ -52,7 +53,7 @@ export default function ChatScreen() {
   useFocusEffect(useCallback(() => { setActiveTopic(id); return () => setActiveTopic(null); }, [id]));
   const lastId = messages.at(-1)?.id;
   useEffect(() => { if (lastId && chat.linked) void chat.read(id, lastId).catch(() => {}); }, [id, lastId, chat.linked]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><Stack.Screen options={{ headerBackButtonDisplayMode: 'minimal', title: topic?.title || 'Conversación', headerTitle: fontScale > 1.15 ? (topic?.title || 'Conversación') : () => <View><Text style={{ color: palette.text, fontWeight: '600', fontSize: 17 }}>{topic?.title || 'Conversación'}</Text>{fontScale <= 1.15 && <Text style={{ color: palette.textMuted, fontSize: 12 }}>Tu asistente personal</Text>}</View>, headerRight: () => <IconButton name="doc.text" label="Reportes de la conversación" onPress={() => {
+  return <SafeAreaView edges={['bottom']} style={{ flex: 1 }}><Stack.Screen options={{ headerBackButtonDisplayMode: 'minimal', title: topic?.title || 'Conversación', headerTitle: fontScale > 1.15 ? (topic?.title || 'Conversación') : () => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>{topic && <TopicAvatar topic={topic} size={34} place="chat" />}<View><Text style={{ color: palette.text, fontWeight: '600', fontSize: 17 }}>{topic?.title || 'Conversación'}</Text>{fontScale <= 1.15 && <Text style={{ color: palette.textMuted, fontSize: 12 }}>Tu asistente personal</Text>}</View></View>, headerRight: () => <IconButton name="doc.text" label="Reportes de la conversación" onPress={() => {
       const reports = messages.flatMap(m => (m.reportRefs || []).map(reportId => ({ reportId, date: m.createdAt })));
       if (!reports.length) { Alert.alert('Reportes', 'Todavía no hay reportes en esta conversación.'); return; }
       ActionSheetIOS.showActionSheetWithOptions({ options: ['Cancelar', ...reports.map(r => `Reporte · ${new Date(r.date).toLocaleDateString('es-AR')}`)], cancelButtonIndex: 0 }, index => { if (index > 0) void chat.gateway.getReportLink(reports[index - 1].reportId).then(link => Linking.openURL(link.url)).catch(e => Alert.alert('Reporte', e.message)); });

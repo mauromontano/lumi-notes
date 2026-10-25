@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Canvas, Circle, RadialGradient, vec } from '@shopify/react-native-skia';
+import { Canvas, Circle, RadialGradient, RoundedRect, vec } from '@shopify/react-native-skia';
 import Animated, {
   SharedValue,
   useSharedValue,
@@ -85,6 +85,11 @@ export function LumiOrb({ state, volume, size }: Props) {
         <Circle cx={r} cy={r} r={r * 0.72}>
           <RadialGradient c={gradientCenter} r={r * 0.95} colors={colors} />
         </Circle>
+        {/* ojos del personaje Lumi (diseño E16): pastillas blancas, a escala del orbe de r=40 */}
+        {[-9, 9].map(dx => {
+          const k = (r * 0.72) / 40, w = 10 * k, h = 22 * k;
+          return <RoundedRect key={dx} x={r + dx * k - w / 2} y={r - h / 2} width={w} height={h} r={w / 2} color="#ffffff" />;
+        })}
       </Canvas>
     </Animated.View>
   );
