@@ -5,7 +5,10 @@ export type Attachment = { id: string; fileName: string; mimeType: string; sizeB
 export type Message = { id: string; topicId: string; clientMessageId?: string; createdAt: string; updatedAt: string; revision: number; origin: 'user' | 'assistant' | 'job'; kind: 'text' | 'audio' | 'image' | 'document' | 'event'; text?: string; status: Status; attachment?: Attachment; reportRefs?: string[]; replyToMessageId?: string; error?: { code: string; message: string; retryable: boolean } ; actions?: ActionButton[]; approvals?: Approval[] };
 /** E16 approvals: buttons stay while the card is pending; approvals carry each action's state. */
 export type ActionButton = { id: string; label: string; style: 'primary' | 'secondary' | 'link'; requiresAuth: boolean };
-export type Approval = { id: string; kind: string; summary: string; status: 'pending' | 'approved' | 'rejected' | 'expired' | 'failed' | 'done'; requiresAuth: boolean; expiresAt: string };
+/** A mail.send card carries the whole mail (T38): what Mauro approves is exactly what leaves. */
+export type MailDraft = { to: string[]; cc: string[]; subject: string; body: string; attachments: string[] };
+export type MailEdits = { subject?: string; body?: string };
+export type Approval = { id: string; kind: string; summary: string; status: 'pending' | 'approved' | 'rejected' | 'expired' | 'failed' | 'done'; requiresAuth: boolean; expiresAt: string; mail?: MailDraft };
 export type InboxItem = Approval & { messageId: string; topicId: string; agent: string; actions: ActionButton[] };
 export type NotifyLevel = 'urgent' | 'normal' | 'silent' | 'digest';
 export type EventKind = 'reply' | 'approval' | 'watch' | 'reminder' | 'digest' | 'system';
@@ -32,7 +35,7 @@ export interface ChatGateway {
   registerPushToken(token: string | null): Promise<void>;
   getReportLink(reportId: string): Promise<{ url: string; expiresAt: string }>;
   getAttachmentAccess(id: string): Promise<{ url: string; expiresAt: string }>;
-  decideAction(messageId: string, body: { actionId: string; clientMessageId: string }): Promise<{ actionId: string; status: Approval['status'] }>;
+  decideAction(messageId: string, body: { actionId: string; clientMessageId: string; edits?: MailEdits }): Promise<{ actionId: string; status: Approval['status'] }>;
   inbox(): Promise<InboxItem[]>;
   notificationSettings(): Promise<NotificationSettings>;
   updateNotificationSettings(patch: NotificationPatch): Promise<NotificationSettings>;

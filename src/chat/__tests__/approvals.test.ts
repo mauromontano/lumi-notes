@@ -1,4 +1,4 @@
-import { approveFromPush, decide, responseIntent, statusLabel } from '../approvals';
+import { approveFromPush, decide, mailDraftError, mailEdits, responseIntent, statusLabel } from '../approvals';
 import { GatewayError, type ActionButton } from '../types';
 const id = 'a2156936-088a-4df5-aa38-b87f4edaa802', topicId = 'b2156936-088a-4df5-aa38-b87f4edaa802';
 const approve: ActionButton = { id: `${id}:approve`, label: 'Abrir PR', style: 'primary', requiresAuth: true };
@@ -41,4 +41,21 @@ test('Aprobar from the push finds the pending card and still asks Face ID', asyn
   expect(await approveFromPush(g, 'm1', auth, () => 'c4')).toEqual({ actionId: id, status: 'approved' });
   expect(auth).toHaveBeenCalledTimes(1);
   expect(await approveFromPush({ ...g, inbox: jest.fn(async () => []) }, 'm1', auth, () => 'c5')).toBeNull();
+});
+const mail = { to: ['ana@x.com'], cc: [], subject: 'Turno', body: 'Hola Ana.', attachments: [] };
+test('a mail card sends only the words Mauro changed, and only when approving', async () => {
+  expect(mailEdits(mail, { subject: 'Turno', body: 'Hola Ana.' })).toBeUndefined();
+  expect(mailEdits(mail, { subject: ' Turno del jueves ', body: 'Hola Ana.' })).toEqual({ subject: 'Turno del jueves' });
+  const g = port();
+  await decide(g, 'm1', approve, async () => true, () => 'c4', { body: 'Hola Ana, confirmo.' });
+  expect(g.decideAction).toHaveBeenCalledWith('m1', { actionId: approve.id, clientMessageId: 'c4', edits: { body: 'Hola Ana, confirmo.' } });
+  await decide(g, 'm1', reject, async () => true, () => 'c5', { body: 'x' });
+  expect(g.decideAction).toHaveBeenLastCalledWith('m1', { actionId: reject.id, clientMessageId: 'c5' });
+});
+test('an edited mail is checked before Face ID: one-line subject, nothing empty', () => {
+  expect(mailDraftError({ subject: 'Turno', body: 'Hola.' })).toBeNull();
+  expect(mailDraftError({ subject: 'Turno\nBcc: x@y.com', body: 'Hola.' })).toMatch(/una sola línea/);
+  expect(mailDraftError({ subject: '  ', body: 'Hola.' })).toMatch(/asunto/);
+  expect(mailDraftError({ subject: 'Turno', body: '' })).toMatch(/texto/);
+  expect(mailDraftError({ subject: 'x'.repeat(201), body: 'Hola.' })).toMatch(/200/);
 });
