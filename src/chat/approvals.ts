@@ -1,5 +1,5 @@
 import * as LocalAuthentication from 'expo-local-authentication';
-import { GatewayError, type ActionButton, type Approval, type ChatGateway, type MailDraft, type MailEdits } from './types';
+import { GatewayError, type ActionButton, type Approval, type ChatGateway, type MailDraft, type MailEdits, type WatchDraft } from './types';
 export type Authenticate = (reason: string) => Promise<boolean>;
 /** Face ID (or the passcode) before anything that leaves the phone: a mail, a PR, a calendar invite. */
 export const faceId: Authenticate = async reason => (await LocalAuthentication.authenticateAsync({ promptMessage: reason, cancelLabel: 'Cancelar' })).success;
@@ -25,6 +25,11 @@ export function mailDraftError(draft: { subject: string; body: string }): string
   if (!draft.body.trim()) return 'Falta el texto del mail.';
   if (draft.body.trim().length > 20000) return 'El texto puede tener hasta 20 000 caracteres.';
   return null;
+}
+const WATCH_LEVELS = { urgent: 'siempre suena, también de noche', normal: 'normal', silent: 'sin aviso' };
+/** The lines a watch card adds under its summary, so nothing it will do is hidden. */
+export function watchLines(w: WatchDraft) {
+  return [...(w.url ? [`Mira: ${w.url}`] : []), ...(w.prompt ? [`Cuando dispare, le pido al bot: «${w.prompt}»`] : []), ...(w.level ? [`Aviso: ${WATCH_LEVELS[w.level]}`] : [])];
 }
 export const statusLabel: Record<Approval['status'], string> = { pending: 'Espera tu OK', approved: 'Aprobada · en curso', rejected: 'Descartada', expired: 'Venció', failed: 'No se pudo hacer', done: 'Hecha' };
 /** Push category with the lock-screen buttons. Aprobar opens the app, where Face ID runs; Ahora no only dismisses. */

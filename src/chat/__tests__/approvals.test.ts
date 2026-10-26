@@ -1,4 +1,4 @@
-import { approveFromPush, decide, mailDraftError, mailEdits, responseIntent, statusLabel } from '../approvals';
+import { approveFromPush, decide, mailDraftError, mailEdits, responseIntent, statusLabel, watchLines } from '../approvals';
 import { GatewayError, type ActionButton } from '../types';
 const id = 'a2156936-088a-4df5-aa38-b87f4edaa802', topicId = 'b2156936-088a-4df5-aa38-b87f4edaa802';
 const approve: ActionButton = { id: `${id}:approve`, label: 'Abrir PR', style: 'primary', requiresAuth: true };
@@ -58,4 +58,8 @@ test('an edited mail is checked before Face ID: one-line subject, nothing empty'
   expect(mailDraftError({ subject: '  ', body: 'Hola.' })).toMatch(/asunto/);
   expect(mailDraftError({ subject: 'Turno', body: '' })).toMatch(/texto/);
   expect(mailDraftError({ subject: 'x'.repeat(201), body: 'Hola.' })).toMatch(/200/);
+});
+test('a watch card shows the whole URL, what the bot will be asked and how loud it is', () => {
+  expect(watchLines({ kind: 'page', description: 'Página · tienda.com', url: 'https://tienda.com/p/1?c=negro', prompt: 'Decime si conviene.', level: 'urgent' })).toEqual(['Mira: https://tienda.com/p/1?c=negro', 'Cuando dispare, le pido al bot: «Decime si conviene.»', 'Aviso: siempre suena, también de noche']);
+  expect(watchLines({ kind: 'chat', description: 'Chat · 3 días sin mensajes' })).toEqual([]);
 });

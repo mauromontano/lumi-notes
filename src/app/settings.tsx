@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { ActionSheetIOS, Alert, ScrollView, Switch, Text, View } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { botRows, levelPatch, LEVEL_LABELS, showTextPatch } from '@/chat/notificationSettings';
 import type { NotificationPatch, NotificationSettings, NotifyLevel } from '@/chat/types';
 import { useTheme } from '@/theme/ThemeContext';
@@ -24,6 +24,7 @@ export default function Settings() {
       setBusy(true);
       void syncNotifications(true).then(() => Alert.alert('Notificaciones activadas', 'Los avisos no muestran importes ni documentos.')).catch(e => Alert.alert('No se pudo activar', e instanceof Error ? e.message : 'Volvé a intentarlo.')).finally(() => setBusy(false));
     }} />}
+    {live && <Action title="Automatismos: vigías, rutinas y recordatorios" onPress={() => router.push('/automations')} />}
     {avisos && <View style={{ gap: 12 }}>
       <Text style={{ color: palette.text, fontSize: 22, fontWeight: '600' }}>Avisos por bot</Text>
       <Text style={{ color: palette.textMuted, fontSize: 15, lineHeight: 22 }}>{`De ${avisos.quietHours.start} a ${avisos.quietHours.end} solo suena lo urgente y los recordatorios. Finanzas nunca muestra montos.`}</Text>

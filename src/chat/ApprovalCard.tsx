@@ -3,7 +3,7 @@ import { Alert, Text, View } from 'react-native';
 import { randomUUID } from 'expo-crypto';
 import { useTheme } from '@/theme/ThemeContext';
 import { useChat } from './ChatProvider';
-import { decide, faceId, mailDraftError, mailEdits, statusLabel } from './approvals';
+import { decide, faceId, mailDraftError, mailEdits, statusLabel, watchLines } from './approvals';
 import type { Approval, Message } from './types';
 import { Action, Input, styles } from './ui';
 /** The card under a reply that needs Mauro's OK. The server runs the action after Aprobar; the result arrives as a new message. */
@@ -44,6 +44,7 @@ function Card({ approval: a, message, busy, online, onDecide, palette }: { appro
       </>}
       {a.status === 'pending' && <Action subtle title={editing ? 'Listo' : 'Editar asunto y texto'} disabled={!!busy} onPress={() => setEditing(e => !e)} />}
     </View>}
+    {a.watch && watchLines(a.watch).map(line => <Text key={line} style={muted} selectable>{line}</Text>)}
     <Text style={{ color: a.status === 'failed' || a.status === 'expired' ? palette.danger : palette.textMuted, fontSize: 13 }}>{statusLabel[a.status]}</Text>
     {buttons.length > 0 && <View style={styles.row}>{buttons.map(b => <Action key={b.id} subtle={b.style !== 'primary'} title={busy === b.id ? 'Enviando…' : b.label + (b.requiresAuth ? ' · Face ID' : '')} disabled={!!busy || !online} onPress={() => press(b)} />)}</View>}
   </View>;

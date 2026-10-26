@@ -8,14 +8,20 @@ export type ActionButton = { id: string; label: string; style: 'primary' | 'seco
 /** A mail.send card carries the whole mail (T38): what Mauro approves is exactly what leaves. */
 export type MailDraft = { to: string[]; cc: string[]; subject: string; body: string; attachments: string[] };
 export type MailEdits = { subject?: string; body?: string };
-export type Approval = { id: string; kind: string; summary: string; status: 'pending' | 'approved' | 'rejected' | 'expired' | 'failed' | 'done'; requiresAuth: boolean; expiresAt: string; mail?: MailDraft };
+/** A watch.set card (T39) carries what the summary leaves out: the whole URL, what the bot will be asked and the push level. */
+export type WatchDraft = { kind: string; description: string; url?: string; prompt?: string; level?: 'urgent' | 'normal' | 'silent' };
+export type Approval = { id: string; kind: string; summary: string; status: 'pending' | 'approved' | 'rejected' | 'expired' | 'failed' | 'done'; requiresAuth: boolean; expiresAt: string; mail?: MailDraft; watch?: WatchDraft };
 export type InboxItem = Approval & { messageId: string; topicId: string; agent: string; actions: ActionButton[] };
 export type NotifyLevel = 'urgent' | 'normal' | 'silent' | 'digest';
 export type EventKind = 'reply' | 'approval' | 'watch' | 'reminder' | 'digest' | 'system';
 export type NotificationRule = { agent: string; name: string; eventKind: EventKind; level: NotifyLevel; showText: boolean };
 export type NotificationSettings = { quietHours: { start: string; end: string; timeZone: string }; rules: NotificationRule[] };
 export type NotificationPatch = { quietHours?: { start: string; end: string }; rules?: { agent: string; eventKind: EventKind; level?: NotifyLevel; showText?: boolean }[] };
-export type Change = { id: string; type: 'message.upsert'; entityId: string; revision: number; payload: Message } | { id: string; type: 'topic.upsert'; entityId: string; revision: number; payload: Topic };
+/** T39: a watch, a routine or a reminder, as GET /v1/automations lists them. kind is the watch's kind (null otherwise). */
+export type Automation = { id: string; type: 'watch' | 'schedule' | 'reminder'; kind: 'github' | 'gmail' | 'ledger' | 'chat' | 'page' | null; agent: string | null; title: string; detail: string; enabled: boolean; toggleable: boolean; origin: 'registry' | 'chat' | null; nextAt: string | null; lastAt: string | null };
+export type RunsToday = { total: number; limit: number; agents: { agent: string; runs: number; limit: number }[] };
+export type Automations = { items: Automation[]; runsToday: RunsToday };
+export type Change = { id: string; type: 'message.upsert'; entityId: string; revision: number; payload: Message } | { id: string; type: 'topic.upsert'; entityId: string; revision: number; payload: Topic } | { id: string; type: 'automation.upsert'; entityId: string; revision: number; payload: Automation | { id: string; deleted: true } };
 export type SendText = { topicId: string; clientMessageId: string; text: string };
 export type SendAttachment = { topicId: string; clientMessageId: string; localUri: string; mimeType: string; fileName: string; caption?: string };
 export type SendAudio = { topicId: string; clientMessageId: string; localUri: string; mimeType: string; durationMs: number };
@@ -39,6 +45,8 @@ export interface ChatGateway {
   inbox(): Promise<InboxItem[]>;
   notificationSettings(): Promise<NotificationSettings>;
   updateNotificationSettings(patch: NotificationPatch): Promise<NotificationSettings>;
+  automations(): Promise<Automations>;
+  setAutomationEnabled(id: string, enabled: boolean): Promise<Automation>;
 }
 export class GatewayError extends Error {
   constructor(public code: string, message: string, public retryable = false) { super(message); }

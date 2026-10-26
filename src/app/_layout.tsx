@@ -34,6 +34,7 @@ function Navigation() {
     <Stack.Screen name="index" options={{ headerShown: false }} />
     <Stack.Screen name="chat/[id]" options={{ title: 'Conversación', headerBackTitle: 'Temas' }} />
     <Stack.Screen name="settings" options={{ title: 'Preferencias' }} />
+    <Stack.Screen name="automations" options={{ title: 'Automatismos', headerBackTitle: 'Preferencias' }} />
   </Stack></>;
 }
 export default function Layout() { return <GestureHandlerRootView style={{ flex: 1 }}><ThemeProvider><ChatProvider><Navigation /></ChatProvider></ThemeProvider></GestureHandlerRootView>; }

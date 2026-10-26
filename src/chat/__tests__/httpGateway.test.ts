@@ -68,3 +68,11 @@ test('approvals, inbox and notification settings use the E16 routes', async () =
   expect(f.requests[3].options.method).toBe('PATCH');
   expect(f.requests.map(r => r.url.replace('https://lumi.example/v1', ''))).toEqual(['/messages/m%2F1/actions', '/inbox', '/notification-settings', '/notification-settings']);
 });
+test('automations are listed and switched with the T39 routes', async () => {
+  const runsToday = { total: 1, limit: 30, agents: [] };
+  const f = setup([{ status: 200, body: { items: [], runsToday } }, { status: 200, body: { id: 'w/1', enabled: false } }]);
+  expect(await f.gateway.automations()).toEqual({ items: [], runsToday });
+  expect(await f.gateway.setAutomationEnabled('w/1', false)).toEqual({ id: 'w/1', enabled: false });
+  expect(f.requests.map(r => [r.url.replace('https://lumi.example/v1', ''), r.options.method ?? 'GET'])).toEqual([['/automations', 'GET'], ['/automations/w%2F1', 'PATCH']]);
+  expect(JSON.parse(f.requests[1].options.body as string)).toEqual({ enabled: false });
+});

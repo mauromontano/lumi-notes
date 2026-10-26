@@ -106,4 +106,7 @@ export class MockChatGateway implements ChatGateway {
     if (patch.quietHours) this.settings.quietHours = { ...this.settings.quietHours, ...patch.quietHours };
     return clone(this.settings);
   }
+  // Nor watches or routines: the automations screen shows its empty state.
+  async automations() { return { items: [], runsToday: { total: 0, limit: 30, agents: [] } }; }
+  async setAutomationEnabled(): Promise<never> { throw new GatewayError('demo', 'En la demo no hay automatismos.'); }
 }
