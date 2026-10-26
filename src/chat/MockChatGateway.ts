@@ -109,4 +109,6 @@ export class MockChatGateway implements ChatGateway {
   // Nor watches or routines: the automations screen shows its empty state.
   async automations() { return { items: [], runsToday: { total: 0, limit: 30, agents: [] } }; }
   async setAutomationEnabled(): Promise<never> { throw new GatewayError('demo', 'En la demo no hay automatismos.'); }
+  async usage() { const zero = { runs: 0, failed: 0, turns: 0, tokens: 0, costUsd: 0 }; return { estimate: true, agents: [], total: { today: zero, week: zero } }; }
+  async today() { return { pending: 0, nextEvent: null, nextReminder: null, agenda: 'off' as const, updatedAt: new Date().toISOString() }; }
 }

@@ -1,4 +1,4 @@
-import { Approval, Attachment, Automation, Automations, MailEdits, Bootstrap, Change, ChatGateway, GatewayError, InboxItem, Message, NotificationPatch, NotificationSettings, SendAttachment, SendAudio, SendText, Topic } from './types';
+import { Approval, Attachment, Automation, Automations, MailEdits, Today, Usage, Bootstrap, Change, ChatGateway, GatewayError, InboxItem, Message, NotificationPatch, NotificationSettings, SendAttachment, SendAudio, SendText, Topic } from './types';
 
 type Transport = (url: string, options: RequestInit) => Promise<Response>;
 type UploadBody = (input: SendAttachment | SendAudio, fileName: string) => FormData;
@@ -70,4 +70,6 @@ export class HttpChatGateway implements ChatGateway {
   updateNotificationSettings(patch: NotificationPatch) { return this.request<NotificationSettings>('/notification-settings', 'PATCH', patch); }
   automations() { return this.request<Automations>('/automations'); }
   setAutomationEnabled(id: string, enabled: boolean) { return this.request<Automation>(`/automations/${encodeURIComponent(id)}`, 'PATCH', { enabled }); }
+  usage() { return this.request<Usage>('/usage'); }
+  today() { return this.request<Today>('/today'); }
 }

@@ -10,6 +10,8 @@ import { activeTopic, foregroundBehavior } from '@/chat/foreground';
 import { APPROVAL_CATEGORY, approvalButtons, approveFromPush, faceId, responseIntent } from '@/chat/approvals';
 import { gateway } from '@/chat/gateway';
 import { randomUUID } from 'expo-crypto';
+import { ShareIntentProvider, useShareIntentContext } from 'expo-share-intent';
+import { useAppExtras } from '@/chat/useAppExtras';
 export const unstable_settings = { initialRouteName: 'index' };
 // Without a handler iOS hides every push while Lumi is open.
 Notifications.setNotificationHandler({ handleNotification: async n => foregroundBehavior(n.request.content.data, activeTopic()) });
@@ -17,6 +19,10 @@ Notifications.setNotificationHandler({ handleNotification: async n => foreground
 void Notifications.setNotificationCategoryAsync(APPROVAL_CATEGORY, approvalButtons).catch(() => {});
 function Navigation() {
   const { palette, theme } = useTheme();
+  // T40: the widget, Siri and the share sheet («Mandar a Lumi»).
+  useAppExtras();
+  const { hasShareIntent } = useShareIntentContext();
+  useEffect(() => { if (hasShareIntent) router.push('/share'); }, [hasShareIntent]);
   useEffect(() => {
     void SplashScreen.hideAsync();
     const open = (response: Notifications.NotificationResponse | null) => {
@@ -35,6 +41,8 @@ function Navigation() {
     <Stack.Screen name="chat/[id]" options={{ title: 'Conversación', headerBackTitle: 'Temas' }} />
     <Stack.Screen name="settings" options={{ title: 'Preferencias' }} />
     <Stack.Screen name="automations" options={{ title: 'Automatismos', headerBackTitle: 'Preferencias' }} />
+    <Stack.Screen name="share" options={{ title: 'Mandar a Lumi', presentation: 'modal' }} />
   </Stack></>;
 }
-export default function Layout() { return <GestureHandlerRootView style={{ flex: 1 }}><ThemeProvider><ChatProvider><Navigation /></ChatProvider></ThemeProvider></GestureHandlerRootView>; }
+// ShareIntentProvider goes outermost, as expo-share-intent asks.
+export default function Layout() { return <ShareIntentProvider><GestureHandlerRootView style={{ flex: 1 }}><ThemeProvider><ChatProvider><Navigation /></ChatProvider></ThemeProvider></GestureHandlerRootView></ShareIntentProvider>; }

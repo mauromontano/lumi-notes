@@ -76,3 +76,8 @@ test('automations are listed and switched with the T39 routes', async () => {
   expect(f.requests.map(r => [r.url.replace('https://lumi.example/v1', ''), r.options.method ?? 'GET'])).toEqual([['/automations', 'GET'], ['/automations/w%2F1', 'PATCH']]);
   expect(JSON.parse(f.requests[1].options.body as string)).toEqual({ enabled: false });
 });
+test('usage and today use the T40 routes', async () => {
+  const f = setup([{ status: 200, body: { estimate: true, agents: [], total: {} } }, { status: 200, body: { pending: 0 } }]);
+  await f.gateway.usage(); await f.gateway.today();
+  expect(f.requests.map(r => r.url.replace('https://lumi.example/v1', ''))).toEqual(['/usage', '/today']);
+});

@@ -11,7 +11,16 @@
       "bundleIdentifier": "com.mauro.luminotes",
       "supportsTablet": false,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Lumi usa el micrófono para grabar mensajes de audio."
+        "NSMicrophoneUsageDescription": "Lumi usa el micrófono para grabar mensajes de audio.",
+        "NSUserActivityTypes": [
+          "INSendMessageIntent"
+        ]
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.mauro.luminotes"
+        ],
+        "com.apple.developer.usernotifications.communication": true
       }
     },
     "android": {
@@ -70,7 +79,24 @@
         {
           "faceIDPermission": "Lumi usa Face ID para confirmar acciones importantes, como mandar un mail o abrir un PR."
         }
-      ]
+      ],
+      "@bacons/apple-targets",
+      [
+        "expo-share-intent",
+        {
+          "iosAppGroupIdentifier": "group.com.mauro.luminotes",
+          "iosShareExtensionName": "Mandar a Lumi",
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsText": true,
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
+            "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
+            "NSExtensionActivationSupportsImageWithMaxCount": 1,
+            "NSExtensionActivationSupportsFileWithMaxCount": 1
+          },
+          "disableAndroid": true
+        }
+      ],
+      "./plugins/with-ask-lumi-intent"
     ],
     "experiments": {
       "typedRoutes": true,

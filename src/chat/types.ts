@@ -21,6 +21,11 @@ export type NotificationPatch = { quietHours?: { start: string; end: string }; r
 export type Automation = { id: string; type: 'watch' | 'schedule' | 'reminder'; kind: 'github' | 'gmail' | 'ledger' | 'chat' | 'page' | null; agent: string | null; title: string; detail: string; enabled: boolean; toggleable: boolean; origin: 'registry' | 'chat' | null; nextAt: string | null; lastAt: string | null };
 export type RunsToday = { total: number; limit: number; agents: { agent: string; runs: number; limit: number }[] };
 export type Automations = { items: Automation[]; runsToday: RunsToday };
+/** T40: GET /v1/usage. costUsd is an estimate: with Claude Pro it is what the same runs would cost on the API. */
+export type UsageTotals = { runs: number; failed: number; turns: number; tokens: number; costUsd: number };
+export type Usage = { estimate: boolean; agents: { agent: string; today: UsageTotals; week: UsageTotals }[]; total: { today: UsageTotals; week: UsageTotals } };
+/** T40: GET /v1/today, what the home screen widget shows. */
+export type Today = { pending: number; nextEvent: { summary: string; start: string; allDay: boolean } | null; nextReminder: { text: string; at: string } | null; agenda: 'ok' | 'failed' | 'off'; updatedAt: string };
 export type Change = { id: string; type: 'message.upsert'; entityId: string; revision: number; payload: Message } | { id: string; type: 'topic.upsert'; entityId: string; revision: number; payload: Topic } | { id: string; type: 'automation.upsert'; entityId: string; revision: number; payload: Automation | { id: string; deleted: true } };
 export type SendText = { topicId: string; clientMessageId: string; text: string };
 export type SendAttachment = { topicId: string; clientMessageId: string; localUri: string; mimeType: string; fileName: string; caption?: string };
@@ -47,6 +52,8 @@ export interface ChatGateway {
   updateNotificationSettings(patch: NotificationPatch): Promise<NotificationSettings>;
   automations(): Promise<Automations>;
   setAutomationEnabled(id: string, enabled: boolean): Promise<Automation>;
+  usage(): Promise<Usage>;
+  today(): Promise<Today>;
 }
 export class GatewayError extends Error {
   constructor(public code: string, message: string, public retryable = false) { super(message); }

@@ -1,0 +1,15 @@
+diff --git a/node_modules/expo-share-intent/build/useShareIntent.js b/node_modules/expo-share-intent/build/useShareIntent.js
+index 1ab12c4..ff0df7f 100644
+--- a/node_modules/expo-share-intent/build/useShareIntent.js
++++ b/node_modules/expo-share-intent/build/useShareIntent.js
+@@ -37,7 +37,9 @@ export default function useShareIntent(options = SHAREINTENT_OPTIONS_DEFAULT) {
+      */
+     const refreshShareIntent = () => {
+         options.debug && console.debug("useShareIntent[refresh]", url);
+-        if (url?.includes(`${getScheme(options)}://dataUrl=`)) {
++        // Lumi (T40): only the exact link the share extension builds. Any page could open luminotes://dataUrl=…,
++        // and a link without its #type crashes the native module.
++        if (url && new RegExp(`^${getScheme(options)}://dataUrl=${getShareExtensionKey(options)}(\\?nonce=[A-Za-z0-9-]+)?#(text|weburl|media|file)$`).test(url)) {
+             // iOS only
+             ExpoShareIntentModule?.getShareIntent(url);
+         }

@@ -3,7 +3,8 @@ import { ActivityIndicator, Alert, ScrollView, Switch, Text, View } from 'react-
 import { useFocusEffect } from 'expo-router';
 import { useChat } from '@/chat/ChatProvider';
 import { agentName, runsLine, sections, toggled, whenLabel } from '@/chat/automations';
-import type { Automations } from '@/chat/types';
+import type { Automations, Usage } from '@/chat/types';
+import { usageLine, usageRows } from '@/chat/usage';
 import { useTheme } from '@/theme/ThemeContext';
 import { Action } from '@/chat/ui';
 // T39: everything that runs on its own (watches, routines, reminders), with a switch for the ones that can pause.
@@ -12,6 +13,8 @@ export default function AutomationsScreen() {
   const { palette } = useTheme();
   const [data, setData] = useState<Automations>();
   const [error, setError] = useState<string>();
+  // T40: what each bot used. Optional: the list works without it.
+  const [usage, setUsage] = useState<Usage>();
   // One switch change at a time per item, and no list that started before a change may overwrite it.
   const [pending, setPending] = useState<ReadonlySet<string>>(new Set());
   const request = useRef(0);
@@ -27,6 +30,7 @@ export default function AutomationsScreen() {
     });
   }, [chat.gateway]);
   useFocusEffect(load);
+  useFocusEffect(useCallback(() => { void chat.gateway.usage().then(setUsage).catch(() => {}); }, [chat.gateway]));
   const flip = (id: string, enabled: boolean) => {
     request.current++;
     setPending(p => new Set(p).add(id));
@@ -46,6 +50,17 @@ export default function AutomationsScreen() {
   return <ScrollView contentContainerStyle={{ padding: 24, gap: 20 }}>
     <Text style={muted}>{runsLine(data.runsToday)}. Pasado el tope, los vigías avisan igual pero sin que el bot lo analice.</Text>
     {data.items.length === 0 && <Text style={muted}>Todavía no hay vigías, rutinas ni recordatorios. Pedile a un bot que esté atento a algo («avisame si falla el CI», «si pasan 3 días sin entrenar») y te deja una tarjeta para activarlo.</Text>}
+    {usage && <View style={{ gap: 4 }}>
+      <Text accessibilityRole="header" style={{ color: palette.text, fontSize: 20, fontWeight: '600', marginBottom: 4 }}>Uso</Text>
+      <Text style={muted}>{`Hoy: ${usageLine(usage.total.today)}`}</Text>
+      <Text style={muted}>{`7 días: ${usageLine(usage.total.week)}`}</Text>
+      {usageRows(usage, chat.topics).map(row => <View key={row.agent} style={{ paddingVertical: 8, borderBottomWidth: 1, borderColor: palette.cardBorder, gap: 2 }}>
+        <Text style={{ color: palette.text, fontSize: 16, fontWeight: '600' }}>{row.name}</Text>
+        <Text style={{ ...muted, fontSize: 13 }}>{`Hoy: ${row.today}`}</Text>
+        <Text style={{ ...muted, fontSize: 13 }}>{`7 días: ${row.week}`}</Text>
+      </View>)}
+      <Text style={{ ...muted, fontSize: 13 }}>Con Claude Pro no se paga por corrida: el costo es lo que saldría por API, para comparar.</Text>
+    </View>}
     {sections(data.items).map(section => <View key={section.type} style={{ gap: 4 }}>
       <Text accessibilityRole="header" style={{ color: palette.text, fontSize: 20, fontWeight: '600', marginBottom: 4 }}>{section.title}</Text>
       {section.items.map(item => <View key={item.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderColor: palette.cardBorder }}>
