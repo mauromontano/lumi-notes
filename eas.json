@@ -33,7 +33,7 @@
       "extends": "preview",
       "env": {
         "EXPO_PUBLIC_CHAT_MODE": "http",
-        "EXPO_PUBLIC_LUMI_API_URL": "https://lumi-api-production-fa73.up.railway.app"
+        "EXPO_PUBLIC_LUMI_API_URL": "https://mauros-mac-mini.tail4c75c9.ts.net"
       },
       "channel": "preview-connected"
     }

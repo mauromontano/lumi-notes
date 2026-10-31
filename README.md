@@ -209,6 +209,12 @@ Sin permiso push, las novedades de jobs llegan al volver o actualizar; no se man
 la base despierta para buscar novedades. 20 suites/122 tests, tsc/lint/export iOS correctos.
 No se midió aún ahorro real en Railway/Neon ni entrega push en dispositivo físico.
 
+### Mac mini — 30/10/2026
+
+`preview-connected` apunta a `https://mauros-mac-mini.tail4c75c9.ts.net`: el servidor en la Mac mini de Mauro,
+detrás de `tailscale serve`, que solo existe dentro de su tailnet. El iPhone llega con Tailscale y VPN On Demand,
+desde cualquier red. Se vincula con un código de `lumi pair` (lumi-server). Railway queda solo como historia.
+
 ### Piloto Railway — 16/10/2026
 
 `npm run start:pilot` inicia Expo Go/LAN en puerto 8086 con HttpChatGateway y
