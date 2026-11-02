@@ -1,0 +1,5 @@
+# pod install writes machine-dependent checksums here (ExpoModulesCore differs between the Mac and EAS);
+# native dependency versions are already in the fingerprint through node_modules.
+ios/Podfile.lock
+# Xcode creates this locally and git ignores it, so EAS never has it.
+ios/*.xcodeproj/project.xcworkspace/**/*
