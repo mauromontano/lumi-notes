@@ -9,13 +9,15 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "cocoapods": "1.17.0"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "simulator": false
+        "simulator": false,
+        "cocoapods": "1.17.0"
       },
       "env": {
         "EXPO_PUBLIC_CHAT_MODE": "mock"
@@ -27,6 +29,9 @@
       "channel": "production",
       "env": {
         "EXPO_PUBLIC_CHAT_MODE": "http"
+      },
+      "ios": {
+        "cocoapods": "1.17.0"
       }
     },
     "preview-connected": {
