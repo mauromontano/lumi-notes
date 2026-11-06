@@ -3,6 +3,7 @@ import { BlurMask, Canvas, Circle, DashPathEffect, Group, Oval, Path, RadialGrad
 import { cancelAnimation, Easing, useDerivedValue, useReducedMotion, useSharedValue, withDelay, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { useTheme } from '@/theme/ThemeContext';
 import { characters, type EyeSpec, type Shape, type Token } from './shapes';
+import { ballTransform, bodyTransform, eyesTransform } from './motion';
 import { faceFor, motionFor, type CharacterState, type Eyes, type Mark, type Slug } from './state';
 type Props = { slug: Slug; state: CharacterState; size: number; place: 'list' | 'chat' };
 const deg = (d: number) => (d * Math.PI) / 180;
@@ -23,20 +24,9 @@ export function BotCharacter({ slug, state, size, place }: Props) {
     if (motion !== 'none' && face.eyes === 'pill') blink.value = withRepeat(withSequence(withDelay(4600 + slug.length * 170, withTiming(0.1, { duration: 80 })), withTiming(1, { duration: 120 })), -1, false);
   }, [motion, state, slug, face.eyes, t, blink]);
   const gesture = c.gesture;
-  const body = useDerivedValue(() => {
-    const a = 2 * Math.PI * t.value, half = Math.abs(Math.sin(a / 2));
-    switch (gesture) {
-      case 'float': return [{ translateY: -3 * Math.sin(a) }];
-      case 'spin': return [{ scaleX: 0.6 + 0.4 * Math.abs(Math.cos(a / 2)) }];
-      case 'reps': return [{ translateY: -5 * half }];
-      case 'sway': return [{ rotate: deg(6) * Math.sin(a) }];
-      case 'hop': return [{ translateY: -7 * half }];
-      case 'nod': return [{ rotate: deg(4) * Math.sin(a) }];
-      default: return [{ translateY: 0 }];
-    }
-  });
-  const ball = useDerivedValue(() => [{ translateY: gesture === 'bounceBall' ? -10 * Math.abs(Math.sin(Math.PI * t.value)) : 0 }]);
-  const eyes = useDerivedValue(() => [{ translateX: gesture === 'read' ? 3 * Math.sin(2 * Math.PI * t.value) : 0 }, { scaleY: blink.value }]);
+  const body = useDerivedValue(() => bodyTransform(gesture, t.value));
+  const ball = useDerivedValue(() => ballTransform(gesture, t.value));
+  const eyes = useDerivedValue(() => eyesTransform(gesture, t.value, blink.value));
   const eyeColor = color('eye'), e = c.eyes;
   return <Canvas style={{ width: size, height: size }} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
     <Group transform={[{ scale: size / 120 }]}>
