@@ -12,6 +12,7 @@ import { SymbolView } from 'expo-symbols';
 import { useHeaderHeight } from 'expo-router/build/react-navigation/elements';
 import { Action, IconButton, styles } from '@/chat/ui';
 import { messageLinks } from '@/chat/links';
+import { MessageText } from '@/chat/MessageText';
 import { Composer } from '@/chat/Composer';
 import { ImagePreview } from '@/chat/ImageMessage';
 import { AudioPlayer } from '@/chat/AudioMessage';
@@ -24,7 +25,7 @@ function Bubble({ message: m }: { message: Message }) {
   const urls = messageLinks(m.text);
   return <View style={{ alignSelf: m.origin === 'user' ? 'flex-end' : 'flex-start', maxWidth: '88%', paddingHorizontal: 12, paddingVertical: 9, gap: 8, borderRadius: 16, borderBottomRightRadius: m.origin === 'user' ? 4 : 16, borderBottomLeftRadius: m.origin === 'user' ? 16 : 4, backgroundColor: m.origin === 'user' ? palette.outgoing : palette.incoming }}>
     {m.origin === 'job' && <Text style={{ color: palette.textMuted, fontSize: 12 }}>{chat.gateway.simulated ? 'Actualización automática · simulada' : 'Actualización automática'}</Text>}
-    {!!m.text && <Text selectable style={[styles.body, { color: palette.text }]}>{m.text}</Text>}
+    {!!m.text && (m.origin === 'user' ? <Text selectable style={[styles.body, { color: palette.text }]}>{m.text}</Text> : <MessageText text={m.text} />)}
     {a && <View style={{ gap: 8 }}>
       {m.kind !== 'audio' && <Text style={{ color: palette.text, fontWeight: '600' }}>{a.fileName}</Text>}
       {a.availability === 'expired' ? <Text style={{ color: palette.textMuted }}>Audio expirado{a.expiresAt ? ` · ${new Date(a.expiresAt).toLocaleDateString('es-AR')}` : ''}. Conservamos la transcripción.</Text> : a.availability === 'failed' ? <Text style={{ color: palette.danger }}>Archivo no disponible.</Text> : m.kind === 'audio' ? <AudioPlayer key={a.id} durationMs={a.durationMs} resolve={async () => (await chat.gateway.getAttachmentAccess(a.id)).url} /> : <Action subtle title={m.kind === 'image' ? 'Abrir imagen' : 'Abrir PDF'} disabled={busy} onPress={() => { void run(async () => { const access = await chat.gateway.getAttachmentAccess(a.id); if (chat.gateway.simulated) { const Sharing = await import('expo-sharing'); await Sharing.shareAsync(access.url); } else await Linking.openURL(access.url); }); }} />}
